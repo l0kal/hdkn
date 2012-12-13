@@ -7,6 +7,8 @@ namespace Hadouken.Engines
 {
     public abstract class TransferEngine<TManager> : ITransferEngine<TManager> where TManager : IItemTransferManager
     {
+        private readonly IDictionary<string, TManager> _managers = new Dictionary<string, TManager>(StringComparer.InvariantCultureIgnoreCase); 
+
         public abstract void Load();
 
         public abstract void Unload();
@@ -66,6 +68,9 @@ namespace Hadouken.Engines
 
         public abstract void Pause(TManager manager);
 
-        public abstract IDictionary<string, TManager> Managers { get; }
+        public virtual IDictionary<string, TManager> Managers
+        {
+            get { return _managers; }
+        }
     }
 }
