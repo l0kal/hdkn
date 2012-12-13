@@ -19,15 +19,6 @@ namespace Hadouken.Engines
         void StartAll();
         void StopAll();
 
-        void Start(string id);
-        void Start(TManager manager);
-
-        void Stop(string id);
-        void Stop(TManager manager);
-
-        void Pause(string id);
-        void Pause(TManager manager);
-
         IDictionary<string, TManager> Managers { get; } 
     }
 }

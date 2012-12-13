@@ -33,7 +33,7 @@ namespace Hadouken.Engines
             var managers = Managers.Values;
 
             foreach (var manager in managers)
-                Start(manager);
+                manager.Start();
         }
 
         public virtual void StopAll()
@@ -41,32 +41,8 @@ namespace Hadouken.Engines
             var managers = Managers.Values;
 
             foreach (var manager in managers)
-                Stop(manager);
+                manager.Stop();
         }
-
-        public virtual void Start(string id)
-        {
-            if(Managers.ContainsKey(id))
-                Start(Managers[id]);
-        }
-
-        public abstract void Start(TManager manager);
-
-        public virtual void Stop(string id)
-        {
-            if (Managers.ContainsKey(id))
-                Stop(Managers[id]);
-        }
-
-        public abstract void Stop(TManager manager);
-
-        public virtual void Pause(string id)
-        {
-            if (Managers.ContainsKey(id))
-                Pause(Managers[id]);
-        }
-
-        public abstract void Pause(TManager manager);
 
         public virtual IDictionary<string, TManager> Managers
         {
