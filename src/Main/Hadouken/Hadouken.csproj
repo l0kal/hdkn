@@ -83,6 +83,10 @@
     <Compile Include="Data\Models\TorrentInfo.cs" />
     <Compile Include="Data\TableAttribute.cs" />
     <Compile Include="DI\IDependencyResolver.cs" />
+    <Compile Include="Engines\IItemTransferManager.cs" />
+    <Compile Include="Engines\ItemTransferState.cs" />
+    <Compile Include="Engines\ITransferEngine.cs" />
+    <Compile Include="Engines\TransferEngine.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\HttpListenerResponseExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
