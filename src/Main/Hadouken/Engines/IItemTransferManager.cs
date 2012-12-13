@@ -10,6 +10,7 @@ namespace Hadouken.Engines
         string Name { get; }
         long Size { get; }
         string SavePath { get; }
+        string Label { get; }
         ItemTransferState State { get; }
     }
 }
