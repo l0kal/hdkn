@@ -6,6 +6,7 @@ using System.Reflection;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("getpluginfile")]
     public class GetPluginFile : ApiAction
     {

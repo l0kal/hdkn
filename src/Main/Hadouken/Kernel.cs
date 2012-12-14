@@ -16,30 +16,27 @@ namespace Hadouken
         {
             // get all interface types which are assignable from IComponent (but not IComponent itself)
 
-            var componentTypes = (from asm in AppDomain.CurrentDomain.GetAssemblies()
+            var componentTypes = (from asm in assemblies
                                   from type in asm.GetTypes()
-                                  where typeof(IComponent).IsAssignableFrom(type)
-                                  where type != typeof(IComponent) && type.IsInterface
+                                  where type.HasAttribute<ComponentAttribute>()
+                                  where type.IsClass && !type.IsAbstract
                                   select type);
 
             foreach (var component in componentTypes)
             {
-                var lifestyle = ComponentLifestyle.Singleton;
+                var componentAttribute = component.GetAttribute<ComponentAttribute>();
+                var types = component.GetInterfaces().Union(component.GetAbstractParents());
 
-                if (component.HasAttribute<ComponentAttribute>())
-                    lifestyle = component.GetAttribute<ComponentAttribute>().Lifestyle;
-
-                // register all types that inherit the component type
-
-                var implementationTypes = (from asm in assemblies
-                                           from type in asm.GetTypes()
-                                           where component.IsAssignableFrom(type)
-                                           where type.IsClass && !type.IsAbstract
-                                           select type);
-
-                foreach (var implementation in implementationTypes)
+                foreach (var type in types)
                 {
-                    _resolver.Register(component, implementation, lifestyle);
+                    if (String.IsNullOrEmpty(componentAttribute.Name))
+                    {
+                        _resolver.Register(type, component, componentAttribute.Lifestyle);
+                    }
+                    else
+                    {
+                        _resolver.Register(type, component, componentAttribute.Lifestyle, componentAttribute.Name);                        
+                    }
                 }
             }
         }

@@ -4,6 +4,7 @@ using Hadouken.BitTorrent;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("gettorrentfiles")]
     public class GetTorrentFiles : ApiAction
     {

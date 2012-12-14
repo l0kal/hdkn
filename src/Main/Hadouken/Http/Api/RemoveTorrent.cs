@@ -2,6 +2,7 @@
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("remove")]
     public class RemoveTorrent : ApiAction
     {

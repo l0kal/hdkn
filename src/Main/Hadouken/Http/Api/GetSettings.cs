@@ -6,6 +6,7 @@ using Hadouken.Reflection;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("getsettings")]
     public class GetSettings : ApiAction
     {

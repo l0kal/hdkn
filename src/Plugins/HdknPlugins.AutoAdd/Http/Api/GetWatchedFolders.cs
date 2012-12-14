@@ -5,9 +5,11 @@ using System.Text;
 using Hadouken.Http;
 using Hadouken.Data;
 using HdknPlugins.AutoAdd.Data.Models;
+using Hadouken;
 
 namespace HdknPlugins.AutoAdd.Http.Api
 {
+    [Component]
     [ApiAction("autoadd-getwatchedfolders")]
     public class GetWatchedFolders : ApiAction
     {

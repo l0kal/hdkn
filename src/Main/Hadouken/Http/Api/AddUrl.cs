@@ -5,6 +5,7 @@ using System.Net;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("addurl")]
     public class AddUrl : ApiAction
     {

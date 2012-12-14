@@ -5,6 +5,7 @@ using Hadouken.IO;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("listdirs")]
     public class ListDirectories : ApiAction
     {

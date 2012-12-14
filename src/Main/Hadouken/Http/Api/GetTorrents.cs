@@ -5,6 +5,7 @@ using System.IO;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("gettorrents")]
     public class GetTorrents : ApiAction
     {

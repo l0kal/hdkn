@@ -4,6 +4,7 @@ using Hadouken.BitTorrent;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("setprops")]
     public class SetProperties : ApiAction
     {

@@ -3,6 +3,7 @@ using Hadouken.Plugins;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("getplugins")]
     public class GetPlugins : ApiAction
     {

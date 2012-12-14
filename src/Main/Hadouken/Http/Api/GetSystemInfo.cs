@@ -2,6 +2,7 @@
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("getsysteminfo")]
     public class GetSystemInfo : ApiAction
     {

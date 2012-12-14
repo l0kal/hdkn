@@ -3,6 +3,7 @@ using Hadouken.BitTorrent;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("getpeers")]
     public class GetPeers : ApiAction
     {

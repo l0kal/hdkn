@@ -9,6 +9,7 @@ using Hadouken.Reflection;
 
 namespace Hadouken.Impl.Plugins
 {
+    [Component]
     public class DirectoryPluginLoader : IPluginLoader
     {
         private IFileSystem _fs;

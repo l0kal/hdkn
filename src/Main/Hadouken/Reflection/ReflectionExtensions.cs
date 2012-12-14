@@ -25,5 +25,26 @@ namespace Hadouken.Reflection
         {
             return (T)mi.GetCustomAttributes(typeof(T), true).FirstOrDefault();
         }
+
+        public static Type[] GetAbstractParents(this Type type)
+        {
+            var currentType = type;
+            var abstractTypes = new List<Type>();
+
+            while (currentType != null)
+            {
+                currentType = currentType.BaseType;
+
+                if (currentType == typeof(object) || currentType == null)
+                    break;
+
+                if (currentType.IsClass && currentType.IsAbstract)
+                {
+                    abstractTypes.Add(currentType);
+                }
+            }
+
+            return abstractTypes.ToArray();
+        }
     }
 }

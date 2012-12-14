@@ -5,6 +5,7 @@ using Hadouken.BitTorrent;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("addfile")]
     public class AddFile : ApiAction
     {

@@ -2,6 +2,7 @@
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("start")]
     public class StartTorrent : ApiAction
     {

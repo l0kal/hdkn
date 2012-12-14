@@ -2,6 +2,7 @@
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("pause")]
     public class PauseTorrent : ApiAction
     {

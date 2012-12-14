@@ -3,6 +3,7 @@ using Hadouken.Configuration;
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("setsetting")]
     public class SetSetting : ApiAction
     {

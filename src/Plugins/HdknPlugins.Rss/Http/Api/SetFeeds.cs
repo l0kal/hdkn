@@ -5,9 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Hadouken;
 
 namespace HdknPlugins.Rss.Http.Api
 {
+    [Component]
     [ApiAction("rss-setfeeds")]
     public class SetFeeds : ApiAction
     {

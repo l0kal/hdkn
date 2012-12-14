@@ -13,6 +13,7 @@ using NLog;
 
 namespace Hadouken.Http.HttpServer
 {
+    [Component]
     public class DefaultHttpServer : IHttpServer
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();

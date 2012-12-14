@@ -12,6 +12,7 @@ using Hadouken.Messages;
 
 namespace Hadouken.Impl.Config
 {
+    [Component]
     public class DefaultKeyValueStore : IKeyValueStore
     {
         private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer();

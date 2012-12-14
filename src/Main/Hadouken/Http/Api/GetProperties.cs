@@ -2,6 +2,7 @@
 
 namespace Hadouken.Http.Api
 {
+    [Component]
     [ApiAction("getprops")]
     public class GetProperties : ApiAction
     {
