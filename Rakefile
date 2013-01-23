@@ -9,6 +9,7 @@ require 'rake/clean'
 
 require 'tools/buildscripts/environment'
 require 'tools/buildscripts/utils'
+require 'tools/buildscripts/wixtasks'
 
 CLOBBER.include("build/*")
 
@@ -32,6 +33,10 @@ task :reset do
     Rake::Task["zip_webui"].reenable
     Rake::Task["zip"].reenable
     Rake::Task["msi"].reenable
+    Rake::Task["msi_candle_installer"].reenable
+    Rake::Task["msi_light_installer"].reenable
+    Rake::Task["msi_candle_bundle"].reenable
+    Rake::Task["msi_light_bundle"].reenable
 end
 
 desc "Build"
@@ -114,8 +119,63 @@ zip :zip_webui do |zip|
     zip.output_path = "#{File.dirname(__FILE__)}/build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}/"
 end
 
-desc "MSI"
-task :msi => :output do
-    system "tools/wix-3.6rc/candle.exe -ext WixFirewallExtension -ext WixUtilExtension -dPlatform=#{BUILD_PLATFORM} -dBuildVersion=#{BUILD_VERSION} -dBinDir=build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM} -out src/Installer/ src/Installer/Hadouken.wxs src/Installer/WinSrvConfig.wxs src/Installer/WebUIConfig.wxs src/Installer/IncorrectData.wxs"
-    system "tools/wix-3.6rc/light.exe -ext WixUIExtension -ext WixFirewallExtension -ext WixUtilExtension -sval -pdbout src/Installer/Hadouken.wixpdb -out build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.msi src/Installer/Hadouken.wixobj src/Installer/WinSrvConfig.wixobj src/Installer/WebUIConfig.wixobj src/Installer/IncorrectData.wixobj"
+task :msiold => :output do
+    system "tools/wix-3.7/candle.exe -ext WixFirewallExtension -ext WixUtilExtension -dPlatform=#{BUILD_PLATFORM} -dBuildVersion=#{BUILD_VERSION} -dBinDir=build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM} -out src/Installer/ src/Installer/Hadouken.wxs src/Installer/WinSrvConfig.wxs src/Installer/WebUIConfig.wxs src/Installer/IncorrectData.wxs"
+    system "tools/wix-3.7/light.exe -ext WixUIExtension -ext WixFirewallExtension -ext WixUtilExtension -sval -pdbout src/Installer/Hadouken.wixpdb -out build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.msi src/Installer/Hadouken.wixobj src/Installer/WinSrvConfig.wixobj src/Installer/WebUIConfig.wixobj src/Installer/IncorrectData.wixobj"
+
+    system "tools/wix-3.7/candle.exe -dPlatform=#{BUILD_PLATFORM} -dVersion=#{BUILD_VERSION} -dName=Hadouken -out src/Installer/ src/Installer/Bundle.wxs"
+end
+
+task :msi do
+    Rake::Task["msi_candle_installer"].invoke
+    Rake::Task["msi_light_installer"].invoke
+    Rake::Task["msi_candle_bundle"].invoke
+    Rake::Task["msi_light_bundle"].invoke
+end
+
+desc "MSI (candle)"
+candle :msi_candle_installer do |cndl|
+    cndl.command = "tools/wix-3.7/candle.exe"
+    cndl.defines(
+        :Name => "Hadouken",
+        :BinDir => "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}",
+        :Platform => BUILD_PLATFORM,
+        :Version => BUILD_VERSION
+    )
+    cndl.extensions = [ :WixFirewallExtension, :WixUtilExtension ]
+    cndl.sources = [ "src/Installer/Installer.wxs" ]
+    cndl.out = "src/Installer/"
+end
+
+desc "MSI (light)"
+light :msi_light_installer do |lght|
+    lght.command = "tools/wix-3.7/light.exe"
+    lght.extensions = [ :WixFirewallExtension, :WixUtilExtension ]
+    lght.pdbout = "src/Installer/Installer.wixpdb"
+    lght.sources = [ "src/Installer/Installer.wixobj" ]
+    lght.out = "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.msi"
+end
+
+desc "Bundle (candle)"
+candle :msi_candle_bundle do |cndl|
+    cndl.command = "tools/wix-3.7/candle.exe"
+    cndl.defines(
+        :Name => "Hadouken",
+        :InstallerResources => "src/Installer/Hadouken.Installer/bin/#{CONFIGURATION}",
+        :MsiPackage => "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.msi",
+        :Platform => BUILD_PLATFORM,
+        :Version => BUILD_VERSION
+    )
+    cndl.extensions = [ :WixUtilExtension, :WixBalExtension ]
+    cndl.sources = [ "src/Installer/Bundle.wxs" ]
+    cndl.out = "src/Installer/"
+end
+
+desc "Bundle (light)"
+light :msi_light_bundle do |lght|
+    lght.command = "tools/wix-3.7/light.exe"
+    lght.extensions = [ :WixUtilExtension, :WixBalExtension ]
+    lght.pdbout = "src/Installer/Bundle.wixpdb"
+    lght.sources = [ "src/Installer/Bundle.wixobj" ]
+    lght.out = "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.exe"
 end
