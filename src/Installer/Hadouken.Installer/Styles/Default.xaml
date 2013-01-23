@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ux="clr-namespace:Hadouken.Installer">
+    
+    <!-- Brushes -->
+    <LinearGradientBrush x:Key="BackgroundBrush" StartPoint="0.098,0.223" EndPoint="1.015,0.735">
+        <GradientStop Color="#F0F0F0" Offset="0"/>
+        <GradientStop Color="#EEEEEE" Offset="0.948"/>
+    </LinearGradientBrush>
+    
+</ResourceDictionary>

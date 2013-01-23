@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<?if $(var.Platform) = x64?>
+    <?define UpgradeCode = "D0B78BE3-D432-434A-9FB6-2E97A2EBDAD2"?>
+    <?define InstallDir = "[ProgramFiles64Folder]"?>
+    <?define IsWin64 = "yes"?>
+<?else?>
+    <?define UpgradeCode = "B1E9D22F-AA98-412E-8CC8-1097A8BC3193"?>
+    <?define InstallDir = "[ProgramFilesFolder]"?>
+    <?define IsWin64 = "no"?>
+<?endif?>
+
+<Wix
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://schemas.microsoft.com/wix/2006/wi"
+    xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+    <Bundle
+        Name="$(var.Name)"
+        Manufacturer="Viktor Elofsson - vktr.se"
+        UpgradeCode="$(var.UpgradeCode)"
+        Version="$(var.Version)">
+
+        <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
+            <Payload SourceFile="$(var.InstallerResources)/Hadouken.Installer.dll" />
+            <Payload
+                SourceFile="$(var.InstallerResources)/Hadouken.Installer.dll.config"
+                Name="BootstrapperCore.config" />
+            <Payload SourceFile="$(var.InstallerResources)/NetfxLicense.rtf" />
+        </BootstrapperApplicationRef>
+
+        <Variable Name='InstallFolder' Type='string' Value='$(var.InstallDir)Hadouken' />
+        <util:RegistrySearch Id="PreviousInstallFolderSearch" Root='HKLM' Key='SOFTWARE\Hadouken\' Value='InstallFolder' Variable='PreviousInstallFolder' />
+        <util:DirectorySearch Path='[PreviousInstallFolder]' Variable='InstallFolder' After='PreviousInstallFolderSearch' Condition='PreviousInstallFolder' />
+
+        <Chain>
+            <PackageGroupRef 
+                Id="Netfx4Full" />
+            <MsiPackage
+                Id="Hadouken"
+                Compressed="yes"
+                SourceFile="$(var.MsiPackage)"
+                Vital="yes">
+
+                <MsiProperty Name="INSTALLDIR" Value="[InstallFolder]" />
+            </MsiPackage>
+        </Chain>
+    </Bundle>
+
+    <Fragment>
+        <WixVariable 
+            Id="WixMbaPrereqPackageId" 
+            Value="Netfx4Full" />
+        <WixVariable 
+            Id="WixMbaPrereqLicenseUrl" 
+            Value="NetfxLicense.rtf" />
+ 
+        <util:RegistrySearch 
+            Root="HKLM" 
+            Key="SOFTWARE\Microsoft\Net Framework Setup\NDP\v4\Full" 
+            Value="Version" 
+            Variable="Netfx4FullVersion" />
+        <util:RegistrySearch 
+            Root="HKLM" 
+            Key="SOFTWARE\Microsoft\Net Framework Setup\NDP\v4\Full" 
+            Value="Version" 
+            Variable="Netfx4x64FullVersion" 
+            Win64="yes" />
+ 
+        <PackageGroup 
+            Id="Netfx4Full">
+            <ExePackage 
+                Id="Netfx4Full" 
+                Cache="no" 
+                Compressed="no" 
+                PerMachine="yes" 
+                Permanent="yes" 
+                Vital="yes" 
+                SourceFile="C:\Users\Viktor\Downloads\dotNetFx40_Full_x86_x64.exe"
+                DownloadUrl="http://go.microsoft.com/fwlink/?LinkId=164193"
+                DetectCondition="Netfx4FullVersion AND (NOT VersionNT64 OR Netfx4x64FullVersion)" />
+        </PackageGroup>
+    </Fragment>
+</Wix>
