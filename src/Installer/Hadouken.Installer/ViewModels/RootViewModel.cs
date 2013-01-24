@@ -13,5 +13,19 @@ namespace Hadouken.Installer.ViewModels
     public class RootViewModel : PropertyNotifyBase
     {
         public IntPtr ViewWindowHandle { get; set; }
+
+        public string InstallationDirectory
+        {
+            get { return HadoukenInstaller.Model.InstallDirectory; }
+
+            set
+            {
+                if (HadoukenInstaller.Model.InstallDirectory != value)
+                {
+                    HadoukenInstaller.Model.InstallDirectory = value;
+                    base.OnPropertyChanged("InstallationDirectory");
+                }
+            }
+        }
     }
 }
