@@ -20,6 +20,7 @@
         Name="$(var.Name)"
         Manufacturer="Viktor Elofsson - vktr.se"
         UpgradeCode="$(var.UpgradeCode)"
+        SplashScreenSourceFile="src/Installer/Graphics/Splash.bmp"
         Version="$(var.Version)">
 
         <WixVariable 

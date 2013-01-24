@@ -88,7 +88,8 @@ namespace Hadouken.Installer
 
             Engine.Detect();
 
-            if (Model.Command.Display == Display.Passive || Model.Command.Display == Display.Full)
+            if (Model.Command.Display == Display.Passive
+                || Model.Command.Display == Display.Full)
             {
                 Engine.Log(LogLevel.Verbose, "Creating UI");
                 
