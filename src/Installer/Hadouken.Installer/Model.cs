@@ -86,7 +86,7 @@ namespace Hadouken.Installer
                 this.Engine.StringVariables[BurnBundleInstallDirectoryVariable] = value;
             }
         }
-
+        
         /// <summary>
         /// Get or set the path for the layout to be created.
         /// </summary>
@@ -118,7 +118,7 @@ namespace Hadouken.Installer
         public HttpWebRequest CreateWebRequest(string uri)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.UserAgent = String.Concat("WixInstall", this.Version.ToString());
+            request.UserAgent = String.Concat("HadoukenInstall-", this.Version.ToString());
 
             return request;
         }
