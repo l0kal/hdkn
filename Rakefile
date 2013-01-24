@@ -58,7 +58,7 @@ assemblyinfo :version => "env:common" do |asm|
     asm.company_name = "Hadouken"
     asm.product_name = "Hadouken"
     asm.copyright = "2012"
-    asm.namespaces = "System", "System.Reflection", "System.Runtime.InteropServices", "System.Security", "Hadouken.Reflection"
+    asm.namespaces = "System", "System.Reflection", "System.Runtime.InteropServices", "System.Security"
     
     asm.custom_attributes :AssemblyInformationalVersion => "#{BUILD_VERSION} (#{BUILD_PLATFORM})", # disposed as product version in explorer
         :CLSCompliantAttribute => false,
