@@ -15,5 +15,6 @@
     <Grid>
         <Rectangle MouseLeftButtonDown="Background_MouseLeftButtonDown" Fill="{StaticResource BackgroundBrush}" />
         <Button Content="Button" Height="23" HorizontalAlignment="Left" Margin="134,189,0,0" Name="button1" VerticalAlignment="Top" Width="75" />
+        <TextBox Text="{Binding InstallationDirectory}" Height="23" HorizontalAlignment="Left" Margin="58,98,0,0" Name="textBox1" VerticalAlignment="Top" Width="502" />
     </Grid>
 </Window>
