@@ -51,12 +51,12 @@
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="$(var.InstallDir)" Name="PFiles">
                 <Directory Id="INSTALLDIR" Name="Hadouken">
-                    <Component Win64="$(var.IsWin64)">
-                        <File Source="$(var.BinDir)/Hadouken.dll" />
+                    <Component Id="Hdkn" Guid="A3FACA94-3F24-4EAC-AF60-5F4985179D33" Win64="$(var.IsWin64)">
+                        <File Id="Hdkn" Name="Hadouken.dll" Source="$(var.BinDir)/Hadouken.dll" KeyPath="yes" />
                     </Component>
 
-                    <Component Win64="$(var.IsWin64)">
-                        <File Source="$(var.BinDir)/Hadouken.DI.Ninject.dll" />
+                    <Component Id="HdknDiNinject" Guid="02AB6D10-6AB5-4A9C-9DED-AB92C806D61C" Win64="$(var.IsWin64)">
+                        <File Id="HdknDiNinject" Name="Hadouken.DI.Ninject.dll" Source="$(var.BinDir)/Hadouken.DI.Ninject.dll" KeyPath="yes" />
                     </Component>
           
                     <Component Id="HdknImpl" Guid="79C85E28-7AB4-432D-8AF2-2D20C8CB1278" Win64="$(var.IsWin64)">
