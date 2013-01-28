@@ -72,6 +72,8 @@
                     Size="50449456"
                     Version="4.0.30319.1" />
             </ExePackage>
+            
+            <RollbackBoundary />
         
             <MsiPackage
                 Id="Hadouken"
