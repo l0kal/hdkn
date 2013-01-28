@@ -8,21 +8,33 @@
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         Width="640"
-        Height="480"
-        Background="{DynamicResource WindowBackground}">
+        Height="480">
     
     <Window.Resources>
-        <SolidColorBrush x:Key="WindowBackground"
-                         Color="#333333"
-                         Opacity="0.7"/>
-        <SolidColorBrush x:Key="RectangleBackground"
-                         Color="#FFFFFF"
-                         Opacity="1"/>
+        <ResourceDictionary Source="..\Styles\Default.xaml" />
     </Window.Resources>
     
+    <Window.Background>
+        <StaticResource ResourceKey="WindowBackground" />
+    </Window.Background>
+    
     <Grid>
-        <Rectangle MouseLeftButtonDown="Background_MouseLeftButtonDown" Fill="{DynamicResource RectangleBackground}" Margin="8" />
-        <Image HorizontalAlignment="Left" Height="62" Margin="15,15,0,0" VerticalAlignment="Top" Width="62" Source="/Hadouken.Installer;component/Resources/Logo.png"/>
-        <Image HorizontalAlignment="Right" Height="32" Margin="0,15,15,0" VerticalAlignment="Top" Width="32" Source="/Hadouken.Installer;component/Resources/Close.png"/>
+        <Rectangle MouseLeftButtonDown="Background_MouseLeftButtonDown" Fill="{StaticResource RectangleBackground}" Margin="8" />
+        <Image HorizontalAlignment="Left" Height="32" Margin="15,15,0,0" VerticalAlignment="Top" Width="32" Source="/Hadouken.Installer;component/Resources/Logo.png"/>
+        
+        <Button Width="32" Height="32" Margin="0,15,15,0" VerticalAlignment="Top" HorizontalAlignment="Right" Style="{StaticResource CloseButtonStyle}" Command="{Binding CloseCommand}">
+            <StackPanel>
+                <Image HorizontalAlignment="Center" Height="24" VerticalAlignment="Center" Width="24" Source="/Hadouken.Installer;component/Resources/Close.png" />
+            </StackPanel>
+        </Button>
+
+        <TextBlock HorizontalAlignment="Left" Margin="61,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" Foreground="#FF333333" Text="Hadouken"/>
+        <TextBlock HorizontalAlignment="Left" Margin="175,28,0,0" TextWrapping="Wrap" VerticalAlignment="Top" DataContext="{Binding InstallationViewModel}" Text="{Binding Version}" />
+
+        <ProgressBar HorizontalAlignment="Left" Height="25" Margin="15,0,0,15" VerticalAlignment="Bottom" Width="400" DataContext="{Binding ProgressViewModel}" Value="{Binding Path=Progress}" Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="15,419,0,0" TextWrapping="Wrap" VerticalAlignment="Top" DataContext="{Binding ProgressViewModel}" Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" Text="{Binding Message}"/>
+
+        <Button Content="Install" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Command="{Binding InstallCommand}" Visibility="{Binding InstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Button Content="Uninstall" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Command="{Binding UninstallCommand}" Visibility="{Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
     </Grid>
 </Window>

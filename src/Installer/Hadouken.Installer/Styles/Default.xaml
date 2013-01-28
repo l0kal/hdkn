@@ -4,10 +4,20 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ux="clr-namespace:Hadouken.Installer">
+
+    <!-- Converters -->
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+    <SolidColorBrush x:Key="WindowBackground"
+                         Color="#333333"
+                         Opacity="0.7"/>
+    <SolidColorBrush x:Key="RectangleBackground"
+                         Color="#FFFFFF"
+                         Opacity="1"/>
     
-    <!-- Brushes -->
-    <LinearGradientBrush x:Key="BackgroundBrush" StartPoint="0.098,0.223" EndPoint="1.015,0.735">
-        <GradientStop Color="#F0F0F0" Offset="0"/>
-        <GradientStop Color="#EEEEEE" Offset="0.948"/>
-    </LinearGradientBrush>
+    <Style x:Key="CloseButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="{x:Null}" />
+    </Style>
 </ResourceDictionary>

@@ -143,7 +143,7 @@ candle :msi_candle_installer do |cndl|
         :Version => BUILD_VERSION
     )
     cndl.extensions = [ :WixFirewallExtension, :WixUtilExtension ]
-    cndl.sources = [ "src/Installer/Installer.wxs" ]
+    cndl.sources = [ "src/Installer/Installer.wxs", "src/Installer/Core.wxs" ]
     cndl.out = "src/Installer/"
 end
 
@@ -152,7 +152,7 @@ light :msi_light_installer do |lght|
     lght.command = "tools/wix-3.7/light.exe"
     lght.extensions = [ :WixFirewallExtension, :WixUtilExtension ]
     lght.pdbout = "src/Installer/Installer.wixpdb"
-    lght.sources = [ "src/Installer/Installer.wixobj" ]
+    lght.sources = [ "src/Installer/Installer.wixobj", "src/Installer/Core.wixobj" ]
     lght.out = "build/#{BUILD_PLATFORM}/hdkn-#{BUILD_VERSION}-#{BUILD_PLATFORM}.msi"
 end
 
