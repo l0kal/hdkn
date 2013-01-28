@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using Microsoft.Tools.WindowsInstallerXml.Bootstrapper;
 using ErrorEventArgs = Microsoft.Tools.WindowsInstallerXml.Bootstrapper.ErrorEventArgs;
+using System.Windows.Forms;
 
 namespace Hadouken.Installer.ViewModels
 {
@@ -38,6 +39,7 @@ namespace Hadouken.Installer.ViewModels
 
         private ICommand _installCommand;
         private ICommand _uninstallCommand;
+        private ICommand _browseInstallDirectory;
 
         public InstallationViewModel(RootViewModel root)
         {
@@ -97,6 +99,19 @@ namespace Hadouken.Installer.ViewModels
         public bool CompleteEnabled
         {
             get { return _root.State == InstallationState.Applied; }
+        }
+
+        public ICommand BrowseInstallDirectoryCommand
+        {
+            get
+            {
+                if (_browseInstallDirectory == null)
+                {
+                    _browseInstallDirectory = new RelayCommand(BrowseInstallFolder, CanBrowseInstallFolder);
+                }
+
+                return _browseInstallDirectory;
+            }
         }
 
         public string Version
@@ -231,6 +246,21 @@ namespace Hadouken.Installer.ViewModels
             }
         }
 
+        private void BrowseInstallFolder(object param)
+        {
+            var dialog = new FolderBrowserDialog();
+
+            if (dialog.ShowDialog(HadoukenInstaller.View.GetIWin32Window()) == DialogResult.OK)
+            {
+                _root.InstallDirectory = dialog.SelectedPath;
+            }
+        }
+
+        private bool CanBrowseInstallFolder(object param)
+        {
+            return true;
+        }
+
         void RootPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "State")
@@ -340,7 +370,7 @@ namespace Hadouken.Installer.ViewModels
                                 var result = MessageBoxResult.None;
                                 HadoukenInstaller.View.Dispatcher.Invoke((Action) delegate()
                                     {
-                                        result = MessageBox.Show(HadoukenInstaller.View, e.ErrorMessage, "WiX Toolset",
+                                        result = System.Windows.MessageBox.Show(HadoukenInstaller.View, e.ErrorMessage, "WiX Toolset",
                                                                  msgbox, MessageBoxImage.Error);
                                     });
 

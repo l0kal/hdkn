@@ -98,7 +98,7 @@ namespace Hadouken.Installer.ViewModels
                 if (HadoukenInstaller.Model.InstallDirectory != value)
                 {
                     HadoukenInstaller.Model.InstallDirectory = value;
-                    base.OnPropertyChanged("InstallationDirectory");
+                    base.OnPropertyChanged("InstallDirectory");
                 }
             }
         }

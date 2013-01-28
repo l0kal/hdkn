@@ -37,5 +37,21 @@
         <Button Content="Install" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Command="{Binding InstallCommand}" Visibility="{Binding InstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <Button Content="Uninstall" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Command="{Binding UninstallCommand}" Visibility="{Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <Button Content="Complete" IsEnabled="False" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Visibility="{Binding CompleteEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        
+        <GroupBox Header="Installation Directory" HorizontalAlignment="Stretch" Margin="15,65,15,0" VerticalAlignment="Top" Height="60" Width="610">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Text="Path" Grid.Column="0" VerticalAlignment="Center" />
+                
+                <TextBox HorizontalAlignment="Stretch" Grid.Column="1" VerticalAlignment="Center" Text="{Binding InstallDirectory}" />
+                
+                <Button Content="Browse..." Grid.Column="2" VerticalAlignment="Center" Width="70" DataContext="{Binding InstallationViewModel}" Command="{Binding BrowseInstallDirectoryCommand}" />
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>
