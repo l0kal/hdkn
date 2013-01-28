@@ -77,7 +77,8 @@
         
             <MsiPackage
                 Id="Hadouken"
-                Compressed="yes"
+                Compressed="no"
+                DownloadUrl="https://get.hdkn.net/v$(var.Version)/hdkn-$(var.Version)-$(var.Platform).msi"
                 SourceFile="$(var.MsiPackage)"
                 Vital="yes">
 
