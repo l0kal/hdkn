@@ -94,6 +94,11 @@ namespace Hadouken.Installer.ViewModels
             get { return UninstallCommand.CanExecute(this); }
         }
 
+        public bool CompleteEnabled
+        {
+            get { return _root.State == InstallationState.Applied; }
+        }
+
         public string Version
         {
             get { return String.Concat("v", HadoukenInstaller.Model.Version.ToString()); }

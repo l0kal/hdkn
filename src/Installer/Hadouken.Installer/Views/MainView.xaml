@@ -31,10 +31,11 @@
         <TextBlock HorizontalAlignment="Left" Margin="61,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" Foreground="#FF333333" Text="Hadouken"/>
         <TextBlock HorizontalAlignment="Left" Margin="175,28,0,0" TextWrapping="Wrap" VerticalAlignment="Top" DataContext="{Binding InstallationViewModel}" Text="{Binding Version}" />
 
-        <ProgressBar HorizontalAlignment="Left" Height="25" Margin="15,0,0,15" VerticalAlignment="Bottom" Width="400" DataContext="{Binding ProgressViewModel}" Value="{Binding Path=Progress}" Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <ProgressBar HorizontalAlignment="Stretch" Height="25" Margin="15,0,15,15" VerticalAlignment="Bottom" Width="610" DataContext="{Binding ProgressViewModel}" Value="{Binding Path=Progress}" Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <TextBlock HorizontalAlignment="Left" Margin="15,419,0,0" TextWrapping="Wrap" VerticalAlignment="Top" DataContext="{Binding ProgressViewModel}" Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" Text="{Binding Message}"/>
 
         <Button Content="Install" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Command="{Binding InstallCommand}" Visibility="{Binding InstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <Button Content="Uninstall" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Command="{Binding UninstallCommand}" Visibility="{Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Button Content="Complete" IsEnabled="False" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Visibility="{Binding CompleteEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
     </Grid>
 </Window>
