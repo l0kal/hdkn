@@ -46,8 +46,6 @@
 
         <Media Id="1" Cabinet="hdkn.cab" EmbedCab="yes" CompressionLevel="high" />
 
-        <Property Id="ARPSYSTEMCOMPONENT" Value="1" />
-
         <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
 
         <Directory Id="TARGETDIR" Name="SourceDir">
@@ -66,6 +64,7 @@
             <ComponentGroupRef Id="CoreComponents" />
             <ComponentGroupRef Id="ConfigComponents" />
             <ComponentGroupRef Id="LibComponents" />
+            <ComponentGroupRef Id="ServiceComponents" />
         </Feature>
     </Product>
 </Wix>
