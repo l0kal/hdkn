@@ -29,6 +29,17 @@
         <WixVariable 
             Id="WixMbaPrereqLicenseUrl" 
             Value="NetfxLicense.rtf" />
+            
+        <util:RegistrySearch Root="HKLM"
+                             Key="SOFTWARE\Microsoft\Net Framework Setup\NDP\v4\Full"
+                             Value="Version"
+                             Variable="Netfx4FullVersion" />
+
+        <util:RegistrySearch Root="HKLM"
+                             Key="SOFTWARE\Microsoft\Net Framework Setup\NDP\v4\Full"
+                             Value="Version"
+                             Variable="Netfx4x64FullVersion"
+                             Win64="yes" />
 
         <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
             <Payload SourceFile="$(var.InstallerResources)/Hadouken.Installer.dll" />
@@ -43,6 +54,25 @@
         <util:DirectorySearch Path='[PreviousInstallFolder]' Variable='InstallFolder' After='PreviousInstallFolderSearch' Condition='PreviousInstallFolder' />
 
         <Chain>
+            <ExePackage
+                Id="Netfx4Full"
+                Name="dotnetfx40_full_x86_x64.exe"
+                Cache="no"
+                Compressed="no"
+                PerMachine="yes"
+                Permanent="yes"
+                Vital="yes"
+                DownloadUrl="http://go.microsoft.com/fwlink/?LinkId=164193"
+                DetectCondition="Netfx4FullVersion AND (NOT VersionNT64 OR Netfx4x64FullVersion)">
+                
+                <RemotePayload
+                    Description="The full .NET 4 framework"
+                    Hash="58DA3D74DB353AAD03588CBB5CEA8234166D8B99"
+                    ProductName="Microsoft .NET Framework 4"
+                    Size="50449456"
+                    Version="4.0.30319.1" />
+            </ExePackage>
+        
             <MsiPackage
                 Id="Hadouken"
                 Compressed="yes"
