@@ -8,9 +8,33 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Fragment>
-        <ComponentGroup Id="CoreComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+        <ComponentGroup Id="ConfigComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
             <Component Win64="$(var.IsWin64)">
                 <File Name="Hadouken.dll" />
+            </Component>
+
+            <Component Win64="$(var.IsWin64)">
+                <File Name="Hadouken.Impl.dll" />
+            </Component>
+
+            <Component Win64="$(var.IsWin64)">
+                <File Name="Hadouken.Impl.BitTorrent.dll" />
+            </Component>
+
+            <Component Win64="$(var.IsWin64)">
+                <File Name="Hadouken.DI.Ninject.dll" />
+            </Component>
+
+            <Component Win64="$(var.IsWin64)">
+                <File Name="Hadouken.Http.HttpServer.dll" />
+            </Component>
+
+            <Component Win64="$(var.IsWin64)">
+                <File Name="Hadouken.Messages.dll" />
+            </Component>
+
+            <Component Win64="$(var.IsWin64)">
+                <File Name="Hadouken.Hosts.WindowsService.exe" />
             </Component>
         </ComponentGroup>
     </Fragment>

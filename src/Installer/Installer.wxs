@@ -64,6 +64,8 @@
            </Component>
 
             <ComponentGroupRef Id="CoreComponents" />
+            <ComponentGroupRef Id="ConfigComponents" />
+            <ComponentGroupRef Id="LibComponents" />
         </Feature>
     </Product>
 </Wix>

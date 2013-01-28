@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?if $(var.Platform) = x64?>
+    <?define IsWin64 = "yes"?>
+<?else?>
+    <?define IsWin64 = "no"?>
+<?endif?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+    xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+    <Fragment>
+        <ComponentGroup Id="CoreComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
+            <Component Win64="$(var.IsWin64)">
+                <File Name="Hadouken.Hosts.WindowsService.exe.config" />
+
+                <util:XmlFile
+                    Id="ModifyWebUIPort"
+                    File="[#HdknWinSrvCfg]"
+                    Action="setValue"
+                    ElementPath="//appSettings/add[\[]@key='WebUI.Url'[\]]/@value"
+                    Value="http://+:[HDKN_WEBUI_PORT]/" />
+              
+                <util:XmlFile
+                    Id="ModifyAuthUser"
+                    File="[#HdknWinSrvCfg]"
+                    Action="setValue"
+                    ElementPath="//appSettings/add[\[]@key='Auth.Username'[\]]/@value"
+                    Value="[HDKN_AUTH_USER]" />
+          
+                <util:XmlFile
+                    Id="ModifyAuthPassword"
+                    File="[#HdknWinSrvCfg]"
+                    Action="setValue"
+                    ElementPath="//appSettings/add[\[]@key='Auth.Password'[\]]/@value"
+                    Value="[HDKN_AUTH_PASS]" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>
