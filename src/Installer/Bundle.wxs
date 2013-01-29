@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<?if $(var.Platform) = x64?>
-    <?define UpgradeCode = "D0B78BE3-D432-434A-9FB6-2E97A2EBDAD2"?>
-    <?define InstallDir = "[ProgramFiles64Folder]"?>
-    <?define IsWin64 = "yes"?>
-<?else?>
-    <?define UpgradeCode = "B1E9D22F-AA98-412E-8CC8-1097A8BC3193"?>
-    <?define InstallDir = "[ProgramFilesFolder]"?>
-    <?define IsWin64 = "no"?>
-<?endif?>
-
 <Wix
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://schemas.microsoft.com/wix/2006/wi"
@@ -19,7 +9,7 @@
     <Bundle
         Name="$(var.Name)"
         Manufacturer="Viktor Elofsson - vktr.se"
-        UpgradeCode="$(var.UpgradeCode)"
+        UpgradeCode="B1E9D22F-AA98-412E-8CC8-1097A8BC3193"
         SplashScreenSourceFile="src/Installer/Graphics/Splash.bmp"
         Version="$(var.Version)">
 
@@ -48,10 +38,8 @@
                 Name="BootstrapperCore.config" />
             <Payload SourceFile="$(var.InstallerResources)/NetfxLicense.rtf" />
         </BootstrapperApplicationRef>
-
-        <Variable Name='InstallFolder' Type='string' Value='$(var.InstallDir)Hadouken' />
-        <util:RegistrySearch Id="PreviousInstallFolderSearch" Root='HKLM' Key='SOFTWARE\Hadouken\' Value='InstallFolder' Variable='PreviousInstallFolder' />
-        <util:DirectorySearch Path='[PreviousInstallFolder]' Variable='InstallFolder' After='PreviousInstallFolderSearch' Condition='PreviousInstallFolder' />
+        
+        <Variable Name="InstallFolder" Type="string" Value="[ProgramFilesFolder]Hadouken" />
 
         <Chain>
             <ExePackage
@@ -76,10 +64,22 @@
             <RollbackBoundary />
         
             <MsiPackage
-                Id="Hadouken"
+                Id="Hadouken_x86"
                 Compressed="no"
-                DownloadUrl="https://get.hdkn.net/v$(var.Version)/hdkn-$(var.Version)-$(var.Platform).msi"
-                SourceFile="$(var.MsiPackage)"
+                DownloadUrl="https://get.hdkn.net/v$(var.Version)/hdkn-$(var.Version)-x86.msi"
+                SourceFile="$(var.MsiPackage_x86)"
+                InstallCondition="NOT VersionNT64"
+                Vital="yes">
+
+                <MsiProperty Name="INSTALLDIR" Value="[InstallFolder]" />
+            </MsiPackage>
+            
+            <MsiPackage
+                Id="Hadouken_x64"
+                Compressed="no"
+                DownloadUrl="https://get.hdkn.net/v$(var.Version)/hdkn-$(var.Version)-x64.msi"
+                SourceFile="$(var.MsiPackage_x64)"
+                InstallCondition="VersionNT64"
                 Vital="yes">
 
                 <MsiProperty Name="INSTALLDIR" Value="[InstallFolder]" />
