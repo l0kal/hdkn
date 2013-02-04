@@ -66,5 +66,8 @@
             <ComponentGroupRef Id="LibComponents" />
             <ComponentGroupRef Id="ServiceComponents" />
         </Feature>
+
+        <Property Id="HDKN_SRV_ENABLE" Value="1" />
+        <Property Id="HDKN_WEBUI_PORT" Value="8080" />
     </Product>
 </Wix>

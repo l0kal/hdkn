@@ -124,5 +124,18 @@ namespace Hadouken.Installer.ViewModels
                 base.OnPropertyChanged("CancelEnabled");
             }
         }
+
+        public bool InstallWindowsService
+        {
+            get { return HadoukenInstaller.Model.InstallWindowsService; }
+
+            set
+            {
+                if (HadoukenInstaller.Model.InstallWindowsService == value) return;
+
+                HadoukenInstaller.Model.InstallWindowsService = value;
+                base.OnPropertyChanged("InstallWindowsService");
+            }
+        }
     }
 }

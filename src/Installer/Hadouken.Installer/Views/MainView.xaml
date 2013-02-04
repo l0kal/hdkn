@@ -38,19 +38,66 @@
         <Button Content="Uninstall" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Command="{Binding UninstallCommand}" Visibility="{Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <Button Content="Complete" IsEnabled="False" HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Width="100" Height="50" DataContext="{Binding InstallationViewModel}" Visibility="{Binding CompleteEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         
-        <GroupBox Header="Installation Directory" HorizontalAlignment="Stretch" Margin="15,65,15,0" VerticalAlignment="Top" Height="60" Width="610">
+        <GroupBox HorizontalAlignment="Stretch" Margin="15,65,15,0" VerticalAlignment="Top" Height="60" Width="610">
+            <GroupBox.Header>
+                <TextBlock FontSize="14">Installation Directory</TextBlock>
+            </GroupBox.Header>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="100" />
                 </Grid.ColumnDefinitions>
                 
-                <TextBlock Text="Path" Grid.Column="0" VerticalAlignment="Center" />
+                <TextBlock Text="Path" Grid.Column="0" VerticalAlignment="Center" Margin="10,0,0,0" />
                 
                 <TextBox HorizontalAlignment="Stretch" Grid.Column="1" VerticalAlignment="Center" Text="{Binding InstallDirectory}" />
                 
                 <Button Content="Browse..." Grid.Column="2" VerticalAlignment="Center" Width="70" DataContext="{Binding InstallationViewModel}" Command="{Binding BrowseInstallDirectoryCommand}" />
+            </Grid>
+        </GroupBox>
+        
+        <GroupBox HorizontalAlignment="Stretch" Margin="15,140,15,0" VerticalAlignment="Top" Height="60" Width="610">
+            <GroupBox.Header>
+                <TextBlock FontSize="14">Web Interface</TextBlock>
+            </GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="70" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Port" Grid.Column="0" VerticalAlignment="Center" Margin="10,0,0,0" />
+
+                <TextBox HorizontalAlignment="Stretch" Grid.Column="1" VerticalAlignment="Center" />
+
+                <Button Content="Check" Grid.Column="2" VerticalAlignment="Center" Width="50" DataContext="{Binding InstallationViewModel}" Command="{Binding CheckWebInterfacePort}" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox HorizontalAlignment="Stretch" Margin="15,215,15,0" VerticalAlignment="Top" Height="100" Width="610">
+            <GroupBox.Header>
+                <CheckBox Content="Install Windows Service?" FontSize="14" IsChecked="{Binding InstallWindowsService}" />
+            </GroupBox.Header>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Account" Grid.Column="0" VerticalAlignment="Center" Margin="10,0,0,0" />
+                <ComboBox Grid.Column="1" IsEditable="True" VerticalAlignment="Center" IsEnabled="{Binding InstallWindowsService}"></ComboBox>
+                <TextBlock Grid.Column="2" Text="The Windows account to run the service as." VerticalAlignment="Center" IsEnabled="False" Margin="15,0,0,0"></TextBlock>
+                
+                <TextBlock Text="Password" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
+                <PasswordBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" IsEnabled="{Binding InstallWindowsService}"></PasswordBox>
             </Grid>
         </GroupBox>
     </Grid>

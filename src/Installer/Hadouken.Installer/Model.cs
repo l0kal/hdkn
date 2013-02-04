@@ -16,6 +16,8 @@ namespace Hadouken.Installer
         private static readonly string BurnBundleInstallDirectoryVariable = "InstallFolder";
         private static readonly string BurnBundleLayoutDirectoryVariable = "WixBundleLayoutDirectory";
 
+        private static readonly string WixInstallWindowsServiceVariable = "HadoukenInstallWindowsService";
+
         public Model(BootstrapperApplication bootstrapper)
         {
             this.Bootstrapper = bootstrapper;
@@ -121,6 +123,19 @@ namespace Hadouken.Installer
             request.UserAgent = String.Concat("HadoukenInstall-", this.Version.ToString());
 
             return request;
+        }
+
+        public bool InstallWindowsService
+        {
+            get
+            {
+                if (!this.Engine.StringVariables.Contains(WixInstallWindowsServiceVariable))
+                    return false;
+
+                return Convert.ToBoolean(Convert.ToInt32(this.Engine.StringVariables[WixInstallWindowsServiceVariable]));
+            }
+
+            set { this.Engine.StringVariables[WixInstallWindowsServiceVariable] = Convert.ToInt32(value).ToString(); }
         }
     }
 }

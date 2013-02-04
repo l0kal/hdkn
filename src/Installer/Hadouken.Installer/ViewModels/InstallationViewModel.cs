@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -34,12 +35,13 @@ namespace Hadouken.Installer.ViewModels
         private bool _downgrade;
         private readonly string _homePage = "http://www.hdkn.net";
         private string _message;
-        private DateTime cachePackageStart;
+        private DateTime _cachePackageStart;
         private DateTime _executePackageStart;
 
         private ICommand _installCommand;
         private ICommand _uninstallCommand;
         private ICommand _browseInstallDirectory;
+        private ICommand _checkWebInterfacePort;
 
         public InstallationViewModel(RootViewModel root)
         {
@@ -111,6 +113,19 @@ namespace Hadouken.Installer.ViewModels
                 }
 
                 return _browseInstallDirectory;
+            }
+        }
+
+        public ICommand CheckWebInterfacePortCommand
+        {
+            get
+            {
+                if (_checkWebInterfacePort == null)
+                {
+                    _checkWebInterfacePort = new RelayCommand(CheckWebInterfacePort);
+                }
+
+                return _checkWebInterfacePort;
             }
         }
 
@@ -261,6 +276,20 @@ namespace Hadouken.Installer.ViewModels
             return true;
         }
 
+        private void CheckWebInterfacePort(object param)
+        {
+            var port = 456; //<--- This is your value
+
+            // Evaluate current system tcp connections. This is the same information provided
+            // by the netstat command line application, just in .Net strongly-typed object
+            // form.  We will look through the list, and if our port we would like to use
+            // in our TcpClient is occupied, we will set isAvailable to false.
+            var ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+            var tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
+
+            var isAvailable = tcpConnInfoArray.All(tcpi => tcpi.LocalEndPoint.Port != port);
+        }
+
         void RootPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "State")
@@ -407,12 +436,12 @@ namespace Hadouken.Installer.ViewModels
 
         private void CacheAcquireComplete(object sender, CacheAcquireCompleteEventArgs e)
         {
-            AddPackageTelemetry("Cache", e.PackageOrContainerId ?? String.Empty, DateTime.Now.Subtract(cachePackageStart).TotalMilliseconds, e.Status);
+            AddPackageTelemetry("Cache", e.PackageOrContainerId ?? String.Empty, DateTime.Now.Subtract(_cachePackageStart).TotalMilliseconds, e.Status);
         }
 
         private void CacheAcquireBegin(object sender, CacheAcquireBeginEventArgs e)
         {
-            cachePackageStart = DateTime.Now;
+            _cachePackageStart = DateTime.Now;
         }
 
         private void ApplyBegin(object sender, ApplyBeginEventArgs e)
