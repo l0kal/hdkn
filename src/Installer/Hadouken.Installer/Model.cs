@@ -16,7 +16,10 @@ namespace Hadouken.Installer
         private static readonly string BurnBundleInstallDirectoryVariable = "InstallFolder";
         private static readonly string BurnBundleLayoutDirectoryVariable = "WixBundleLayoutDirectory";
 
-        private static readonly string WixInstallWindowsServiceVariable = "HadoukenInstallWindowsService";
+        private static readonly string WixInstallWindowsServiceVariable = "InstallWindowsService";
+        private static readonly string WixWebInterfacePort = "WebInterfacePort";
+        private static readonly string WixWindowsServiceAccount = "WindowsServiceAccount";
+        private static readonly string WixWindowsServicePassword = "WindowsServicePassword";
 
         public Model(BootstrapperApplication bootstrapper)
         {
@@ -136,6 +139,55 @@ namespace Hadouken.Installer
             }
 
             set { this.Engine.StringVariables[WixInstallWindowsServiceVariable] = Convert.ToInt32(value).ToString(); }
+        }
+
+        public int WebInterfacePort
+        {
+            get
+            {
+                if (!this.Engine.StringVariables.Contains(WixWebInterfacePort))
+                    return 8080;
+
+                return Convert.ToInt32(this.Engine.StringVariables[WixWebInterfacePort]);
+            }
+
+            set { this.Engine.StringVariables[WixWebInterfacePort] = value.ToString(); }
+        }
+
+        public string WindowsServiceAccount
+        {
+            get
+            {
+                if (!this.Engine.StringVariables.Contains(WixWindowsServiceAccount))
+                {
+                    return null;
+                }
+
+                return this.Engine.StringVariables[WixWindowsServiceAccount];
+            }
+
+            set
+            {
+                this.Engine.StringVariables[WixWindowsServiceAccount] = value;
+            }
+        }
+
+        public string WindowsServicePassword
+        {
+            get
+            {
+                if (!this.Engine.StringVariables.Contains(WixWindowsServicePassword))
+                {
+                    return null;
+                }
+
+                return this.Engine.StringVariables[WixWindowsServicePassword];
+            }
+
+            set
+            {
+                this.Engine.StringVariables[WixWindowsServicePassword] = value;
+            }
         }
     }
 }

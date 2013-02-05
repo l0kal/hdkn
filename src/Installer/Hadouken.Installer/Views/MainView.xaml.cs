@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -41,6 +42,11 @@ namespace Hadouken.Installer.Views
         private void Background_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
+        }
+
+        public string WindowsServicePassword
+        {
+            get { return servicePassword.Password; }
         }
     }
 }

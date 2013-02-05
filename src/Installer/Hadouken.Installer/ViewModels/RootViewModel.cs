@@ -137,5 +137,31 @@ namespace Hadouken.Installer.ViewModels
                 base.OnPropertyChanged("InstallWindowsService");
             }
         }
+
+        public int WebInterfacePort
+        {
+            get { return HadoukenInstaller.Model.WebInterfacePort; }
+
+            set
+            {
+                if (HadoukenInstaller.Model.WebInterfacePort == value) return;
+
+                HadoukenInstaller.Model.WebInterfacePort = value;
+                base.OnPropertyChanged("WebInterfacePort");
+            }
+        }
+
+        public string WindowsServiceAccount
+        {
+            get { return HadoukenInstaller.Model.WindowsServiceAccount; }
+
+            set
+            {
+                if (HadoukenInstaller.Model.WindowsServiceAccount == value) return;
+
+                HadoukenInstaller.Model.WindowsServiceAccount = value;
+                base.OnPropertyChanged("WindowsServiceAccount");
+            }
+        }
     }
 }

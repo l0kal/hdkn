@@ -40,6 +40,10 @@
         </BootstrapperApplicationRef>
         
         <Variable Name="InstallFolder" Type="string" Value="[ProgramFilesFolder]Hadouken" />
+        <Variable Name="WebInterfacePort" Type="numeric" Value="8080" />
+        <Variable Name="InstallWindowsService" Type="numeric" Value="1" />
+        <Variable Name="WindowsServiceAccount" Type="string" Value="" />
+        <Variable Name="WindowsServicePassword" Type="string" Value="" />
 
         <Chain>
             <ExePackage
@@ -72,6 +76,10 @@
                 Vital="yes">
 
                 <MsiProperty Name="INSTALLDIR" Value="[InstallFolder]" />
+                <MsiProperty Name="HDKN_WEBUI_PORT" Value="[WebInterfacePort]" />
+                <MsiProperty Name="HDKN_SRV_ENABLE" Value="[InstallWindowsService]" />
+                <MsiProperty Name="HDKN_SRV_USER" Value="[WindowsServiceAccount]" />
+                <MsiProperty Name="HDKN_SRV_PASS" Value="[WindowsServicePassword]" />
             </MsiPackage>
             
             <MsiPackage
@@ -83,6 +91,10 @@
                 Vital="yes">
 
                 <MsiProperty Name="INSTALLDIR" Value="[InstallFolder]" />
+                <MsiProperty Name="HDKN_WEBUI_PORT" Value="[WebInterfacePort]" />
+                <MsiProperty Name="HDKN_SRV_ENABLE" Value="[InstallWindowsService]" />
+                <MsiProperty Name="HDKN_SRV_USER" Value="[WindowsServiceAccount]" />
+                <MsiProperty Name="HDKN_SRV_PASS" Value="[WindowsServicePassword]" />
             </MsiPackage>
         </Chain>
     </Bundle>

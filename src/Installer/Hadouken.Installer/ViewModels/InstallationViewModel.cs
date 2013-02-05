@@ -69,10 +69,17 @@ namespace Hadouken.Installer.ViewModels
             get
             {
                 if(_installCommand == null)
-                    _installCommand = new RelayCommand(param => HadoukenInstaller.Plan(LaunchAction.Install), param => _root.State == InstallationState.DetectedAbsent);
+                    _installCommand = new RelayCommand(Install, param => _root.State == InstallationState.DetectedAbsent);
 
                 return _installCommand;
             }
+        }
+
+        private void Install(object param)
+        {
+            HadoukenInstaller.Model.WindowsServicePassword = HadoukenInstaller.View.WindowsServicePassword; // Not really MVVM but what to do?
+
+            HadoukenInstaller.Plan(LaunchAction.Install);
         }
 
         public bool InstallEnabled
