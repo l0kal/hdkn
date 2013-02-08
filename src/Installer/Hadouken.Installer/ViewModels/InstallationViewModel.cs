@@ -77,7 +77,7 @@ namespace Hadouken.Installer.ViewModels
 
         private void Install(object param)
         {
-            HadoukenInstaller.Model.WindowsServicePassword = HadoukenInstaller.View.WindowsServicePassword; // Not really MVVM but what to do?
+            //HadoukenInstaller.Model.WindowsServicePassword = HadoukenInstaller.View.WindowsServicePassword; // Not really MVVM but what to do?
 
             HadoukenInstaller.Plan(LaunchAction.Install);
         }

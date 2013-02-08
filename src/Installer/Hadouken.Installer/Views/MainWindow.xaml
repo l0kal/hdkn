@@ -1,0 +1,73 @@
+﻿<Window x:Class="Hadouken.Installer.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        mc:Ignorable="d" 
+        AllowsTransparency="True"
+        Title="Hadouken"
+        Width="300" Height="380"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ResourceDictionary Source="..\Styles\Default.xaml" />
+    </Window.Resources>
+
+    <Window.Background>
+        <StaticResource ResourceKey="WindowBackground" />
+    </Window.Background>
+    
+    <Grid>
+        <Rectangle MouseLeftButtonDown="Background_MouseLeftButtonDown" Fill="{StaticResource RectangleBackground}" Margin="8" />
+        <Image HorizontalAlignment="Left" Height="32" Margin="15,15,0,0" VerticalAlignment="Top" Width="32" Source="/Hadouken.Installer;component/Resources/Logo.png"/>
+
+        <Button Width="32" Height="32" Margin="0,15,15,0" VerticalAlignment="Top" HorizontalAlignment="Right" Style="{StaticResource CloseButtonStyle}" Command="{Binding CloseCommand}">
+            <StackPanel>
+                <Image HorizontalAlignment="Center" Height="24" VerticalAlignment="Center" Width="24" Source="/Hadouken.Installer;component/Resources/Close.png" />
+            </StackPanel>
+        </Button>
+        
+        <TextBlock HorizontalAlignment="Left" Margin="60,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="24" Foreground="#FF333333" Text="Hadouken"/>
+        
+        <Grid Margin="15,70,15,15" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45" />
+                <RowDefinition Height="45" />
+                <RowDefinition Height="45" />
+                <RowDefinition Height="45" />
+                <RowDefinition Height="45" />
+                <RowDefinition Height="45" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button HorizontalAlignment="Left" Width="72" Height="72" Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding InstallationViewModel}" Command="{Binding InstallCommand}" IsEnabled="{Binding InstallEnabled}">
+                <Image Source="/Hadouken.Installer;component/Resources/Install.png" Width="64" Height="64" SnapsToDevicePixels="True" />
+            </Button>
+            
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Install" VerticalAlignment="Bottom" FontSize="20" Grid.Row="0" Grid.Column="1"/>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1">
+                Install Hadouken to your computer.
+            </TextBlock>
+
+            <Button HorizontalAlignment="Left" Grid.Row="2" Grid.RowSpan="2" Width="72" Height="72">
+                <Image Source="/Hadouken.Installer;component/Resources/Repair.png" Width="64" Height="64" />
+            </Button>
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Repair" VerticalAlignment="Bottom" FontSize="20" Grid.Row="2" Grid.Column="1"/>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="3" Grid.Column="1" Text="Repair a broken Hadouken installation." />
+
+            <Button HorizontalAlignment="Left" Grid.Row="4" Grid.RowSpan="2" Width="72" Height="72" DataContext="{Binding InstallationViewModel}" Command="{Binding UninstallCommand}" IsEnabled="{Binding UninstallEnabled}">
+                <Image Source="/Hadouken.Installer;component/Resources/Uninstall.png" Width="64" Height="64" />
+            </Button>
+
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Uninstall" VerticalAlignment="Bottom" FontSize="20" Grid.Row="4" Grid.Column="1"/>
+            <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="5" Grid.Column="1" Text="Remove Hadouken from your PC computer." />
+        </Grid>
+
+        <TextBlock HorizontalAlignment="Left" Margin="15,0,0,15" TextWrapping="Wrap" VerticalAlignment="Bottom" DataContext="{Binding InstallationViewModel}" Text="{Binding Version}" />
+    </Grid>
+</Window>

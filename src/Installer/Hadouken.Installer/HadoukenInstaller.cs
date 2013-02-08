@@ -21,7 +21,7 @@ namespace Hadouken.Installer
         /// <summary>
         /// Gets the global view.
         /// </summary>
-        static public MainView View { get; private set; }
+        static public MainWindow View { get; private set; }
         // TODO: We should refactor things so we dont have a global View.
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Hadouken.Installer
             {
                 Engine.Log(LogLevel.Verbose, "Creating UI");
                 
-                View = new MainView(viewModel);
+                View = new MainWindow(viewModel);
                 View.Show();
             }
 
