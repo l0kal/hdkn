@@ -20,9 +20,9 @@ namespace Hadouken.Installer.Views
     /// <summary>
     /// Interaction logic for MainView.xaml
     /// </summary>
-    public partial class MainView : Window
+    public partial class InstallWindow : Window
     {
-        public MainView(RootViewModel viewModel)
+        public InstallWindow(RootViewModel viewModel)
         {
             DataContext = viewModel;
 
