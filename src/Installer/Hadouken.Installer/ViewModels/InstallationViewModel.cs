@@ -39,6 +39,7 @@ namespace Hadouken.Installer.ViewModels
         private DateTime _executePackageStart;
 
         private ICommand _installCommand;
+        private ICommand _repairCommand;
         private ICommand _uninstallCommand;
         private ICommand _browseInstallDirectory;
         private ICommand _checkWebInterfacePort;
@@ -85,6 +86,27 @@ namespace Hadouken.Installer.ViewModels
         public bool InstallEnabled
         {
             get { return InstallCommand.CanExecute(this); }
+        }
+
+        public ICommand RepairCommand
+        {
+            get
+            {
+                if (_repairCommand == null)
+                    _repairCommand = new RelayCommand(Repair, param => _root.State == InstallationState.DetectedPresent);
+
+                return _repairCommand;
+            }
+        }
+
+        public void Repair(object param)
+        {
+            HadoukenInstaller.Plan(LaunchAction.Repair);
+        }
+
+        public bool RepairEnabled
+        {
+            get { return RepairCommand.CanExecute(this); }
         }
 
         public ICommand UninstallCommand

@@ -53,7 +53,7 @@
                 Install Hadouken to your computer.
             </TextBlock>
 
-            <Button HorizontalAlignment="Left" Grid.Row="2" Grid.RowSpan="2" Width="72" Height="72">
+            <Button HorizontalAlignment="Left" Grid.Row="2" Grid.RowSpan="2" Width="72" Height="72" DataContext="{Binding InstallationViewModel}" Command="{Binding RepairCommand}" IsEnabled="{Binding RepairEnabled}">
                 <Image Source="/Hadouken.Installer;component/Resources/Repair.png" Width="64" Height="64" />
             </Button>
 
@@ -69,5 +69,7 @@
         </Grid>
 
         <TextBlock HorizontalAlignment="Left" Margin="15,0,0,15" TextWrapping="Wrap" VerticalAlignment="Bottom" DataContext="{Binding InstallationViewModel}" Text="{Binding Version}" />
+        
+        <Button Content="Check for updates..." HorizontalAlignment="Right" Margin="0,0,15,15" VerticalAlignment="Bottom" Style="{StaticResource LinkButton}" />
     </Grid>
 </Window>
