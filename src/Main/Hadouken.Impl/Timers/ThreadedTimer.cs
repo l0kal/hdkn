@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
+using Hadouken.Timers;
 
-namespace HdknPlugins.AutoAdd.Timers
+namespace Hadouken.Impl.Timers
 {
     public class ThreadedTimer : ITimer
     {

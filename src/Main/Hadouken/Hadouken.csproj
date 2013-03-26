@@ -136,6 +136,8 @@
     <Compile Include="Reflection\BuildDateAttribute.cs" />
     <Compile Include="Reflection\ReflectionExtensions.cs" />
     <Compile Include="Security\Hash.cs" />
+    <Compile Include="Timers\ITimer.cs" />
+    <Compile Include="Timers\ITimerFactory.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

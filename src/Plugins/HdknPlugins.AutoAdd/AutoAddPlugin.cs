@@ -6,7 +6,7 @@ using Hadouken.Plugins;
 using Hadouken.Data;
 using Hadouken.BitTorrent;
 using Hadouken.IO;
-using HdknPlugins.AutoAdd.Timers;
+using Hadouken.Timers;
 using Hadouken.Configuration;
 using HdknPlugins.AutoAdd.Data.Models;
 using System.Text.RegularExpressions;

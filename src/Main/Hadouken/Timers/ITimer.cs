@@ -1,10 +1,6 @@
-﻿using Hadouken;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 
-namespace HdknPlugins.AutoAdd.Timers
+namespace Hadouken.Timers
 {
     public interface ITimer
     {
