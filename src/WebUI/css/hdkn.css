@@ -1,0 +1,19 @@
+#torrentsDropTarget {
+    border-style: dashed;
+    border-color: #eee;
+    border-width: 5px;
+
+    margin: 0 auto;
+
+    width: 80%;
+    line-height: 70px;
+
+    font-size: 24px;
+    text-align: center;
+    color: #ccc;
+}
+
+.active {
+    border-color: #ccc;
+    color: #aaa;
+}
