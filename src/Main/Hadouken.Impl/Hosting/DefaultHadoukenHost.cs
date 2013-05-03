@@ -71,12 +71,12 @@ namespace Hadouken.Impl.Hosting
 
 
             _httpServer = _serverFactory.Create(_environment.HttpBinding,
-                                                   new NetworkCredential(httpUser, httpPass),
-                                                   "C:\\temp\\webui");
+                                                new NetworkCredential(httpUser, httpPass),
+                                                HdknConfig.GetPath("Paths.WebUI"));
 
             _webApiServer = _serverFactory.Create(_environment.HttpBinding + "api",
-                                                     new NetworkCredential(httpUser, httpPass),
-                                                     AppDomain.CurrentDomain.GetAssemblies());
+                                                  new NetworkCredential(httpUser, httpPass),
+                                                  AppDomain.CurrentDomain.GetAssemblies());
 
             Logger.Debug("Starting the HTTP API server");
             _webApiServer.Start();
