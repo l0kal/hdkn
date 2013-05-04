@@ -68,7 +68,15 @@ var Settings = new Class({
             var element = $$('input[name=' + setting.key + ']');
 
             if(element != null) {
-                element.set('value', setting.value);
+                switch(setting.type) {
+                    case SettingType.String:
+                        element.set('value', setting.value);
+                        break;
+
+                    case SettingType.Boolean:
+                        element.set('checked', setting.value);
+                        break;
+                }
             }
         }
     }
