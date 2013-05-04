@@ -1,6 +1,10 @@
-#torrentsDropTarget {
+body {
+    padding-top: 50px;
+}
+
+#adt_droparea {
     border-style: dashed;
-    border-color: #eee;
+    border-color: #ccc;
     border-width: 5px;
 
     margin: 0 auto;
@@ -10,7 +14,7 @@
 
     font-size: 24px;
     text-align: center;
-    color: #ccc;
+    color: #aaa;
 }
 
 .active {

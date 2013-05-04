@@ -1,4 +1,7 @@
 $(document).ready(function() {
+
+  UI.init();
+
   var fileData = [];
 
   jQuery.event.props.push('dataTransfer');
