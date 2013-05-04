@@ -9,12 +9,12 @@ var Settings = new Class({
     },
 
     setup: function() {
-        this.hdkn.getPlugins(function(plugins) {
-            this.loadPlugins(plugins);
+        this.hdkn.listPlugins(function(plugins) {
+            this.listPlugins(plugins);
         }.bind(this));
     },
 
-    loadPlugins: function(plugins) {
+    listPlugins: function(plugins) {
         var pluginHeader = this.element.getElementById("settings_plugins");
 
         for(var i = 0; i < plugins.length; i++){

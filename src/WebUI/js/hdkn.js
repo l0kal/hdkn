@@ -5,7 +5,13 @@ var Hadouken = new Class({
     this.network = network;
   },
 
-  getPlugins: function(callback){
+  // Loads all plugins (eg. loads their boot.js file)
+  loadPlugins: function(){
+
+  },
+
+  // Returns all plugins in a handy list
+  listPlugins: function(callback){
     this.network.get("/api/plugins", function(data) {
       callback(data);
     });
