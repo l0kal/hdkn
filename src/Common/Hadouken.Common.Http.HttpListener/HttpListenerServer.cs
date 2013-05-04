@@ -66,33 +66,65 @@ namespace Hadouken.Common.Http.HttpListener
 
         private void OnHttpRequest(HttpListenerContext context)
         {
-            var pathSegments = context.Request.Url.Segments.Skip(1).Select(s => s.Replace("/", "")).ToList();
-            pathSegments.Insert(0, _basePath);
-
-            // Check file system for file
-            var file = Path.Combine(pathSegments.ToArray());
-
-            if (_fileSystem.FileExists(file))
+            try
             {
-                var contentType = "";
+                var pathSegments = context.Request.Url.Segments.Skip(1).Select(s => s.Replace("/", "")).ToList();
+                pathSegments.Insert(0, _basePath);
 
-                if (MimeTypes.ContainsKey(Path.GetExtension(file)))
-                    contentType = MimeTypes[Path.GetExtension(file)];
+                // Check file system for file
+                var file = Path.Combine(pathSegments.ToArray());
 
-                var data = _fileSystem.ReadAllBytes(file);
+                if (_fileSystem.FileExists(file))
+                {
+                    var contentType = "";
 
-                context.Response.StatusCode = 200;
-                context.Response.ContentEncoding = Encoding.UTF8;
-                context.Response.ContentType = contentType;
-                context.Response.OutputStream.Write(data, 0, data.Length);
+                    if (MimeTypes.ContainsKey(Path.GetExtension(file)))
+                        contentType = MimeTypes[Path.GetExtension(file)];
+
+                    var data = _fileSystem.ReadAllBytes(file);
+
+                    context.Response.StatusCode = 200;
+                    context.Response.ContentEncoding = Encoding.UTF8;
+                    context.Response.ContentType = contentType;
+                    context.Response.OutputStream.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    context.Response.StatusCode = 404;
+                }
+
+                context.Response.OutputStream.Close();
+                context.Response.Close();
             }
-            else
+            catch (Exception e)
             {
-                context.Response.StatusCode = 404;
-            }
+                var sb = new StringBuilder();
+                sb.AppendLine("<html>");
+                sb.AppendLine("<head>");
+                sb.AppendLine("<title>500 - Internal Server Error</title>");
+                sb.AppendLine("</head>");
+                sb.AppendLine("<body>");
+                sb.AppendLine("<h1>500 Internal Server Error</h1>");
+                sb.AppendLine("<p>An internal server error occured when requesting path <i>" + context.Request.Url +
+                              "</i></p>");
+                sb.AppendLine("<pre>" + e + "</pre>");
+                sb.AppendLine("</body>");
+                sb.AppendLine("</html>");
 
-            context.Response.OutputStream.Close();
-            context.Response.Close();
+                var data = Encoding.UTF8.GetBytes(sb.ToString());
+
+                try
+                {
+                    context.Response.StatusCode = 500;
+                    context.Response.OutputStream.Write(data, 0, data.Length);
+                    context.Response.OutputStream.Close();
+                    context.Response.Close();
+                }
+                catch (Exception e2)
+                {
+                    return;
+                }
+            }
         }
 
         private bool IsAuthenticated(HttpListenerBasicIdentity identity)
