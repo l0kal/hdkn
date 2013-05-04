@@ -38,6 +38,9 @@ window.addEvent('domready', function() {
         e.preventDefault();
         e.stopPropagation();
 
+        $$('.page-navigator').getParent().removeClass("active");
+        this.getParent().addClass("active");
+
         var page = this.get("href");
         location.hash = "#!" + page;
     });
