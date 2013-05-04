@@ -1,10 +1,20 @@
 Object.append(Element.NativeEvents, {
     dragenter: 2,
     dragleave: 2,
-    drop: 2
+    drop: 2,
+    hashchange: 2
 });
 
 var Pages = {};
+
+window.addEvent('hashchange', function() {
+    var hash = location.hash;
+
+    if(hash == "")
+        return;
+
+    navigate(hash);
+});
 
 window.addEvent('domready', function() {
     $('modal-back').setStyle('display', 'none');
@@ -16,13 +26,22 @@ window.addEvent('domready', function() {
     var tm = new TorrentManager();
     var net = new Network();
 
-    Pages["dash"] = new Dashboard();
-    Pages["settings"] = new Settings();
+    Pages["/dashboard.html"] = new Dashboard();
+    Pages["/settings.html"] = new Settings();
 
-    setPage(Pages["dash"]);
+    // navigation defaults
+    var hash = location.hash;
+    if(hash == "") hash = "#!/dashboard.html";
+    navigate(hash);
 
-    $('page-navigator').addEvent('click', function() {
-        alert(this);
+    $$('.page-navigator').addEvent('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log(this);
+
+        var page = this.get("href");
+        location.hash = "#!" + page;
     });
 
     $('addTorrents').addEvent('click', function(){
@@ -33,9 +52,23 @@ window.addEvent('domready', function() {
         });
     });
 
-    roar.alert("Hadouken", "All done sir.");
+    
 });
 
+function navigate(hash){
+    hash = hash.substring(1);
+
+    if(hash.substring(0, 1) == "!"){
+        var page = hash.substring(1);
+        setPage(page);
+    }
+}
+
 function setPage(page) {
-    page.load();
+    console.log(page);
+
+    if(Pages[page] === undefined) return;
+
+    var obj = Pages[page];
+    obj.load();
 }
