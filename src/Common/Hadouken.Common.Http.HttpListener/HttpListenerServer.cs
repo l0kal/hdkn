@@ -69,6 +69,11 @@ namespace Hadouken.Common.Http.HttpListener
             try
             {
                 var pathSegments = context.Request.Url.Segments.Skip(1).Select(s => s.Replace("/", "")).ToList();
+
+                // Add default document
+                if (pathSegments.Count == 0)
+                    pathSegments.Add("index.html");
+
                 pathSegments.Insert(0, _basePath);
 
                 // Check file system for file
