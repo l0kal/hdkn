@@ -5,6 +5,16 @@ var Network = new Class({
 
     },
 
+    get: function(url, callback){
+        new Request({
+            url: url,
+
+            onSuccess: function(json){
+                callback(JSON.decode(json));
+            }
+        }).get();
+    },
+
     post: function(url, data, callback) {
         var r = new Request({
             data: JSON.encode(data),

@@ -10,6 +10,8 @@ var Page = new Class({
             url: this.source,
             onSuccess: function(tree, elements, html, js) {
                 $("page-container").set('html', html);
+                this.element = $("page-container");
+
                 this.setup();
             }.bind(this)
         }).get();

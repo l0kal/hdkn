@@ -25,9 +25,10 @@ window.addEvent('domready', function() {
 
     var tm = new TorrentManager();
     var net = new Network();
+    var hdkn = new Hadouken(net);
 
     Pages["/dashboard.html"] = new Dashboard();
-    Pages["/settings.html"] = new Settings();
+    Pages["/settings.html"] = new Settings(hdkn);
 
     // navigation defaults
     var hash = location.hash;
