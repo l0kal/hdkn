@@ -35,6 +35,36 @@ var Settings = new Class({
             that.element.getElements(".settings-pane").addClass("hide");
             that.element.getElementById("pane-" + this.get("href").substring(1)).removeClass("hide");
         });
+
+        this.element.getElementById("settings_save_btn").addEvent('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var elem = this;
+
+            elem.set('disabled', true);
+
+            var inputs = that.element.getElements("input");
+            var settings = {};
+
+            for(var i = 0; i < inputs.length; i++) {
+                var input = inputs[i];
+                var name = input.get('name');
+
+                switch(input.get('type')) {
+                    case "checkbox":
+                        settings[name] = input.checked;
+                        break;
+
+                    default:
+                        settings[name] = input.get('value');
+                }
+            }
+
+            that.hdkn.network.post("/api/settings", settings, function(response) {
+                elem.set('disabled', false);
+            });
+        });
     },
 
     listPlugins: function(plugins) {
