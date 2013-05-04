@@ -15,5 +15,11 @@ var Hadouken = new Class({
     this.network.get("/api/plugins", function(data) {
       callback(data);
     });
+  },
+
+  listSettings: function(callback) {
+    this.network.get("/api/settings", function(data) {
+      callback(data);
+    });
   }
 })
