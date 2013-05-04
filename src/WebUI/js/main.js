@@ -72,3 +72,7 @@ function setPage(page) {
     var obj = Pages[page];
     obj.load();
 }
+
+function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}

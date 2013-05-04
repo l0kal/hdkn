@@ -59,6 +59,10 @@ var Settings = new Class({
                     default:
                         settings[name] = input.get('value');
                 }
+
+                if(isNumeric(settings[name])) {
+                    settings[name] = parseInt(settings[name], 10);
+                }
             }
 
             that.hdkn.network.post("/api/settings", settings, function(response) {
