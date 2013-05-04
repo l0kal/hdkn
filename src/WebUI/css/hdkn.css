@@ -2,6 +2,10 @@ body {
     padding-top: 50px;
 }
 
+.sidebar-nav {
+    padding: 9px 0;
+}
+
 #adt_droparea {
     border-style: dashed;
     border-color: #ccc;
