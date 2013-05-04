@@ -9,13 +9,33 @@
     <div class="well sidebar-nav">
       <ul id="settings_categories" class="nav nav-list">
         <li class="nav-header">Hadouken</li>
-        <li><a href="#">General</a></li>
-        <li><a href="#">Connection</a></li>
-        <li><a href="#">Downloads</a></li>
-        <li><a href="#">Advanced</a></li>
+        <li class="active"><a href="#general" class="setlink">General</a></li>
+        <li><a href="#connection" class="setlink">Connection</a></li>
+        <li><a href="#downloads" class="setlink">Downloads</a></li>
+        <li><a href="#advanced" class="setlink">Advanced</a></li>
 
         <li id="settings_plugins" class="nav-header">Plugins</li>
       </ul>
+    </div>
+  </div>
+
+  <div class="span9" id="settings-container">
+    <div id="pane-general" class="settings-pane">
+      <h3>General</h3>
+
+      <form class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label" for="auth.password">Password</label>
+
+          <div class="controls">
+            <input type="text" name="auth.password" />
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div id="pane-connection" class="settings-pane hide">
+      <h3>Connection</h3>
     </div>
   </div>
 </div>
