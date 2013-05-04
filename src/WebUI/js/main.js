@@ -38,8 +38,6 @@ window.addEvent('domready', function() {
         e.preventDefault();
         e.stopPropagation();
 
-        console.log(this);
-
         var page = this.get("href");
         location.hash = "#!" + page;
     });
@@ -65,8 +63,6 @@ function navigate(hash){
 }
 
 function setPage(page) {
-    console.log(page);
-
     if(Pages[page] === undefined) return;
 
     var obj = Pages[page];
