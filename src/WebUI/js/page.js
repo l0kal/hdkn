@@ -1,5 +1,13 @@
 var Page = new Class({
-    initialize: function(name, source) {
+    Implements: [ Options ],
+
+    options: {
+        container: 'page-container'
+    },
+
+    initialize: function(name, source, options) {
+        this.setOptions(options);
+        
         this.name = name;
         this.source = source;
     },
