@@ -28,7 +28,7 @@
           <label class="control-label" for="auth.password">Password</label>
 
           <div class="controls">
-            <input type="text" name="auth.password" />
+            
           </div>
         </div>
       </form>
@@ -43,13 +43,28 @@
 
       <form class="form-horizontal">
         <div class="control-group">
-          <label class="control-label" for="auth.password">Move completed downloads</label>
+          <label class="control-label" for="paths.defaultSavePath">Default save path</label>
 
           <div class="controls">
-            <input type="checkbox" name="paths.shouldMoveCompleted" />
+            <div class="input-append">
+              <input type="text" class="input-xxlarge" name="paths.defaultSavePath" />
+              <button class="btn">Browse...</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="auth.password">Move completed</label>
+
+          <div class="controls">
+            <input type="checkbox" id="paths.shouldMoveCompleted" name="paths.shouldMoveCompleted" />
           </div>
         </div>
       </form>
+    </div>
+
+    <div class="pull-right">
+      <button class="btn btn-primary" id="settings_save_btn">Save</button>
     </div>
   </div>
 </div>
