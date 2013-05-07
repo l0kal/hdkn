@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Ninject.Extensions.Conventions;
 using Ninject.Modules;
 using Hadouken.Common.Messaging;
 
@@ -23,12 +22,16 @@ namespace Hadouken.Common.DI.Ninject.Modules
             {
                 var messageHandlerType = typeof (IMessageHandler<>).MakeGenericType(messageType);
 
-                Kernel.Bind(
-                    ctx =>
-                    ctx.From(AppDomain.CurrentDomain.GetAssemblies())
-                       .SelectAllClasses()
-                       .InheritedFrom(messageHandlerType)
-                       .BindAllInterfaces());
+                var implTypes = (from asm in AppDomain.CurrentDomain.GetAssemblies()
+                                 from type in asm.GetTypes()
+                                 where type.BaseType == messageHandlerType
+                                 where type.IsClass && !type.IsAbstract
+                                 select type);
+
+                foreach (var impl in implTypes)
+                {
+                    Kernel.Bind(messageHandlerType).To(impl);
+                }
             }
         }
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Ninject.Extensions.Conventions;
 using Ninject.Infrastructure.Language;
 using Ninject.Modules;
 
