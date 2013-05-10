@@ -41,13 +41,19 @@ namespace Hadouken.Http.Api
         public HttpResponseMessage Post([FromBody] PostTorrentDto post)
         {
             var data = Convert.FromBase64String(post.Data);
+            var torrent = _torrentEngine.AddTorrent(data);
 
-            _messageBus.Publish(new AddTorrentMessage
-                {
-                    Data = data
-                });
+            if (!String.IsNullOrEmpty(post.Label))
+                torrent.Label = post.Label;
 
-            return new HttpResponseMessage(HttpStatusCode.NoContent);
+            if (post.AutoStart)
+                torrent.Start();
+
+            using (var response = Request.CreateResponse(HttpStatusCode.Created))
+            {
+                //response.Headers.Location = ""; //TODO: fix
+                return response;
+            }
         }
     }
 }
