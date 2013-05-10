@@ -43,7 +43,7 @@ namespace Hadouken.Plugins.PluginEngine
                 return;
 
             var blacklist = _keyValueStore.Get(message.Key, new string[] {});
-            var unblacklistedItems = _plugins.Keys.Except(blacklist );
+            var unblacklistedItems = _plugins.Keys.Except(blacklist);
 
             foreach (var item in blacklist)
             {
@@ -89,10 +89,8 @@ namespace Hadouken.Plugins.PluginEngine
 
             var assemblies = pluginLoader.Load(path);
             // Add common assemblies to list
-            foreach (
-                var file in
-                    _fileSystem.GetFiles(Path.GetDirectoryName(typeof(Kernel).Assembly.Location),
-                                         "Hadouken.Common.**.dll"))
+            foreach (var file in _fileSystem.GetFiles(HdknConfig.WorkingDirectory,
+                                                      "Hadouken.Common.**.dll"))
             {
                 assemblies.Add(_fileSystem.ReadAllBytes(file));
             }

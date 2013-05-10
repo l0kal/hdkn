@@ -76,5 +76,10 @@ namespace Hadouken.Configuration
                 return ConfigManager.ConnectionString;
             }
         }
+
+        public static string WorkingDirectory
+        {
+            get { return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); }
+        }
     }
 }
