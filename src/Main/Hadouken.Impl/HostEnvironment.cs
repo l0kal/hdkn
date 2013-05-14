@@ -53,7 +53,5 @@ namespace Hadouken.Impl
         }
 
         public string HttpBinding { get; private set; }
-
-        public NetworkCredential HttpCredentials { get; private set; }
     }
 }
