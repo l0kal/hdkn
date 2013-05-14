@@ -61,6 +61,7 @@
     <Compile Include="Dto\GetSettingsDto.cs" />
     <Compile Include="Dto\EditSettingDto.cs" />
     <Compile Include="Dto\PostTorrentDto.cs" />
+    <Compile Include="PeersController.cs" />
     <Compile Include="PluginsController.cs" />
     <Compile Include="SettingsController.cs" />
     <Compile Include="SystemController.cs" />
