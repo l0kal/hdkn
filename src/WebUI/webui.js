@@ -16,7 +16,7 @@ var LANG_LIST = LANG_LIST || {};
 */
 window.guiBase = "";
 window.proxyBase = "/proxy";
-window.apiBase = "/api";
+window.apiBase = "/api/";
 var isGuest = window.location.pathname.test(/.*guest.html$/);
 
 var utWebUI = {
@@ -359,16 +359,13 @@ var utWebUI = {
     {
         var self = this;
         
-        this.request("get", "action=getplugins", null, (function(data)
+        this.request("get", "plugins", null, (function(data)
         {
-            for(var i = 0; i < data.plugins.length; i++)
+            for(var i = 0; i < data.length; i++)
             {
-                var plugin = data.plugins[i];
+                var plugin = data[i];
                 
-                if(plugin.init !== undefined)
-                {
-                    Asset.javascript(apiBase + "?token=" + self.TOKEN + "&action=getpluginfile&plugin=" + plugin.name + "&file=" + plugin.init);
-                }
+                Asset.javascript("/plugins/" + plugin.name + "/boot.js");
 
 				self.plgTable.addRow([plugin.name, plugin.version], plugin.name);
             }
@@ -413,7 +410,7 @@ var utWebUI = {
 		var req = function() {
 			try {
 				new Request.JSON({
-					"url": apiBase + "?token=" + self.TOKEN + "&" + qs + "&t=" + Date.now(),
+					"url": apiBase + qs,
 					"method": method,
 					"async": typeof(async) === 'undefined' || !!async,
                     "data": (data != null ? JSON.encode(data) : null),
@@ -462,26 +459,7 @@ var utWebUI = {
 			} catch(e){}
 		};
 
-		if (!self.TOKEN)
-			self.requestToken(req, true);
-		else
-			req();
-	},
-
-	"requestToken": function(fn, async) {
-		var self = this;
-		try {
-			new Request({
-				"url": apiBase + "?action=gettoken&t=" + Date.now(),
-				"method": "get",
-				"async": !!async,
-				"onFailure": (fn) ? fn.bind(self) : Function.from(),
-				"onSuccess": function(str) {
-					self.TOKEN = JSON.parse(str);
-					if (fn) fn.delay(0);
-				}
-			}).send();
-		} catch(e){}
+		req();
 	},
 
 	"perform": function(action) {
@@ -759,7 +737,7 @@ var utWebUI = {
 		qs = qs || "";
 		if (qs != "")
 			qs += "&";
-		this.request("get", "action=gettorrents", null, (function(json) {
+		this.request("get", "torrents", null, (function(json) {
 			this.loadList(json);
 			if (fn) fn(json);
 		}).bind(this));
@@ -1516,7 +1494,7 @@ var utWebUI = {
 			act();
 		}
 		else {
-			this.request("get", "action=getsettings", null, act);
+			this.request("get", "settings", null, act);
 		}
 	},
 
@@ -1590,22 +1568,16 @@ var utWebUI = {
 		}
 		else {
 			var tcmode = 0;
-			for (var i = 0, j = json.settings.length; i < j; i++) {
-				var key = json.settings[i][CONST.SETTING_NAME],
-					typ = json.settings[i][CONST.SETTING_TYPE],
-					val = json.settings[i][CONST.SETTING_VALUE],
-					par = json.settings[i][CONST.SETTING_PARAMS] || {};
+			for (var i = 0, j = json.length; i < j; i++) {
+				var key = json[i].key,
+					typ = json[i].type,
+					val = json[i].value,
+					par = json[i].options || {};
 
 				// handle cookie
 				if (key === "webui.cookie") {
 					loadCookie(JSON.decode(val, true));
 					continue;
-				}
-
-				// convert types
-				switch (typ) {
-					case CONST.SETTINGTYPE_INTEGER: val = val.toInt(); break;
-					//case CONST.SETTINGTYPE_BOOLEAN: val = ('true' === val); break;
 				}
                 
 				// handle special settings
@@ -1918,7 +1890,7 @@ var utWebUI = {
 		}
 
 		//if (str != "")
-		this.request("post", "action=setsetting", data, Function.from(), !reload); // if the page is going to reload make it a synchronous request
+		this.request("post", "settings", data, Function.from(), !reload); // if the page is going to reload make it a synchronous request
 
 		this.toggleSearchBar();
 		resizeUI();
@@ -1986,7 +1958,7 @@ var utWebUI = {
 
 	"searchMenuSet": function(index) {
 		// TODO: Generalize settings storage requests
-		this.request("post", "action=setsetting", { "search_list_sel": index });
+		this.request("post", "settings", { "search_list_sel": index });
 
 		this.settings["search_list_sel"] = index;
 		$("query").focus();
@@ -2154,7 +2126,7 @@ var utWebUI = {
 
 	"setSpeedDownload": function(val) {
 		// TODO: Generalize settings storage requests
-		this.request("post", "action=setsetting", { "max_dl_rate": val }, (function() {
+		this.request("post", "settings", { "max_dl_rate": val }, (function() {
 			this.settings["max_dl_rate"] = val;
 
 			$("max_dl_rate").set("value", val);
@@ -2164,7 +2136,7 @@ var utWebUI = {
 
 	"setSpeedUpload": function(val) {
 		// TODO: Generalize settings storage requests
-		this.request("post", "action=setsetting", { "max_ul_rate": val }, (function() {
+		this.request("post", "settings", { "max_ul_rate": val }, (function() {
 			this.settings["max_ul_rate"] = val;
 
 			$("max_ul_rate").set("value", val);
@@ -3334,7 +3306,7 @@ var utWebUI = {
 		this.settings["resolve_peerips"] = !this.settings["resolve_peerips"];
 
 		// TODO: Generalize settings storage requests
-		this.request("post", "action=setsetting", { "resolve_peerips": (this.settings["resolve_peerips"] ? 1 : 0) }, (function() {
+		this.request("post", "settings", { "resolve_peerips": (this.settings["resolve_peerips"] ? 1 : 0) }, (function() {
 			if (this.torrentID != "")
 				this.getPeers(this.torrentID, true);
 		}).bind(this));
@@ -3550,7 +3522,7 @@ var utWebUI = {
 
 	"saveConfig": function(async, callback) {
 		if (isGuest) return;
-		this.request("post", "action=setsetting", { "webui.cookie": JSON.encode(this.config) }, callback || null, async || false);
+		this.request("post", "settings", { "webui.cookie": JSON.encode(this.config) }, callback || null, async || false);
 	},
 
 	"updateStatusBar": function() {
