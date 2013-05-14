@@ -4,7 +4,6 @@
 
     "Resources":
     {
-        "~/boot.js":         "HdknPlugins.AutoAdd.UI.boot.js",
-        "~/img/autoadd.png": "HdknPlugins.AutoAdd.UI.img.autoadd.png"
+        "~/boot.js":         "HdknPlugins.AutoAdd.UI.boot.js"
     }
 }
