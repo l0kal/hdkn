@@ -42,13 +42,6 @@ namespace Hadouken.Impl.Http
             _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
 
             RootDirectory = HdknConfig.GetPath("Paths.WebUI");
-        }
-
-        public string RootDirectory { get; private set; }
-
-        public void Start()
-        {
-            if (_httpListener == null) return;
 
             try
             {
@@ -57,8 +50,15 @@ namespace Hadouken.Impl.Http
             catch (Exception e)
             {
                 // Enter failure mode
-                Logger.Error("Could not unzip.");
+                Logger.ErrorException("Could not unzip.", e);
             }
+        }
+
+        public string RootDirectory { get; private set; }
+
+        public void Start()
+        {
+            if (_httpListener == null) return;
 
             Logger.Info("RootDirectory=" + Path.GetFullPath(RootDirectory));
 
