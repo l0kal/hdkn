@@ -4,9 +4,12 @@ namespace HdknPlugins.AutoAdd.Http.Api
 {
     public class FoldersController : ApiController
     {
-        public string Get()
+        public object Get()
         {
-            return "Hej";
+            return new
+                {
+                    folders = new object[] {}
+                };
         }
     }
 }

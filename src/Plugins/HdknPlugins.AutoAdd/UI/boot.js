@@ -10,7 +10,7 @@
         "init": function () {
             var self = this;
             
-            utWebUI.request("get", "action=autoadd-getwatchedfolders", null, function (data) {
+            utWebUI.request("get", "plugins/autoadd/folders", null, function (data) {
                 $each(data.folders, function (val) {
                     self.addFolder(val);
                 });
