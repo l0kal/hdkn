@@ -1385,10 +1385,10 @@ var utWebUI = {
 	"getDirectoryList": function(forceload, callback) {
 		var now = Date.now();
 		if (forceload || !this.dirlist._TIME_ || (now - this.dirlist._TIME_) > (this.limits.minDirListCache * 1000)) {
-			this.request("get", "action=listdirs", null, (function(json) {
+			this.request("get", "directories", null, (function(json) {
 				this.dirlist.empty();
 
-				this.dirlist = json["download-dirs"];
+				this.dirlist = json.directories;
 				this.dirlist._TIME_ = now;
 
 				this.loadDirectoryList();
