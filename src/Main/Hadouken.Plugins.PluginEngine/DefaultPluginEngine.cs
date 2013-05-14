@@ -8,6 +8,7 @@ using Hadouken.Configuration;
 using Hadouken.Common.IO;
 using Hadouken.Common.Messaging;
 using Hadouken.Common.Plugins;
+using Hadouken.Http;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -19,6 +20,7 @@ namespace Hadouken.Plugins.PluginEngine
         private readonly IFileSystem _fileSystem;
         private readonly IKeyValueStore _keyValueStore;
         private readonly IMessageBus _messageBus;
+        private readonly IHttpFileSystemServer _httpServer;
         private readonly IPluginLoader[] _pluginLoaders;
 
         private readonly IDictionary<string, PluginInfo> _plugins =
@@ -27,11 +29,13 @@ namespace Hadouken.Plugins.PluginEngine
         public DefaultPluginEngine(IFileSystem fileSystem,
                                    IKeyValueStore keyValueStore,
                                    IMessageBusFactory messageBusFactory,
+                                   IHttpFileSystemServer httpServer,
                                    IPluginLoader[] pluginLoaders)
         {
             _fileSystem = fileSystem;
             _keyValueStore = keyValueStore;
             _messageBus = messageBusFactory.Create("hdkn");
+            _httpServer = httpServer;
             _pluginLoaders = pluginLoaders;
 
             _messageBus.Subscribe<KeyValueChangedMessage>(OnBlacklistChanged);
@@ -144,6 +148,7 @@ namespace Hadouken.Plugins.PluginEngine
 
                 var sandbox = Sandbox.CreatePluginSandbox(info.Manifest, info.Assemblies);
                 sandbox.Load(info.Manifest);
+                sandbox.ExtractResources(info.Manifest, _httpServer.RootDirectory);
 
                 info.Sandbox = sandbox;
             }

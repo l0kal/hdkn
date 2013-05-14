@@ -11,6 +11,7 @@ using Hadouken.Common.DI;
 using Hadouken.Common.IO;
 using NLog;
 using Hadouken.Common.Http;
+using System.IO;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -42,6 +43,55 @@ namespace Hadouken.Plugins.PluginEngine
             foreach (var asm in assemblies)
             {
                 AppDomain.CurrentDomain.Load(asm);
+            }
+        }
+
+        internal void ExtractResources(PluginManifest manifest, string webRoot)
+        {
+            if (manifest == null)
+                throw new ArgumentNullException("manifest");
+
+            if (manifest.Resources == null)
+                return;
+
+            var fs = Kernel.Get<IFileSystem>();
+            var pluginRoot = "plugins/" + manifest.Name;
+
+            foreach (var key in manifest.Resources.Keys)
+            {
+                if (String.IsNullOrEmpty(manifest.Resources[key]))
+                    continue;
+
+                var resource = manifest.Resources[key];
+                var assembly =
+                    (from asm in AppDomain.CurrentDomain.GetAssemblies()
+                     where asm.GetManifestResourceInfo(resource) != null
+                     select asm).FirstOrDefault();
+
+                if (assembly == null)
+                    continue;
+
+                var jailed = key.StartsWith("~");
+                var path = (jailed ? pluginRoot + key.Substring(1) : key).Split(new[] {"/"},
+                                                                                StringSplitOptions.RemoveEmptyEntries)
+                                                                         .ToList();
+                path.Insert(0, webRoot);
+
+                var fullPath = Path.Combine(path.ToArray());
+
+                if (!fs.DirectoryExists(Path.GetDirectoryName(fullPath)))
+                    fs.CreateDirectory(Path.GetDirectoryName(fullPath));
+
+                using (var stream = assembly.GetManifestResourceStream(resource))
+                using (var ms = new MemoryStream())
+                {
+                    if (stream == null)
+                        return;
+
+                    stream.CopyTo(ms);
+
+                    fs.WriteAllBytes(fullPath, ms.ToArray());
+                }
             }
         }
 
