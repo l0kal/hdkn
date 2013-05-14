@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DirectoriesController.cs" />
     <Compile Include="Dto\GetSettingsDto.cs" />
     <Compile Include="Dto\EditSettingDto.cs" />
     <Compile Include="Dto\PostTorrentDto.cs" />
