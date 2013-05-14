@@ -7,9 +7,8 @@ using System.Reflection;
 
 namespace Hadouken.Common.Http
 {
-    public interface IHttpServerFactory
+    public interface IHttpWebApiServerFactory
     {
-        IHttpFileSystemServer Create(string baseAddress, NetworkCredential credential, string path);
         IHttpWebApiServer Create(string baseAddress, NetworkCredential credential, Assembly[] controllerAssemblies);
     }
 }

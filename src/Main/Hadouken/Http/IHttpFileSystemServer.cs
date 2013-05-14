@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Net;
 
-namespace Hadouken.Common.Http
+namespace Hadouken.Http
 {
     public interface IHttpFileSystemServer
     {
+        string RootDirectory { get; }
+
         void Start();
         void Stop();
     }

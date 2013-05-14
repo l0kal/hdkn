@@ -6,17 +6,24 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Hadouken.Http;
+using Hadouken.Common;
+using Hadouken.Configuration;
+using Ionic.Zip;
+using NLog;
+using Hadouken.Security;
 
-
-namespace Hadouken.Common.Http.HttpListener
+namespace Hadouken.Impl.Http
 {
+    [Component(ComponentType.Singleton)]
     public class HttpListenerServer : IHttpFileSystemServer
     {
-        private readonly System.Net.HttpListener _httpListener;
-        private readonly HttpListenerBasicIdentity _credential;
-        private readonly string _basePath;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        private readonly HttpListener _httpListener;
 
         private readonly IFileSystem _fileSystem;
+        private readonly IKeyValueStore _keyValueStore;
 
         private static readonly IDictionary<string, string> MimeTypes = new Dictionary<string, string>()
             {
@@ -25,24 +32,62 @@ namespace Hadouken.Common.Http.HttpListener
                 {".html", "text/html"}
             };
 
-        public HttpListenerServer(IFileSystem fileSystem, string binding, NetworkCredential credential, string basePath)
+        public HttpListenerServer(IFileSystem fileSystem, IKeyValueStore keyValueStore, IEnvironment environment)
         {
             _fileSystem = fileSystem;
-            _basePath = basePath;
+            _keyValueStore = keyValueStore;
 
-            _httpListener = new System.Net.HttpListener();
-            _httpListener.Prefixes.Add(binding);
+            _httpListener = new HttpListener();
+            _httpListener.Prefixes.Add(environment.HttpBinding);
             _httpListener.AuthenticationSchemes = AuthenticationSchemes.Basic;
 
-            _credential = new HttpListenerBasicIdentity(credential.UserName, credential.Password);            
+            RootDirectory = HdknConfig.GetPath("Paths.WebUI");
         }
+
+        public string RootDirectory { get; private set; }
 
         public void Start()
         {
             if (_httpListener == null) return;
 
+            try
+            {
+                Unzip();
+            }
+            catch (Exception e)
+            {
+                // Enter failure mode
+                Logger.Error("Could not unzip.");
+            }
+
+            Logger.Info("RootDirectory=" + Path.GetFullPath(RootDirectory));
+
             _httpListener.Start();
             _httpListener.BeginGetContext(BeginGetContext, null);
+        }
+
+        private void Unzip()
+        {
+            var zip = Path.Combine(HdknConfig.WorkingDirectory, "webui.zip");
+
+            if (_fileSystem.FileExists(zip))
+            {
+                Logger.Debug("Unzipping web ui");
+
+                // Get a temporary path
+                var temporaryPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+
+                if (!_fileSystem.DirectoryExists(temporaryPath))
+                    _fileSystem.CreateDirectory(temporaryPath);
+
+                // Unzip the webui.zip
+                using (var zipFile = ZipFile.Read(zip))
+                {
+                    zipFile.ExtractAll(temporaryPath);
+                }
+
+                RootDirectory = temporaryPath;
+            }
         }
 
         private void BeginGetContext(IAsyncResult ar)
@@ -67,7 +112,7 @@ namespace Hadouken.Common.Http.HttpListener
         private void OnHttpRequest(HttpListenerContext context)
         {
             var pathSegments = context.Request.Url.Segments.Skip(1).Select(s => s.Replace("/", "")).ToList();
-            pathSegments.Insert(0, _basePath);
+            pathSegments.Insert(0, RootDirectory);
 
             // Check file system for file
             var file = Path.Combine(pathSegments.ToArray());
@@ -100,7 +145,11 @@ namespace Hadouken.Common.Http.HttpListener
             if (identity == null)
                 return false;
 
-            return (identity.Name == _credential.Name && identity.Password == _credential.Password);
+            var usr = _keyValueStore.Get<string>("auth.username");
+            var pwd = _keyValueStore.Get<string>("auth.password");
+            var comp = StringComparison.InvariantCultureIgnoreCase;
+
+            return (String.Equals(usr, identity.Name, comp) && String.Equals(pwd, Hash.Generate(identity.Password)));
         }
 
         public void Stop()

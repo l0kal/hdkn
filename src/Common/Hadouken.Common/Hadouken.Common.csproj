@@ -53,8 +53,7 @@
     <Compile Include="Data\IDataRepository.cs" />
     <Compile Include="Data\Model.cs" />
     <Compile Include="DI\IDependencyResolver.cs" />
-    <Compile Include="Http\IHttpFileSystemServer.cs" />
-    <Compile Include="Http\IHttpServerFactory.cs" />
+    <Compile Include="Http\IHttpWebApiServerFactory.cs" />
     <Compile Include="Http\IHttpWebApiServer.cs" />
     <Compile Include="IComponentFactory.cs" />
     <Compile Include="IEnvironment.cs" />

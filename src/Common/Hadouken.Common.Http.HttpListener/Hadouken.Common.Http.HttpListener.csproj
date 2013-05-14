@@ -61,7 +61,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HttpListenerServer.cs" />
     <Compile Include="HttpServerFactory.cs" />
     <Compile Include="IdentityValidator.cs" />
     <Compile Include="KernelDependencyResolver.cs" />

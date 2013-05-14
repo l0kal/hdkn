@@ -8,6 +8,7 @@ using Hadouken.Common.Http;
 using Hadouken.Hosting;
 
 using Hadouken.Data;
+using Hadouken.Http;
 using Hadouken.Plugins;
 using Hadouken.BitTorrent;
 using NLog;
@@ -27,8 +28,8 @@ namespace Hadouken.Impl.Hosting
         private readonly IMigrationRunner _migratorRunner;
         private readonly IPluginEngine _pluginEngine;
 
-        private readonly IHttpServerFactory _serverFactory;
-        private IHttpFileSystemServer _httpServer;
+        private readonly IHttpWebApiServerFactory _serverFactory;
+        private readonly IHttpFileSystemServer _httpServer;
         private IHttpWebApiServer _webApiServer;
 
         public DefaultHadoukenHost(IEnvironment environment,
@@ -36,12 +37,14 @@ namespace Hadouken.Impl.Hosting
                                    IBitTorrentEngine torrentEngine,
                                    IMigrationRunner runner,
                                    IPluginEngine pluginEngine,
-                                   IHttpServerFactory httpServerFactory)
+                                   IHttpFileSystemServer httpServer,
+                                   IHttpWebApiServerFactory httpServerFactory)
         {
             _environment = environment;
             _keyValueStore = keyValueStore;
             _torrentEngine = torrentEngine;
             _serverFactory = httpServerFactory;
+            _httpServer = httpServer;
             _migratorRunner = runner;
             _pluginEngine = pluginEngine;
 
@@ -68,11 +71,6 @@ namespace Hadouken.Impl.Hosting
 
             var httpUser = _keyValueStore.Get("http.auth.username", "hdkn");
             var httpPass = _keyValueStore.Get("http.auth.password", "hdkn");
-
-
-            _httpServer = _serverFactory.Create(_environment.HttpBinding,
-                                                   new NetworkCredential(httpUser, httpPass),
-                                                   "C:\\temp\\webui");
 
             _webApiServer = _serverFactory.Create(_environment.HttpBinding + "api",
                                                      new NetworkCredential(httpUser, httpPass),

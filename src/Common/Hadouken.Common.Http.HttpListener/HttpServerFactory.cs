@@ -17,18 +17,13 @@ using Hadouken.Common.IO;
 namespace Hadouken.Common.Http.HttpListener
 {
     [Component]
-    public class HttpServerFactory : IHttpServerFactory
+    public class HttpServerFactory : IHttpWebApiServerFactory
     {
         private readonly IFileSystem _fileSystem;
 
         public HttpServerFactory(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
-        }
-
-        public IHttpFileSystemServer Create(string baseAddress, NetworkCredential credential, string path)
-        {
-            return new HttpListenerServer(_fileSystem, baseAddress, credential, path);
         }
 
         public IHttpWebApiServer Create(string baseAddress, NetworkCredential credential, Assembly[] assemblies)
