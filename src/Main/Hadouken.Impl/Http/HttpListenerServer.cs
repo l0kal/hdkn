@@ -96,10 +96,8 @@ namespace Hadouken.Impl.Http
             {
                 var context = _httpListener.EndGetContext(ar);
 
-                if (!IsAuthenticated(context.User.Identity as HttpListenerBasicIdentity))
-                    return;
-
-                Task.Factory.StartNew(() => OnHttpRequest(context));
+                if (IsAuthenticated(context.User.Identity as HttpListenerBasicIdentity))
+                    Task.Factory.StartNew(() => OnHttpRequest(context));
 
                 _httpListener.BeginGetContext(BeginGetContext, null);
             }
