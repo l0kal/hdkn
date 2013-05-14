@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using Hadouken.Common.Messaging;
 using Hadouken.Http.Api.Dto;
 using System;
@@ -14,12 +15,10 @@ namespace Hadouken.Http.Api
 {
     public class TorrentsController : ApiController
     {
-        private readonly IMessageBus _messageBus;
         private readonly IBitTorrentEngine _torrentEngine;
 
-        public TorrentsController(IMessageBusFactory messageBusFactory, IBitTorrentEngine torrentEngine)
+        public TorrentsController(IBitTorrentEngine torrentEngine)
         {
-            _messageBus = messageBusFactory.Create("hdkn");
             _torrentEngine = torrentEngine;
         }
 
@@ -27,13 +26,46 @@ namespace Hadouken.Http.Api
         {
             return new
                 {
+                    label = (from l in _torrentEngine.Managers.Values.GroupBy(m => m.Label)
+                             where !String.IsNullOrEmpty(l.Key)
+                             select new object[]
+                                 {
+                                     l.Key,
+                                     l.Count()
+                                 }),
                     torrents = (from m in _torrentEngine.Managers.Values
-                                select new
+                                select new object[]
                                     {
+                                        m.InfoHash,
+                                        m.State,
                                         m.Torrent.Name,
                                         m.Torrent.Size,
-                                        m.InfoHash,
-                                        m.Label
+                                        (int) m.Progress*10,
+                                        m.DownloadedBytes,
+                                        m.UploadedBytes,
+                                        (m.DownloadedBytes == 0 ? 0 : ((m.UploadedBytes/m.DownloadedBytes)*10)),
+                                        m.UploadSpeed,
+                                        m.DownloadSpeed,
+                                        m.ETA.TotalSeconds,
+                                        m.Label,
+                                        m.Peers.Count(p => !p.IsSeeder),
+                                        m.Trackers.Sum(tr => tr.Incomplete),
+                                        m.Peers.Count(p => p.IsSeeder),
+                                        m.Trackers.Sum(tr => tr.Complete),
+                                        -1, // availability
+                                        -1, // queue position
+                                        m.RemainingBytes,
+                                        "", // download url
+                                        "", // rss feed url
+                                        (m.State == TorrentState.Error ? "Error: --" : ""),
+                                        -1, // stream id
+                                        m.StartTime.ToUnixTime(),
+                                        (m.CompletedTime.HasValue ? m.CompletedTime.Value.ToUnixTime() : -1),
+                                        "", // app update url
+                                        (m.Torrent.Files.Length > 1
+                                             ? m.SavePath
+                                             : Path.Combine(m.SavePath, m.Torrent.Name)),
+                                        m.Complete
                                     })
                 };
         }
