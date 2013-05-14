@@ -696,17 +696,11 @@ function setupAddTorrentDialog() {
 	// -- OK Button (File)
 
 	$("ADD_FILE_OK").addEvent("click", function() {
-		this.disabled = true;
-
 		var dir = $("dlgAdd-basePath").value || 0;
 		var sub = encodeURIComponent($("dlgAdd-subPath").get("value")); // TODO: Sanitize!
 
-		$("dlgAdd-form").set("action", apiBase
-			+ "?token=" + utWebUI.TOKEN
-			+ "&action=addfile"
-			+ "&download_dir=" + dir
-			+ "&path=" + sub
-		).submit();
+		console.log("encode torrent files");
+
 		// should it hide the dialog now? YES
 		DialogManager.hide("Add");
 	});
@@ -717,35 +711,7 @@ function setupAddTorrentDialog() {
 		DialogManager.hide("Add");
 	});
 
-	// -- Upload Frame
-
-	var uploadfrm = new IFrame({
-		"id": "uploadfrm",
-		"src": "about:blank",
-		"styles": {
-			  display: "none"
-			, height: 0
-			, width: 0
-		},
-		"onload": function(doc) {
-			$("dlgAdd-file").set("value", "");
-			$("ADD_FILE_OK").disabled = false;
-
-			if (!doc) return;
-
-			var str = $(doc.body).get("text");
-			if (str) {
-				var data = JSON.decode(str);
-				if (has(data, "error")) {
-					alert(data.error);
-					log("[Add Torrent File Error] " + data.error);
-				}
-			}
-		}
-	}).inject(document.body);
-
-	$("dlgAdd-form").set("target", uploadfrm.get("id"));
-
+	$("dlgAdd-form").addEvent("submit", Function.from(false));
 }
 
 function setupPropertiesDialog() {
