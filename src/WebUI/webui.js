@@ -455,7 +455,7 @@ var utWebUI = {
 						}, async, fails]);
 					},
 					"onSuccess": (fn) ? fn.bind(self) : Function.from()
-				}).send();
+				}).setHeader("Content-Type", "application/json").send();
 			} catch(e){}
 		};
 
