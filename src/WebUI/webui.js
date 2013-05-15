@@ -2801,7 +2801,7 @@ var utWebUI = {
 
         var now = Date.now();
         if (forceload || this.peerlist._ID_ !== id || !this.peerlist._TIME_ || (now - this.peerlist._TIME_) > (this.limits.minPeerListCache * 1000)) {
-            this.request("get", "action=getpeers&hash=" + id, null, (function(json) {
+            this.request("get", "peers?id=" + id, null, (function(json) {
                 this.peerlist.empty();
 
                 var peers = json.peers;
