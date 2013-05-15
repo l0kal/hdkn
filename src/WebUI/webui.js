@@ -364,7 +364,7 @@ var utWebUI = {
             for(var i = 0; i < data.length; i++)
             {
                 var plugin = data[i];
-                
+
                 Asset.javascript("/plugins/" + plugin.name + "/boot.js");
 
                 self.plgTable.addRow([plugin.name, plugin.version], plugin.name);
@@ -455,9 +455,7 @@ var utWebUI = {
                         }, async, fails]);
                     },
                     "onSuccess": function(d) {
-                        console.log("Success: " + method + " " + apiBase + qs);
-
-                        if (fn) fn.delay(0, self, JSON.decode(d));
+                        if (fn) fn.delay(0, self, [ JSON.decode(d) ]);
                     }
                 }).setHeader("Content-Type", "application/json").send();
             } catch(e){}
