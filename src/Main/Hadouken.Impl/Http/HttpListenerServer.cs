@@ -109,29 +109,46 @@ namespace Hadouken.Impl.Http
 
         private void OnHttpRequest(HttpListenerContext context)
         {
-            var pathSegments = context.Request.Url.Segments.Skip(1).Select(s => s.Replace("/", "")).ToList();
-            pathSegments.Insert(0, RootDirectory);
-
-            // Check file system for file
-            var file = Path.Combine(pathSegments.ToArray());
-
-            if (_fileSystem.FileExists(file))
+            try
             {
-                var contentType = "";
+                var pathSegments = context.Request.Url.Segments.Skip(1).Select(s => s.Replace("/", "")).ToList();
+                pathSegments.Insert(0, RootDirectory);
 
-                if (MimeTypes.ContainsKey(Path.GetExtension(file)))
-                    contentType = MimeTypes[Path.GetExtension(file)];
+                // Check file system for file
+                var file = Path.Combine(pathSegments.ToArray());
 
-                var data = _fileSystem.ReadAllBytes(file);
+                if (_fileSystem.FileExists(file))
+                {
+                    var contentType = "";
 
-                context.Response.StatusCode = 200;
-                context.Response.ContentEncoding = Encoding.UTF8;
-                context.Response.ContentType = contentType;
-                context.Response.OutputStream.Write(data, 0, data.Length);
+                    if (MimeTypes.ContainsKey(Path.GetExtension(file)))
+                        contentType = MimeTypes[Path.GetExtension(file)];
+
+                    var data = _fileSystem.ReadAllBytes(file);
+
+                    context.Response.StatusCode = 200;
+                    context.Response.ContentEncoding = Encoding.UTF8;
+                    context.Response.ContentType = contentType;
+                    context.Response.OutputStream.Write(data, 0, data.Length);
+                }
+                else
+                {
+                    context.Response.StatusCode = 404;
+                }
             }
-            else
+            catch (Exception e)
             {
-                context.Response.StatusCode = 404;
+                try
+                {
+                    var data = Encoding.UTF8.GetBytes(e.ToString());
+
+                    context.Response.StatusCode = 500;
+                    context.Response.OutputStream.Write(data, 0, data.Length);
+                }
+                catch (Exception e2)
+                {
+                    Logger.ErrorException("Could not write exception to response", e2);
+                }
             }
 
             context.Response.OutputStream.Close();
