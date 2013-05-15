@@ -698,11 +698,11 @@ function setupAddTorrentDialog() {
     $("ADD_FILE_OK").addEvent("click", function() {
         var dir = $("dlgAdd-basePath").value || 0;
         var sub = encodeURIComponent($("dlgAdd-subPath").get("value")); // TODO: Sanitize!
+        var inp = document.id("dlgAdd-file");
 
-        console.log("encode torrent files");
-
-        // should it hide the dialog now? YES
-        DialogManager.hide("Add");
+        utWebUI.addFiles(inp.files, function() {
+            DialogManager.hide("Add");
+        });
     });
 
     // -- Cancel Button (File)

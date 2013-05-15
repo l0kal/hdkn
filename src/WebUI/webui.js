@@ -409,7 +409,7 @@ var utWebUI = {
 
         var req = function() {
             try {
-                new Request.JSON({
+                new Request({
                     "url": apiBase + qs,
                     "method": method,
                     "async": typeof(async) === 'undefined' || !!async,
@@ -454,7 +454,11 @@ var utWebUI = {
                             }
                         }, async, fails]);
                     },
-                    "onSuccess": (fn) ? fn.bind(self) : Function.from()
+                    "onSuccess": function(d) {
+                        console.log("Success: " + method + " " + apiBase + qs);
+
+                        if (fn) fn.delay(0, self, JSON.decode(d));
+                    }
                 }).setHeader("Content-Type", "application/json").send();
             } catch(e){}
         };
@@ -745,8 +749,6 @@ var utWebUI = {
 
     "getStatusInfo": function(state, progress, complete) {
         var res = ["", ""];
-        
-        console.log(state + ", " + progress + ", " + complete);
         
         if(state == CONST.STATE_STOPPED && complete)
         {
@@ -2727,41 +2729,33 @@ var utWebUI = {
         $("hs").set("html", id);
     },
 
-    "addFile": function(param, fn) {
-        var files = Array.from(param.file);
-        if (files.length <= 0) return;
+    "addFiles": function(files, fn) {
+        var cc = 0;
 
-        var count = 0;
-        var fnwrap = (function() {
-            if (++count === files.length) fn();
-        });
+        for(var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var reader = new FileReader();
 
-        var qs = "action=add-file"
-        var val;
+            reader.onload = (function(f) {
+                return function(e) {
 
-        if ((val = (parseInt(param.dir, 10) || 0)))
-            qs += "&download_dir=" + val;
+                    var data = {
+                        data: e.target.result.split(',')[1]
+                    };
 
-        if ((val = (param.sub || "")))
-            qs += "&path=" + encodeURIComponent(val); // TODO: Sanitize!
+                    this.request("post", "torrents", data, function() {
+                        cc += 1;
 
-        Array.each(files, function(file) {
+                        if(cc >= files.length) {
+                            fn();
+                        }
+                    }.bind(this));
 
-            // TODO: Finish implementing!
-            //
-            // NOTE: Not implemented because I don't feel like the FileReader
-            //       standard is completely stabilized, with browsers having
-            //       spotty support for it. Too, it would probably be better to
-            //       wait for MooTools to implement the requisite interfaces
-            //       natively rather than hack it in myself only to  have to
-            //       toss it all out again later.
-            //
-            //       Once finished, we can rewrite the ADD_FILE_OK click event
-            //       handler to use this API rather than having it do everything
-            //       manually. May have to be an indirect usage so that we can
-            //       fall back gracefully for older browsers.
+                }.bind(this);
+            }.bind(this))(file);
 
-        }, this);
+            reader.readAsDataURL(file);
+        }
     },
     
     "setLabel": function(param, fn) {
