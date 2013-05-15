@@ -696,11 +696,18 @@ function setupAddTorrentDialog() {
     // -- OK Button (File)
 
     $("ADD_FILE_OK").addEvent("click", function() {
+        var that = this;
+        that.disabled = true;
+
         var dir = $("dlgAdd-basePath").value || 0;
         var sub = encodeURIComponent($("dlgAdd-subPath").get("value")); // TODO: Sanitize!
         var inp = document.id("dlgAdd-file");
 
         utWebUI.addFiles(inp.files, function() {
+
+            $("dlgAdd-file").set('value', '');
+
+            that.disabled = false;
             DialogManager.hide("Add");
         });
     });
