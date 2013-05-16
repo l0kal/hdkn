@@ -971,12 +971,6 @@ var utWebUI = {
 
             if (typeof(listcb) === 'function') listcb();
         }).bind(this));
-
-        if (typeof(DialogManager) !== 'undefined') {
-            if (DialogManager.showing.contains("Settings") && ("dlgSettings-TransferCap" == this.stpanes.active)) {
-                this.getTransferHistory();
-            }
-        }
     },
 
     "loadLabels": function(labels) {
@@ -1157,15 +1151,9 @@ var utWebUI = {
             //var sep = "&v=" + encodeURIComponent(lbl) + "&s=label&hash=";
             
             var data = {};
+            data.label = lbl;
             
-            for(var i = 0; i < hashes.length; i++)
-            {
-                data[hashes[i]] = {};
-                data[hashes[i]].label = lbl;
-            }
-            
-            this.request("post", "action=setprops", data);
-            //this.request("post", "action=setprops&s=label&hash=" + hashes.join(sep) + "&v=" + encodeURIComponent(lbl));
+            this.request("put", "torrentproperties?id=" + hashes.join("&id="), data);
         }
     },
 
@@ -1437,57 +1425,6 @@ var utWebUI = {
             eleURLList.setStyle("display", dispStyle);
         if (eleURLListDiv)
             eleURLListDiv.setStyle("display", dispStyle);
-    },
-
-    "getTransferHistory": function(forceload) {
-        var now = Date.now();
-        if (forceload || !this.xferhist._TIME_ || (now - this.xferhist._TIME_) > (this.limits.minXferHistCache * 1000)) {
-            this.request("get", "action=getxferhist", null, (function(json) {
-                this.xferhist = json.transfer_history;
-                this.xferhist._TIME_ = now;
-
-                this.loadTransferHistory();
-            }).bind(this));
-        }
-        else {
-            this.loadTransferHistory();
-        }
-    },
-
-    "loadTransferHistory": function() {
-        var history = this.xferhist;
-
-        // Obtain number of days to consider
-        var periodList = L_("ST_CBO_TCAP_PERIODS").split("||");
-        var periodIdx = ($("multi_day_transfer_limit_span").get("value").toInt() || 0).max(0).min(periodList.length-2);
-        var period = periodList[periodIdx].toInt();
-
-        // Calculate uploads/downloads applicable to transfer cap
-        var nolocal = this.getAdvSetting("net.limit_excludeslocal");
-
-        var tu = 0, td = 0;
-        for (var day = 0; day < period; day++) {
-            tu += history["daily_upload"][day];
-            td += history["daily_download"][day];
-            if (nolocal) {
-                tu -= history["daily_local_upload"][day];
-                tu -= history["daily_local_download"][day];
-            }
-        }
-
-        // Reduce precision for readability
-        $("total_uploaded_history").set("text", tu.toFileSize());
-        $("total_downloaded_history").set("text", td.toFileSize());
-        $("total_updown_history").set("text", (tu + td).toFileSize());
-        $("history_period").set("text", L_("DLG_SETTINGS_7_TRANSFERCAP_11").replace(/%d/, period));
-    },
-
-    "resetTransferHistory": function() {
-
-{ // TODO: Remove this once backend support is stable (requires 3.0+)
-    if (undefined === this.settings["webui.uconnect_enable"]) return;
-}
-        this.request("post", "action=resetxferhist", null, function () { window.location.reload(true); } );
     },
 
     "getSettings": function(fn) {
@@ -2550,7 +2487,7 @@ var utWebUI = {
 
         this.propID = (count > 1) ? "multi" : this.trtTable.selectedRows[0];
         if (this.propID != "multi")
-            this.request("get", "action=getprops&hash=" + this.propID, null, this.loadProperties);
+            this.request("get", "torrentproperties?id=" + this.propID, null, this.loadProperties);
         else
             this.updateMultiProperties();
     },
@@ -2675,14 +2612,14 @@ var utWebUI = {
         }
         this.propID = "";
 
-        var tdata = {};
+        var tdata = [];
         
         for(var i = 0; i < this.trtTable.selectedRows.length; i++)
         {
-            tdata[this.trtTable.selectedRows[i]] = data;
+            tdata.push(this.trtTable.selectedRows[i]);
         }
         
-        this.request("post", "action=setprops", tdata);
+        this.request("put", "torrentproperties?id=" + tdata.join("&id="), data);
     },
 
     "showDetails": function(id) {
@@ -2766,16 +2703,9 @@ var utWebUI = {
         var self = this;
         
         var data = {};
+        data.label = param;
         
-        for(var i = 0; i < torrents.length; i++)
-        {
-            var id = torrents[i];
-            
-            data[id] = {};
-            data[id].label = param;
-        }
-        
-        this.request("post", "action=setprops", data, fn);
+        this.request("put", "torrentproperties?id=" + torrents.join("&id="), data, fn);
     },  
 
     "addURL": function(param, fn) {
@@ -3821,10 +3751,6 @@ var utWebUI = {
 
     "settingsPaneChange": function(id) {
         switch (id) {
-            case "dlgSettings-TransferCap":
-                this.getTransferHistory();
-            break;
-
             case "dlgSettings-Advanced":
                 this.advOptTable.calcSize();
                 this.advOptTable.restoreScroll();
