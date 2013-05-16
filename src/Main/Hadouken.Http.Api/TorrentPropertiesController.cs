@@ -24,12 +24,46 @@ namespace Hadouken.Http.Api
             if (id == null || id.Length == 0)
                 return new HttpResponseMessage(HttpStatusCode.NotFound);
 
-            return null;
+            return new
+                {
+                    props = (from tm in _torrentEngine.Managers.Values
+                             where id.Contains(tm.InfoHash)
+                             select new
+                                 {
+                                     hash = tm.InfoHash,
+                                     trackers = "",
+                                     ulrate = tm.Settings.MaxUploadSpeed,
+                                     dlrate = tm.Settings.MaxDownloadSpeed,
+                                     superseed = tm.Settings.InitialSeedingEnabled,
+                                     dht = tm.Settings.UseDht,
+                                     pex = tm.Settings.EnablePeerExchange,
+                                     seed_override = false,
+                                     seed_ratio = 0,
+                                     seed_time = 0,
+                                     ulslots = tm.Settings.UploadSlots,
+                                     seed_num = 0
+                                 })
+                };
         }
 
         public HttpResponseMessage Put([FromBody] PutTorrentPropertiesDto dto, [FromUri] string[] id = null)
         {
-            return null;
+            if (id == null || id.Length == 0)
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+
+            foreach (var infoHash in id)
+            {
+                if (!_torrentEngine.Managers.ContainsKey(infoHash))
+                    continue;
+
+                var tm = _torrentEngine.Managers[infoHash];
+                tm.Label = dto.Label;
+            }
+
+            using (var response = Request.CreateResponse(HttpStatusCode.NoContent))
+            {
+                return response;
+            }
         }
     }
 }
