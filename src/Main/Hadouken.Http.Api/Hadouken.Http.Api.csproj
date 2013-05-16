@@ -62,12 +62,14 @@
     <Compile Include="Dto\GetSettingsDto.cs" />
     <Compile Include="Dto\EditSettingDto.cs" />
     <Compile Include="Dto\PostTorrentDto.cs" />
+    <Compile Include="Dto\PutTorrentPropertiesDto.cs" />
     <Compile Include="PeersController.cs" />
     <Compile Include="PluginsController.cs" />
     <Compile Include="SettingsController.cs" />
     <Compile Include="SystemController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TorrentFilesController.cs" />
+    <Compile Include="TorrentPropertiesController.cs" />
     <Compile Include="TorrentsController.cs" />
   </ItemGroup>
   <ItemGroup>
