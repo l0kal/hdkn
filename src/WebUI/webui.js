@@ -412,6 +412,7 @@ var utWebUI = {
                 new Request({
                     "url": apiBase + qs,
                     "method": method,
+                    "emulation": false,
                     "async": typeof(async) === 'undefined' || !!async,
                     "data": (data != null ? JSON.encode(data) : null),
                     "urlEncoded": false,
@@ -500,7 +501,11 @@ var utWebUI = {
             this.clearDetails();
         }
 
-        this.request("post", "action=" + action, hashes, (function() {
+        var d =  {
+            action: action
+        };
+
+        this.request("put", "torrents?id=" + hashes.join("&id="), d, (function() {
             this.update();
         }).bind(this));
     },
@@ -3056,6 +3061,9 @@ var utWebUI = {
     },
 
     "setPriority": function(id, p) {
+        console.log("not implemented");
+        return;
+
         var fileIds = this.getSelFileIds().filter(function(fileId) {
             return (this.filelist[fileId][CONST.FILE_PRIORITY] != p);
         }, this);
