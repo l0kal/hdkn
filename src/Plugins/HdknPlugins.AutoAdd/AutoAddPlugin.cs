@@ -65,6 +65,9 @@ namespace HdknPlugins.AutoAdd
 
         internal void CheckFolder(Folder folder)
         {
+            if (!_fileSystem.DirectoryExists(folder.Path))
+                return;
+
             var files = _fileSystem.GetFiles(folder.Path, "*.torrent");
 
             foreach (var file in files)
