@@ -11,7 +11,7 @@
             var self = this;
             
             utWebUI.request("get", "plugins/autoadd/folders", null, function (data) {
-                $each(data.folders, function (val) {
+                $each(data, function (val) {
                     self.addFolder(val);
                 });
             });
@@ -52,10 +52,10 @@
         },
 
         "addFolder": function(val) {
-            this.fldTable.addRow([val.Path, val.Label], val.Id);
+            this.fldTable.addRow([val.path, val.label], val.id);
 
             // add to local dictionary as well
-            this.folders[val.Id] = val;
+            this.folders[val.id] = val;
         },
         
         "refreshTable": function () {
@@ -123,15 +123,13 @@
     });
 
     $("autoadd_add_folder").addEvent("click", function () {
-        var d = [{ "Path": $("autoadd_add_folder_path").get("value"), "Label": $("autoadd_add_folder_label").get("value")}];
+        var d = { "Path": $("autoadd_add_folder_path").get("value"), "Label": $("autoadd_add_folder_label").get("value")};
 
-        utWebUI.request("post", "action=autoadd-setwatchedfolders", d, function (folders) {
-            for (var i = 0; i < folders.length; i++) {
-                AutoAdd.addFolder(folders[i]);
+        utWebUI.request("post", "plugins/autoadd/folders", d, function () {
+            AutoAdd.addFolder(d);
 
-                $("autoadd_add_folder_path").set("value", "");
-                $("autoadd_add_folder_label").set("value", "");
-            }
+            $("autoadd_add_folder_path").set("value", "");
+            $("autoadd_add_folder_label").set("value", "");
 
             AutoAdd.refreshTable();
         });
@@ -143,13 +141,8 @@
             return;
         }
 
-        var d = [AutoAdd.folderId];
-
-        utWebUI.request("post", "action=autoadd-remwatchedfolders", d, function(data) {
-            for(var i = 0; i < data.removed.length; i++) {
-                AutoAdd.fldTable.removeRow(data.removed[i]);
-            }
-
+        utWebUI.request("delete", "plugins/autoadd/folders/" + AutoAdd.folderId, null, function() {
+            AutoAdd.fldTable.removeRow(AutoAdd.folderId);
             AutoAdd.refreshTable();
         });
     });
