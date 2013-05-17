@@ -91,6 +91,7 @@
     <Compile Include="Data\Migrations\Create\CreateFolderTable_001.cs" />
     <Compile Include="Data\Models\Folder.cs" />
     <Compile Include="Http\Api\FoldersController.cs" />
+    <Compile Include="Http\Dto\FolderDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timers\DefaultTimerFactory.cs" />
     <Compile Include="Timers\ITimer.cs" />
