@@ -85,6 +85,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hosting\IHadoukenHost.cs" />
     <Compile Include="Http\IHttpFileSystemServer.cs" />
+    <Compile Include="IEnvironment.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
@@ -94,7 +95,6 @@
     <Compile Include="Reflection\BuildCommitAttribute.cs" />
     <Compile Include="Reflection\BuildDateAttribute.cs" />
     <Compile Include="Reflection\ReflectionExtensions.cs" />
-    <Compile Include="Security\Hash.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">

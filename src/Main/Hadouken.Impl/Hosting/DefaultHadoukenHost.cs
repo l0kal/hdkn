@@ -69,8 +69,8 @@ namespace Hadouken.Impl.Hosting
             Logger.Debug("Loading the IPluginEngine implementation");
             _pluginEngine.Load();
 
-            var httpUser = _keyValueStore.Get("http.auth.username", "hdkn");
-            var httpPass = _keyValueStore.Get("http.auth.password", "hdkn");
+            var httpUser = _keyValueStore.Get<string>("auth.username");
+            var httpPass = _keyValueStore.Get<string>("auth.password");
 
             _webApiServer = _serverFactory.Create(_environment.HttpBinding + "api",
                                                      new NetworkCredential(httpUser, httpPass),

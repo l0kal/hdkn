@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Hadouken.Security
+namespace Hadouken.Common.Security
 {
     public sealed class Hash
     {   

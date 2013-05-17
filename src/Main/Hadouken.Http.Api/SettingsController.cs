@@ -22,15 +22,15 @@ namespace Hadouken.Http.Api
         private readonly IDataRepository _repository;
         private readonly IKeyValueStore _keyValueStore;
 
-        public SettingsController(IDataRepository repository, IKeyValueStore keyValueStore)
+        public SettingsController(IDataRepositoryFactory repositoryFactory, IKeyValueStore keyValueStore)
         {
-            if(repository == null)
-                throw new ArgumentNullException("repository");
+            if(repositoryFactory == null)
+                throw new ArgumentNullException("repositoryFactory");
 
             if(keyValueStore == null)
                 throw new ArgumentNullException("keyValueStore");
 
-            _repository = repository;
+            _repository = repositoryFactory.Create(HdknConfig.ConnectionString);
             _keyValueStore = keyValueStore;
         }
 

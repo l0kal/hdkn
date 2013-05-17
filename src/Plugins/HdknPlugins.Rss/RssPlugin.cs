@@ -23,7 +23,6 @@ namespace HdknPlugins.Rss
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly IEnvironment _environment;
         private readonly IDataRepository _dataRepository;
         private readonly ITimer _timer;
         private readonly IWebClient _webClient;
@@ -31,12 +30,10 @@ namespace HdknPlugins.Rss
         private int _ticks = -1;
 
         public RssPlugin(IMessageBus messageBus,
-                         IEnvironment environment,
                          IDataRepository dataRepository,
                          ITimerFactory timerFactory,
                          IWebClient webClient) : base(messageBus)
         {
-            _environment = environment;
             _dataRepository = dataRepository;
             _timer = timerFactory.CreateTimer();
             _webClient = webClient;
@@ -46,7 +43,7 @@ namespace HdknPlugins.Rss
         {
             var m =
                 new Migrator.Migrator(
-                    new SQLiteTransformationProvider(new SQLiteDialect(), _environment.ConnectionString),
+                    new SQLiteTransformationProvider(new SQLiteDialect(), _dataRepository.ConnectionString),
                     this.GetType().Assembly, false);
 
             Logger.Debug("Updating all migrations in current assembly");
@@ -60,12 +57,12 @@ namespace HdknPlugins.Rss
         internal void CheckFeeds()
         {
             _ticks++;
-            var feeds = _dataRepository.List<Feed>(f => f.PollInterval % (_ticks * 60) == 0);
+            var feeds = _dataRepository.List<Feed>();
 
             if (feeds == null)
                 return;
 
-            foreach (var feed in feeds)
+            foreach (var feed in feeds.Where(f => f.PollInterval % (_ticks * 60) == 0))
             {
                 CheckFeed(feed);
             }

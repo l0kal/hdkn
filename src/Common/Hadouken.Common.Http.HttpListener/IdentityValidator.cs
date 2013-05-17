@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IdentityModel.Selectors;
+using Hadouken.Common.Security;
 
 namespace Hadouken.Common.Http.HttpListener
 {
@@ -19,7 +20,7 @@ namespace Hadouken.Common.Http.HttpListener
 
         public override void Validate(string userName, string password)
         {
-            if (!(String.Equals(_userName, userName) && String.Equals(_password, password)))
+            if (!(String.Equals(_userName, userName) && String.Equals(_password, Hash.Generate(password))))
                 throw new UnauthorizedAccessException();
         }
     }

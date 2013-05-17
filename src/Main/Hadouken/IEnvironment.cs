@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 
-namespace Hadouken.Common
+namespace Hadouken
 {
     public interface IEnvironment
     {

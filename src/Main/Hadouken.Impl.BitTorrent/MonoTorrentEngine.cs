@@ -43,10 +43,13 @@ namespace Hadouken.Impl.BitTorrent
         private ClientEngine _clientEngine;
         private Dictionary<string, ITorrentManager> _torrents = new Dictionary<string, ITorrentManager>();
 
-        public MonoTorrentEngine(IFileSystem fs, IMessageBusFactory mbusFactory, IDataRepository data, IKeyValueStore kvs)
+        public MonoTorrentEngine(IFileSystem fs,
+                                 IMessageBusFactory mbusFactory,
+                                 IDataRepositoryFactory repositoryFactory,
+                                 IKeyValueStore kvs)
         {
             _kvs = kvs;
-            _data = data;
+            _data = repositoryFactory.Create(HdknConfig.ConnectionString);
             _fs = fs;
             _mbus = mbusFactory.Create("hdkn");
 

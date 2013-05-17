@@ -11,7 +11,6 @@ using NLog;
 
 namespace Hadouken.Common.Data.FluentNHibernate
 {
-    [Component(ComponentType.Singleton)]
     public class FluentNHibernateDataRepository : IDataRepository
     {
 #pragma warning disable 0169
@@ -25,21 +24,26 @@ namespace Hadouken.Common.Data.FluentNHibernate
         private ISessionFactory _sessionFactory;
         private ISession _session;
 
-        private readonly IEnvironment _environment;
+        private readonly string _connectionString;
 
-        public FluentNHibernateDataRepository(IEnvironment environment)
+        public FluentNHibernateDataRepository(string connectionString)
         {
-            _environment = environment;
+            _connectionString = connectionString;
 
             BuildSessionFactory();
         }
 
+        public string ConnectionString
+        {
+            get { return _connectionString; }
+        }
+
         private void BuildSessionFactory()
         {
-            Logger.Debug("Creating the ISessionFactory with connection string {0}.", _environment.ConnectionString);
+            Logger.Debug("Creating the ISessionFactory with connection string {0}.", _connectionString);
 
             _sessionFactory = Fluently.Configure()
-                                      .Database(SQLiteConfiguration.Standard.ConnectionString(_environment.ConnectionString))
+                                      .Database(SQLiteConfiguration.Standard.ConnectionString(_connectionString))
                                       .Mappings(
                                           m => m.AutoMappings.Add(AutoMap.Assemblies(new CustomAutomappingConfig(),
                                                                                      AppDomain.CurrentDomain.GetAssemblies())

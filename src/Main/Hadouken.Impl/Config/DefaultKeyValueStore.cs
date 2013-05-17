@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using Hadouken.Common.Data;
 using Hadouken.Common.Messaging;
+using Hadouken.Common.Security;
 using Hadouken.Configuration;
 using Hadouken.Data;
 using Hadouken.Data.Models;
 using System.Web.Script.Serialization;
 using System.Linq.Expressions;
-
-using Hadouken.Security;
 
 using Microsoft.Win32;
 using Hadouken.Common;
@@ -24,9 +23,9 @@ namespace Hadouken.Impl.Config
         private readonly IDataRepository _data;
         private readonly IMessageBus _bus;
 
-        public DefaultKeyValueStore(IDataRepository data, IMessageBusFactory busFactory)
+        public DefaultKeyValueStore(IDataRepositoryFactory repositoryFactory, IMessageBusFactory busFactory)
         {
-            _data = data;
+            _data = repositoryFactory.Create(HdknConfig.ConnectionString);
             _bus = busFactory.Create("hdkn");
         }
 

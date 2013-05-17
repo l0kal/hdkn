@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using NLog;
 using Hadouken.Common;
 using Hadouken.Configuration;
@@ -17,6 +19,7 @@ namespace Hadouken.Plugins.PluginEngine
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly IEnvironment _environment;
         private readonly IFileSystem _fileSystem;
         private readonly IKeyValueStore _keyValueStore;
         private readonly IMessageBus _messageBus;
@@ -26,12 +29,14 @@ namespace Hadouken.Plugins.PluginEngine
         private readonly IDictionary<string, PluginInfo> _plugins =
             new Dictionary<string, PluginInfo>(StringComparer.InvariantCultureIgnoreCase); 
 
-        public DefaultPluginEngine(IFileSystem fileSystem,
+        public DefaultPluginEngine(IEnvironment environment,
+                                   IFileSystem fileSystem,
                                    IKeyValueStore keyValueStore,
                                    IMessageBusFactory messageBusFactory,
                                    IHttpFileSystemServer httpServer,
                                    IPluginLoader[] pluginLoaders)
         {
+            _environment = environment;
             _fileSystem = fileSystem;
             _keyValueStore = keyValueStore;
             _messageBus = messageBusFactory.Create("hdkn");
@@ -146,8 +151,22 @@ namespace Hadouken.Plugins.PluginEngine
             {
                 Logger.Debug("Creating plugin sandbox");
 
+                var httpUser = _keyValueStore.Get<string>("auth.username");
+                var httpPass = _keyValueStore.Get<string>("auth.password");
+                var binding = (_environment.HttpBinding.EndsWith("/")
+                                   ? _environment.HttpBinding + "api/plugins/" + info.Name
+                                   : _environment.HttpBinding + "/api/plugins/" + info.Name);
+
                 var sandbox = Sandbox.CreatePluginSandbox(info.Manifest, info.Assemblies);
-                sandbox.Load(info.Manifest);
+                sandbox.Load(new SetupInformation
+                    {
+                        DatabasePath = Path.Combine(HdknConfig.GetPath("Paths.Data"),
+                                                    String.Format("hdkn.plugins.{0}.db", info.Name)),
+                        HttpBinding = binding,
+                        HttpPassword = httpPass,
+                        HttpUsername = httpUser,
+                        PluginName = info.Name
+                    });
                 sandbox.ExtractResources(info.Manifest, _httpServer.RootDirectory);
 
                 info.Sandbox = sandbox;

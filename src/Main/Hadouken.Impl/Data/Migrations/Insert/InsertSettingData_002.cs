@@ -1,4 +1,4 @@
-﻿using Hadouken.Security;
+﻿using Hadouken.Common.Security;
 using Migrator.Framework;
 using System;
 using System.Collections.Generic;

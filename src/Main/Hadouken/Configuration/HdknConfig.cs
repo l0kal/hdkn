@@ -73,7 +73,7 @@ namespace Hadouken.Configuration
                 if (!_isInitialized)
                     Initialize();
 
-                return ConfigManager.ConnectionString;
+                return ConfigManager.ConnectionString.Replace("$Paths.Data$", GetPath("Paths.Data"));
             }
         }
 

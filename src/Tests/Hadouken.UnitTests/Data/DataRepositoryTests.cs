@@ -43,10 +43,7 @@ namespace Hadouken.UnitTests.Data
         [Test]
         public void Can_CRUD_records()
         {
-            var env = new Mock<IEnvironment>();
-            env.SetupGet(e => e.ConnectionString).Returns("Data Source=test.db; Version=3;");
-
-            var repo = new FluentNHibernateDataRepository(env.Object);
+            var repo = new FluentNHibernateDataRepository("Data Source=test.db; Version=3;");
 
             // Saving
             repo.Save(new Setting() { Key = "test", Value = "test" });

@@ -21,19 +21,16 @@ namespace HdknPlugins.AutoAdd
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly IEnvironment _environment;
         private readonly IDataRepository _dataRepository;
         private readonly IFileSystem _fileSystem;
         private readonly ITimer _timer;
 
-        public AutoAddPlugin(IEnvironment environment,
-                             IMessageBus messageBus,
+        public AutoAddPlugin(IMessageBus messageBus,
                              IDataRepository dataRepository,
                              IFileSystem fileSystem,
                              ITimerFactory timerFactory)
             : base(messageBus)
         {
-            _environment = environment;
             _dataRepository = dataRepository;
             _fileSystem = fileSystem;
             _timer = timerFactory.CreateTimer();
@@ -45,7 +42,7 @@ namespace HdknPlugins.AutoAdd
 
             var m =
                 new Migrator.Migrator(
-                    new SQLiteTransformationProvider(new SQLiteDialect(), _environment.ConnectionString),
+                    new SQLiteTransformationProvider(new SQLiteDialect(), _dataRepository.ConnectionString),
                     this.GetType().Assembly, false);
 
             Logger.Debug("Updating all migrations in current assembly");

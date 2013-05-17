@@ -6,12 +6,12 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Hadouken.Common.Security;
 using Hadouken.Http;
 using Hadouken.Common;
 using Hadouken.Configuration;
 using Ionic.Zip;
 using NLog;
-using Hadouken.Security;
 
 namespace Hadouken.Impl.Http
 {

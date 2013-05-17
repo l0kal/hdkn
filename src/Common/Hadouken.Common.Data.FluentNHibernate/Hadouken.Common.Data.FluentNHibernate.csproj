@@ -63,6 +63,7 @@
     <Compile Include="CustomAutomappingConfig.cs" />
     <Compile Include="EnumMappingConvention.cs" />
     <Compile Include="FluentNHibernateDataRepository.cs" />
+    <Compile Include="FluentNHibernateDataRepositoryFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

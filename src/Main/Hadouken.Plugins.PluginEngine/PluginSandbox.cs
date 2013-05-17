@@ -12,6 +12,7 @@ using Hadouken.Common.IO;
 using NLog;
 using Hadouken.Common.Http;
 using System.IO;
+using Hadouken.Common.Data;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -95,9 +96,9 @@ namespace Hadouken.Plugins.PluginEngine
             }
         }
 
-        public void Load(PluginManifest manifest)
+        internal void Load(SetupInformation setup)
         {
-            Logger.Debug("Loading plugin '{0}' in the sandbox.", manifest.Name);
+            Logger.Debug("Loading plugin '{0}' in the sandbox.", setup.PluginName);
 
             var resolverType = (from asm in AppDomain.CurrentDomain.GetAssemblies()
                                 from type in asm.GetTypes()
@@ -111,31 +112,22 @@ namespace Hadouken.Plugins.PluginEngine
             Kernel.BindToFunc(() =>
                 {
                     var factory = Kernel.Get<IMessageBusFactory>();
-                    return factory.Create("hdkn.plugins." + manifest.Name.ToLowerInvariant());
+                    return factory.Create("hdkn.plugins." + setup.PluginName.ToLowerInvariant());
                 });
 
             Kernel.BindToFunc(() =>
                 {
-                    var env = Kernel.Get<IEnvironment>();
-                    var factory = Kernel.Get<IHttpWebApiServerFactory>();
-
-                    return factory.Create(env.HttpBinding,
-                                          new NetworkCredential("hdkn", "hdkn"),
-                                          AppDomain.CurrentDomain.GetAssemblies());
+                    var factory = Kernel.Get<IDataRepositoryFactory>();
+                    return factory.Create(String.Format("Data Source={0}; Version=3;", setup.DatabasePath));
                 });
 
-            Kernel.BindToFunc<IEnvironment>(() =>
+            Kernel.BindToFunc(() =>
                 {
-                    var databasePath = System.IO.Path.Combine(ConfigurationManager.AppSettings["Paths.Data"],
-                                                              String.Format("hdkn.plugins.{0}.db", manifest.Name));
+                    var factory = Kernel.Get<IHttpWebApiServerFactory>();
 
-                    var env = new PluginEnvironment()
-                        {
-                            ConnectionString = String.Format("Data Source={0};", databasePath),
-                            HttpBinding = "http://localhost:8081/api/plugins/" + manifest.Name.ToLowerInvariant()
-                        };
-
-                    return env;
+                    return factory.Create(setup.HttpBinding,
+                                          new NetworkCredential(setup.HttpUsername, setup.HttpPassword), 
+                                          AppDomain.CurrentDomain.GetAssemblies());
                 });
 
             // Resolve the plugin

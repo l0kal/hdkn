@@ -8,6 +8,8 @@ namespace Hadouken.Common.Data
 {
     public interface IDataRepository
     {
+        string ConnectionString { get; }
+
         void Save<TModel>(TModel model) where TModel : Model, new();
         void SaveOrUpdate<TModel>(TModel model) where TModel : Model, new();
         void Update<TModel>(TModel model) where TModel : Model, new();
