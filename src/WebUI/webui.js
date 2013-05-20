@@ -442,7 +442,7 @@ var utWebUI = {
                         }
 
                         self.TOKEN = "";
-                        self.request.delay(delay * 1000, self, [qs, function(json) {
+                        self.request.delay(delay * 1000, self, [apiBase + qs, function(json) {
                             if (fails[0]) {
                                 fails[0] = 0;
                                     // Make sure callback gets called only once. Otherwise, WebUI may
@@ -450,7 +450,7 @@ var utWebUI = {
                                     // be exact, it may spam as many requests as there have been failures)
 
                                 log("Request retry succeeded: " + qs);
-                                if (fn) fn.delay(0, self, json);
+                                if (fn) fn.delay(0, self, [json]);
                                 self.beginPeriodicUpdate();
                             }
                         }, async, fails]);
