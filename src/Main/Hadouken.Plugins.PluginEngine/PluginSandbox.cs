@@ -22,14 +22,15 @@ namespace Hadouken.Plugins.PluginEngine
 
         private Plugin _plugin;
 
-        public PluginSandbox()
+        public PluginSandbox(IEnumerable<byte[]> assemblies)
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-        }
+            AppDomain.CurrentDomain.DomainUnload += (s, e) => { Unload(); };
 
-        public AppDomain AppDomain
-        {
-            get { return AppDomain.CurrentDomain; }
+            foreach (var asm in assemblies)
+            {
+                AppDomain.CurrentDomain.Load(asm);
+            }
         }
 
         System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -39,12 +40,9 @@ namespace Hadouken.Plugins.PluginEngine
                     select asm).FirstOrDefault();
         }
 
-        public void AddAssemblies(IEnumerable<byte[]> assemblies)
+        public AppDomain GetAppDomain()
         {
-            foreach (var asm in assemblies)
-            {
-                AppDomain.CurrentDomain.Load(asm);
-            }
+            return AppDomain.CurrentDomain;
         }
 
         internal void ExtractResources(PluginManifest manifest, string webRoot)

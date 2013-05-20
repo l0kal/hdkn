@@ -17,6 +17,8 @@ namespace Hadouken.Plugins.PluginEngine
 
         public string HttpPassword { get; set; }
 
+        public string HttpRoot { get; set; }
+
         public string PluginName { get; set; }
     }
 }

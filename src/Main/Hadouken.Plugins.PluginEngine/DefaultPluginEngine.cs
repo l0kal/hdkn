@@ -56,14 +56,18 @@ namespace Hadouken.Plugins.PluginEngine
 
             foreach (var item in blacklist)
             {
-                if (_plugins.ContainsKey(item) && _plugins[item].State == PluginState.Loaded)
-                    Unload(item);
+                PluginInfo plugin;
+
+                if (_plugins.TryGetValue(item, out plugin) && plugin.State == PluginState.Unloaded)
+                    Load(plugin);
             }
 
             foreach (var item in unblacklistedItems)
             {
-                if (_plugins.ContainsKey(item) && _plugins[item].State == PluginState.Unloaded)
-                    LoadSandbox(item);
+                PluginInfo plugin;
+
+                if (_plugins.TryGetValue(item, out plugin) && plugin.State == PluginState.Loaded)
+                    Load(plugin);
             }
         }
 
@@ -118,11 +122,7 @@ namespace Hadouken.Plugins.PluginEngine
                 return;
             }
 
-            var info = new PluginInfo(manifest.Name, manifest.Version);
-            info.Assemblies.AddRange(assemblies);
-            info.Manifest = manifest;
-
-            _plugins.Add(info.Name, info);
+            var info = new PluginInfo(manifest, assemblies.ToArray());
 
             var blacklist = _keyValueStore.Get("plugins.blacklist", new string[] { });
             if (blacklist.Contains(manifest.Name))
@@ -131,20 +131,19 @@ namespace Hadouken.Plugins.PluginEngine
                 return;
             }
 
-            LoadSandbox(info.Name);
+            Load(info);
         }
 
         /// <summary>
         /// Loads the sandbox for a plugin present in the _plugin dictionary.
         /// </summary>
-        /// <param name="name">The name of the plugin to load the sandbox for.</param>
-        internal void LoadSandbox(string name)
+        /// <param name="pluginInfo">The name of the plugin to load the sandbox for.</param>
+        internal void Load(PluginInfo pluginInfo)
         {
-            var info = _plugins[name];
-
-            if (info.Sandbox != null)
+            if (pluginInfo.State != PluginState.Unloaded)
             {
-                Logger.Error("Sandbox already exists for plugin {0}", info.Name);
+                Logger.Error("Plugin {0} already loaded.", pluginInfo.Name);
+                return;
             }
 
             try
@@ -154,58 +153,48 @@ namespace Hadouken.Plugins.PluginEngine
                 var httpUser = _keyValueStore.Get<string>("auth.username");
                 var httpPass = _keyValueStore.Get<string>("auth.password");
                 var binding = (_environment.HttpBinding.EndsWith("/")
-                                   ? _environment.HttpBinding + "api/plugins/" + info.Name
-                                   : _environment.HttpBinding + "/api/plugins/" + info.Name);
+                                   ? _environment.HttpBinding + "api/plugins/" + pluginInfo.Name
+                                   : _environment.HttpBinding + "/api/plugins/" + pluginInfo.Name);
 
-                var sandbox = Sandbox.CreatePluginSandbox(info.Manifest, info.Assemblies);
-                sandbox.Load(new SetupInformation
+                pluginInfo.Load(new SetupInformation
                     {
                         DatabasePath = Path.Combine(HdknConfig.GetPath("Paths.Data"),
-                                                    String.Format("hdkn.plugins.{0}.db", info.Name)),
+                                                    String.Format("hdkn.plugins.{0}.db", pluginInfo.Name)),
                         HttpBinding = binding,
                         HttpPassword = httpPass,
                         HttpUsername = httpUser,
-                        PluginName = info.Name
+                        HttpRoot = _httpServer.RootDirectory,
+                        PluginName = pluginInfo.Name
                     });
-                sandbox.ExtractResources(info.Manifest, _httpServer.RootDirectory);
 
-                info.Sandbox = sandbox;
+                if (!_plugins.ContainsKey(pluginInfo.Name))
+                    _plugins.Add(pluginInfo.Name, pluginInfo);
+
+                _messageBus.Publish(new PluginLoadedMessage { Name = pluginInfo.Name, Version = pluginInfo.Version });
             }
             catch (Exception e)
             {
-                Logger.ErrorException(String.Format("Could not load plugin {0}.", info.Name), e);
-
-                return;
+                Logger.ErrorException(String.Format("Could not load plugin {0}.", pluginInfo.Name), e);
             }
-
-            _plugins[name].State = PluginState.Loaded;
-            _messageBus.Publish(new PluginLoadedMessage { Name = info.Name, Version = info.Version });
         }
 
         public void Unload(string name)
         {
-            if (!_plugins.ContainsKey(name))
+            PluginInfo pluginInfo;
+
+            if (!_plugins.TryGetValue(name, out pluginInfo))
                 return;
 
-            Logger.Info("Unloading plugin {0}", name);
+            Logger.Info("Unloading plugin {0}", pluginInfo.Name);
 
-            var sandbox = _plugins[name].Sandbox;
-
-            if (sandbox != null)
+            try
             {
-                try
-                {
-                    sandbox.Unload();
-                    AppDomain.Unload(sandbox.AppDomain);
-                }
-                catch (Exception e)
-                {
-                    Logger.ErrorException("Error when unloading plugin sandbox", e);
-                }
+                pluginInfo.Unload();
             }
-
-            _plugins[name].Sandbox = null;
-            _plugins[name].State = PluginState.Unloaded;
+            catch (Exception e)
+            {
+                Logger.ErrorException("Error when unloading plugin sandbox", e);
+            }
         }
 
         public void UnloadAll()

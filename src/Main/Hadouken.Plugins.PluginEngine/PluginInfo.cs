@@ -1,31 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Hadouken.Plugins.PluginEngine
 {
     public sealed class PluginInfo : IPluginInfo
     {
-        public PluginInfo(string name, Version version)
-        {
-            Name = name;
-            Version = version;
-            State = PluginState.Unloaded;
+        private readonly PluginManifest _manifest;
+        private readonly IEnumerable<byte[]> _assemblies;
 
-            Assemblies = new List<byte[]>();
+        private AppDomain _appDomain;
+
+        public PluginInfo(PluginManifest manifest, IEnumerable<byte[]> assemblies)
+        {
+            _assemblies = assemblies.ToList();
+            _manifest = manifest;
+
+            State = PluginState.Unloaded;
         }
 
-        public string Name { get; private set; }
+        public string Name { get { return _manifest.Name; } }
 
-        public Version Version { get; private set; }
+        public Version Version { get { return _manifest.Version; } }
 
-        public PluginState State { get; internal set; }
+        public PluginState State { get; private set; }
 
-        public PluginSandbox Sandbox { get; set; }
+        internal void Load(SetupInformation setupInformation)
+        {
+            if (State != PluginState.Unloaded)
+                return;
 
-        public PluginManifest Manifest { get; set; }
+            if (_appDomain != null)
+                return;
 
-        public List<byte[]> Assemblies { get; private set; } 
+            var sandbox = Sandbox.CreatePluginSandbox(_manifest, _assemblies);
+            sandbox.Load(setupInformation);
+            sandbox.ExtractResources(_manifest, setupInformation.HttpRoot);
+
+            _appDomain = sandbox.GetAppDomain();
+
+            State = PluginState.Loaded;
+        }
+
+        internal void Unload()
+        {
+            AppDomain.Unload(_appDomain);
+            _appDomain = null;
+
+            State = PluginState.Unloaded;
+        }
     }
 }

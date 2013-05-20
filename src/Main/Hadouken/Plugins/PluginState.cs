@@ -7,7 +7,6 @@ namespace Hadouken.Plugins
 {
     public enum PluginState
     {
-        Unknown = 0,
         Loading,
         Loaded,
         Unloading,

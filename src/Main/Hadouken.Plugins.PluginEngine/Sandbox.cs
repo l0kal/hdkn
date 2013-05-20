@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Permissions;
 using System.Text;
 using System.Security;
@@ -49,9 +50,14 @@ namespace Hadouken.Plugins.PluginEngine
 
 
             var ps = (PluginSandbox) domain.CreateInstanceFromAndUnwrap(typeof (PluginSandbox).Assembly.Location,
-                                                                        typeof (PluginSandbox).FullName);
-            ps.AddAssemblies(assemblies);
-
+                                                                        typeof (PluginSandbox).FullName,
+                                                                        false,
+                                                                        BindingFlags.Default,
+                                                                        null,
+                                                                        new object[] {assemblies},
+                                                                        null,
+                                                                        null);
+            
             Logger.Debug("Created a new AppDomain named '{0}'", domain.FriendlyName);
 
             return ps;
