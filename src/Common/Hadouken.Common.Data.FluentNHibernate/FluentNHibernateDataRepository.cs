@@ -63,6 +63,7 @@ namespace Hadouken.Common.Data.FluentNHibernate
             lock (_lock)
             {
                 _session.Save(model);
+                _session.Flush();
             }
         }
 
@@ -71,6 +72,7 @@ namespace Hadouken.Common.Data.FluentNHibernate
             lock (_lock)
             {
                 _session.SaveOrUpdate(model);
+                _session.Flush();
             }
         }
 
@@ -79,6 +81,7 @@ namespace Hadouken.Common.Data.FluentNHibernate
             lock (_lock)
             {
                 _session.Update(model);
+                _session.Flush();
             }
         }
 
@@ -87,6 +90,7 @@ namespace Hadouken.Common.Data.FluentNHibernate
             lock (_lock)
             {
                 _session.Delete(model);
+                _session.Flush();
             }
         }
 
