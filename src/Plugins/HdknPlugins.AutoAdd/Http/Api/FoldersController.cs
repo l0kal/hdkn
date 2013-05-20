@@ -75,7 +75,7 @@ namespace HdknPlugins.AutoAdd.Http.Api
             }
         }
 
-        public HttpResponseMessage Delete(int id)
+        public HttpResponseMessage Delete([FromUri] int id)
         {
             var f = _repository.Single<Folder>(id);
 
