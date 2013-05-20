@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Web.Http;
 using Hadouken.Plugins;
+using System.Net.Http;
 
 namespace Hadouken.Http.Api
 {
@@ -26,5 +28,34 @@ namespace Hadouken.Http.Api
                             plugin.State
                         });
         } 
+
+        public HttpResponseMessage Put([FromUri] string id, [FromBody] Dictionary<string, object> data)
+        {
+            foreach (var key in data.Keys)
+            {
+                switch (key)
+                {
+                    case "action":
+                        var state = data[key].ToString().ToLowerInvariant();
+
+                        switch (state)
+                        {
+                            case "load":
+                                _pluginEngine.Load(id);
+                                break;
+                            case "unload":
+                                _pluginEngine.Unload(id);
+                                break;
+                        }
+
+                        break;
+                }
+            }
+
+            using (var response = Request.CreateResponse(HttpStatusCode.NoContent))
+            {
+                return response;
+            }
+        }
     }
 }

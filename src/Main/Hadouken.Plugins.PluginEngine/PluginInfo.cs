@@ -35,6 +35,8 @@ namespace Hadouken.Plugins.PluginEngine
             if (_appDomain != null)
                 return;
 
+            State = PluginState.Loading;
+
             var sandbox = Sandbox.CreatePluginSandbox(_manifest, _assemblies);
             sandbox.Load(setupInformation);
             sandbox.ExtractResources(_manifest, setupInformation.HttpRoot);

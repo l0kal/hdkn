@@ -15,10 +15,10 @@ namespace Hadouken.Plugins
         void Load();
 
         /// <summary>
-        /// Load a plugin from the path specified.
+        /// Load the plugin with the specified name
         /// </summary>
-        /// <param name="path">The path to a plugin.</param>
-        void Load(string path);
+        /// <param name="name">The name of the plugin to load.</param>
+        void Load(string name);
 
         /// <summary>
         /// Unloads the plugin with the specified name.

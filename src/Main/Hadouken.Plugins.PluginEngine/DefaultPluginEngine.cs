@@ -11,6 +11,7 @@ using Hadouken.Common.IO;
 using Hadouken.Common.Messaging;
 using Hadouken.Common.Plugins;
 using Hadouken.Http;
+using System.Threading.Tasks;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -59,7 +60,7 @@ namespace Hadouken.Plugins.PluginEngine
                 PluginInfo plugin;
 
                 if (_plugins.TryGetValue(item, out plugin) && plugin.State == PluginState.Unloaded)
-                    Load(plugin);
+                    UnloadPlugin(plugin);
             }
 
             foreach (var item in unblacklistedItems)
@@ -67,7 +68,7 @@ namespace Hadouken.Plugins.PluginEngine
                 PluginInfo plugin;
 
                 if (_plugins.TryGetValue(item, out plugin) && plugin.State == PluginState.Loaded)
-                    Load(plugin);
+                    LoadPlugin(plugin);
             }
         }
 
@@ -82,11 +83,30 @@ namespace Hadouken.Plugins.PluginEngine
 
             foreach (var file in _fileSystem.GetFileSystemInfos(path))
             {
-                Load(file.FullName);
+                LoadPath(file.FullName);
             }
         }
 
-        public void Load(string path)
+        public void Load(string name)
+        {
+            PluginInfo pluginInfo;
+
+            if (!_plugins.TryGetValue(name, out pluginInfo))
+                return;
+
+            Logger.Info("Loading plugin {0}", pluginInfo.Name);
+
+            try
+            {
+                LoadPlugin(pluginInfo);
+            }
+            catch (Exception e)
+            {
+                Logger.ErrorException("Error when loading plugin sandbox", e);
+            }
+        }
+
+        internal void LoadPath(string path)
         {
             Logger.Trace("Load(\"{0}\");", path);
 
@@ -131,14 +151,14 @@ namespace Hadouken.Plugins.PluginEngine
                 return;
             }
 
-            Load(info);
+            LoadPlugin(info);
         }
 
         /// <summary>
         /// Loads the sandbox for a plugin present in the _plugin dictionary.
         /// </summary>
         /// <param name="pluginInfo">The name of the plugin to load the sandbox for.</param>
-        internal void Load(PluginInfo pluginInfo)
+        internal void LoadPlugin(PluginInfo pluginInfo)
         {
             if (pluginInfo.State != PluginState.Unloaded)
             {
@@ -149,6 +169,9 @@ namespace Hadouken.Plugins.PluginEngine
             try
             {
                 Logger.Debug("Creating plugin sandbox");
+
+                if (!_plugins.ContainsKey(pluginInfo.Name))
+                    _plugins.Add(pluginInfo.Name, pluginInfo);
 
                 var httpUser = _keyValueStore.Get<string>("auth.username");
                 var httpPass = _keyValueStore.Get<string>("auth.password");
@@ -167,10 +190,11 @@ namespace Hadouken.Plugins.PluginEngine
                         PluginName = pluginInfo.Name
                     });
 
-                if (!_plugins.ContainsKey(pluginInfo.Name))
-                    _plugins.Add(pluginInfo.Name, pluginInfo);
-
-                _messageBus.Publish(new PluginLoadedMessage { Name = pluginInfo.Name, Version = pluginInfo.Version });
+                _messageBus.Publish(new PluginLoadedMessage
+                    {
+                        Name = pluginInfo.Name,
+                        Version = pluginInfo.Version
+                    });
             }
             catch (Exception e)
             {
@@ -189,12 +213,20 @@ namespace Hadouken.Plugins.PluginEngine
 
             try
             {
-                pluginInfo.Unload();
+                UnloadPlugin(pluginInfo);
             }
             catch (Exception e)
             {
                 Logger.ErrorException("Error when unloading plugin sandbox", e);
             }
+        }
+
+        internal void UnloadPlugin(PluginInfo pluginInfo)
+        {
+            if (pluginInfo == null)
+                throw new ArgumentNullException("pluginInfo");
+
+            pluginInfo.Unload();
         }
 
         public void UnloadAll()
