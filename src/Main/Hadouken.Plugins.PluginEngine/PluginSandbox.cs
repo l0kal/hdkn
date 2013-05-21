@@ -25,7 +25,7 @@ namespace Hadouken.Plugins.PluginEngine
         public PluginSandbox(IEnumerable<byte[]> assemblies)
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-            AppDomain.CurrentDomain.DomainUnload += (s, e) => { Unload(); };
+            AppDomain.CurrentDomain.DomainUnload += (s, e) => Unload();
 
             foreach (var asm in assemblies)
             {
