@@ -56,13 +56,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="ActionMessageHandlerWrapper.cs" />
     <Compile Include="ConsumerFactoryConfigurator.cs" />
     <Compile Include="MassTransitExtensions.cs" />
     <Compile Include="MsmqMessageBus.cs" />
     <Compile Include="IMsmqMessageBus.cs" />
     <Compile Include="MsmqMessageBusFactory.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">

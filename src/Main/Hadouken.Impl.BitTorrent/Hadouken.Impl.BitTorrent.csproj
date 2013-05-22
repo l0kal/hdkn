@@ -63,6 +63,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Handlers\AddTorrentHandler.cs" />
     <Compile Include="HdknBitField.cs" />
     <Compile Include="HdknPeer.cs" />
@@ -72,7 +75,6 @@
     <Compile Include="HdknTorrentSettings.cs" />
     <Compile Include="HdknTracker.cs" />
     <Compile Include="MonoTorrentEngine.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">

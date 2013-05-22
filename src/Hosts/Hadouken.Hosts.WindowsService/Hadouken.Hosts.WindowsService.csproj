@@ -84,12 +84,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="HdknService.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Hadouken.Common.Data.FluentNHibernate\Hadouken.Common.Data.FluentNHibernate.csproj">

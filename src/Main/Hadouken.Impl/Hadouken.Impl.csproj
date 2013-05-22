@@ -78,6 +78,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Config\DefaultKeyValueStore.cs" />
     <Compile Include="Config\DefaultRegistryReader.cs" />
     <Compile Include="Data\DefaultMigratorRunner.cs" />
@@ -93,7 +96,6 @@
     <Compile Include="HostEnvironment.cs" />
     <Compile Include="Hosting\DefaultHadoukenHost.cs" />
     <Compile Include="Http\HttpListenerServer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
