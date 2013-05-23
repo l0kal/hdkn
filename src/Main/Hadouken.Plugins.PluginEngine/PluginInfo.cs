@@ -9,13 +9,13 @@ namespace Hadouken.Plugins.PluginEngine
     public sealed class PluginInfo : IPluginInfo
     {
         private readonly PluginManifest _manifest;
-        private readonly IEnumerable<byte[]> _assemblies;
+        private readonly string[] _assemblies;
 
         private AppDomain _appDomain;
 
-        public PluginInfo(PluginManifest manifest, IEnumerable<byte[]> assemblies)
+        public PluginInfo(PluginManifest manifest, string[] assemblies)
         {
-            _assemblies = assemblies.ToList();
+            _assemblies = assemblies;
             _manifest = manifest;
 
             State = PluginState.Unloaded;

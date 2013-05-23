@@ -21,11 +21,10 @@ namespace Hadouken.Plugins.PluginEngine.Loaders
             return _fileSystem.IsDirectory(path);
         }
 
-        public IList<byte[]> Load(string path)
+        public string[] Load(string path)
         {
-            return (from f in _fileSystem.GetFiles(path)
-                    where f.EndsWith(".dll")
-                    select _fileSystem.ReadAllBytes(f)).ToList();
+            return (from f in _fileSystem.GetFiles(path, "*.dll")
+                    select f).ToArray();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Reflection;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -12,9 +13,19 @@ namespace Hadouken.Plugins.PluginEngine
     {
         private static readonly JsonSerializer Serializer = new JsonSerializer();
 
+        private readonly string[] _assemblies;
+
         static PluginManifestReader()
         {
             Serializer.Converters.Add(new VersionConverter());
+        }
+
+        public PluginManifestReader(IEnumerable<string> assemblies)
+        {
+            foreach (var asm in assemblies)
+            {
+                Assembly.LoadFile(asm);
+            }
         }
 
         public PluginManifest ReadManifest()
@@ -40,14 +51,6 @@ namespace Hadouken.Plugins.PluginEngine
                 {
                     return Serializer.Deserialize<PluginManifest>(new JsonTextReader(reader));
                 }
-            }
-        }
-
-        internal void Load(IEnumerable<byte[]> assemblies)
-        {
-            foreach (var asm in assemblies)
-            {
-                AppDomain.CurrentDomain.Load(asm);
             }
         }
     }

@@ -6,6 +6,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Security;
 using NLog;
+using System.IO;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -13,16 +14,20 @@ namespace Hadouken.Plugins.PluginEngine
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static PluginManifest ReadManifest(IEnumerable<byte[]> assemblies)
+        public static PluginManifest ReadManifest(string[] assemblies)
         {
             var domain = AppDomain.CreateDomain("temp");
 
             var manifestReader =
                 (PluginManifestReader)
                 domain.CreateInstanceFromAndUnwrap(typeof (PluginManifestReader).Assembly.Location,
-                                                   typeof (PluginManifestReader).FullName);
-
-            manifestReader.Load(assemblies);
+                                                   typeof (PluginManifestReader).FullName,
+                                                   false,
+                                                   BindingFlags.Default,
+                                                   null,
+                                                   new object[] {assemblies},
+                                                   null,
+                                                   null);
 
             var manifest = manifestReader.ReadManifest();
 
@@ -31,7 +36,7 @@ namespace Hadouken.Plugins.PluginEngine
             return manifest;
         }
 
-        internal static PluginSandbox CreatePluginSandbox(PluginManifest manifest, IEnumerable<byte[]> assemblies)
+        internal static PluginSandbox CreatePluginSandbox(PluginManifest manifest, string[] assemblies)
         {
             if (manifest == null)
                 throw new ArgumentNullException("manifest");
@@ -43,7 +48,9 @@ namespace Hadouken.Plugins.PluginEngine
                 {
                     ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                     ApplicationName = String.Format("{0}-{1}", manifest.Name, manifest.Version).ToLowerInvariant(),
-                    ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile
+                    ConfigurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
+                    PrivateBinPath =
+                        Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "Plugins", manifest.Name)
                 };
 
             var domain = AppDomain.CreateDomain(setup.ApplicationName, null, setup);

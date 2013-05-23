@@ -13,6 +13,7 @@ using NLog;
 using Hadouken.Common.Http;
 using System.IO;
 using Hadouken.Common.Data;
+using System.Reflection;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -22,22 +23,14 @@ namespace Hadouken.Plugins.PluginEngine
 
         private Plugin _plugin;
 
-        public PluginSandbox(IEnumerable<byte[]> assemblies)
+        public PluginSandbox(IEnumerable<string> assemblies)
         {
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             AppDomain.CurrentDomain.DomainUnload += (s, e) => Unload();
 
             foreach (var asm in assemblies)
             {
-                AppDomain.CurrentDomain.Load(asm);
+                Assembly.LoadFile(asm);
             }
-        }
-
-        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            return (from asm in AppDomain.CurrentDomain.GetAssemblies()
-                    where asm.FullName == args.Name
-                    select asm).FirstOrDefault();
         }
 
         public AppDomain GetAppDomain()
@@ -100,7 +93,7 @@ namespace Hadouken.Plugins.PluginEngine
 
             var resolverType = (from asm in AppDomain.CurrentDomain.GetAssemblies()
                                 from type in asm.GetTypes()
-                                where typeof (IDependencyResolver).IsAssignableFrom(type)
+                                where typeof(IDependencyResolver).IsAssignableFrom(type)
                                 where type.IsClass && !type.IsAbstract
                                 select type).First();
 

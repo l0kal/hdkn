@@ -120,15 +120,16 @@ namespace Hadouken.Plugins.PluginEngine
                 return;
             }
 
-            var assemblies = pluginLoader.Load(path);
+            var assemblies = pluginLoader.Load(path).ToList();
+
             // Add common assemblies to list
             foreach (var file in _fileSystem.GetFiles(HdknConfig.WorkingDirectory,
                                                       "Hadouken.Common.**.dll"))
             {
-                assemblies.Add(_fileSystem.ReadAllBytes(file));
+                assemblies.Add(file);
             }
 
-            var manifest = Sandbox.ReadManifest(assemblies);
+            var manifest = Sandbox.ReadManifest(assemblies.ToArray());
 
             if (manifest == null)
             {

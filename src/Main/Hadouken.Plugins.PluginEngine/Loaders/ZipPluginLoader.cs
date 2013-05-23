@@ -28,23 +28,20 @@ namespace Hadouken.Plugins.PluginEngine.Loaders
             return (header == 0x04034b50 && path.EndsWith(".zip"));
         }
 
-        public IList<byte[]> Load(string path)
+        public string[] Load(string path)
         {
-            var data = new List<byte[]>();
+            var tmpPath = Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(path));
 
             using (ZipFile file = ZipFile.Read(_fileSystem.OpenRead(path)))
             {
-                foreach(var entry in file.Entries.Where(e => e.FileName.EndsWith(".dll")))
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        entry.Extract(ms);
-                        data.Add(ms.ToArray());
-                    }
-                }
+                if (!_fileSystem.DirectoryExists(tmpPath))
+                    _fileSystem.CreateDirectory(tmpPath);
+
+                file.ExtractAll(tmpPath);
             }
 
-            return data;
+            return (from f in _fileSystem.GetFiles(tmpPath, "*.dll")
+                    select f).ToArray();
         }
     }
 }

@@ -6,6 +6,6 @@ namespace Hadouken.Plugins.PluginEngine
     public interface IPluginLoader
     {
         bool CanLoad(string path);
-        IList<byte[]> Load(string path);
+        string[] Load(string path);
     }
 }

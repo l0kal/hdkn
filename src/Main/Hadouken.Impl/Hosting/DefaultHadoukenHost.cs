@@ -66,7 +66,7 @@ namespace Hadouken.Impl.Hosting
             Logger.Debug("Loading the IBitTorrentEngine implementation");
             _torrentEngine.Load();
 
-            Logger.Debug("Loading the IPluginEngine implementation");
+            //Logger.Debug("Loading the IPluginEngine implementation");
             _pluginEngine.Load();
 
             var httpUser = _keyValueStore.Get<string>("auth.username");
