@@ -6,6 +6,7 @@ using System.Text;
 using NUnit.Framework;
 using Hadouken.Impl.Messaging;
 using Hadouken.Messaging;
+using System.Threading;
 
 namespace Hadouken.UnitTests.Messaging
 {
@@ -20,16 +21,17 @@ namespace Hadouken.UnitTests.Messaging
         [Test]
         public void Can_send_and_receive_messages()
         {
-            bool seen = false;
+            var mre = new ManualResetEvent(false);
 
             var mb = new DefaultMessageBus();
             mb.Subscribe<ITestMessage>(msg =>
-            {
-                seen = msg.Test == "1";
-            });
-            mb.Send<ITestMessage>(msgBuilder => { msgBuilder.Test = "1"; }).Wait();
+                {
+                    if (msg.Test == "1")
+                        mre.Set();
+                });
+            mb.Send<ITestMessage>(msgBuilder => { msgBuilder.Test = "1"; });
 
-            Assert.IsTrue(seen);
+            Assert.IsTrue(mre.WaitOne());
         }
     }
 }
