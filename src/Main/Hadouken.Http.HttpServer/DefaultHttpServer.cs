@@ -20,6 +20,14 @@ namespace Hadouken.Http.HttpServer
         private static readonly int DefaultPort = 8081;
         private static readonly string DefaultBinding = "http://localhost:{port}/";
 
+        private static readonly IDictionary<string, string> MimeTypes = new Dictionary<string, string>()
+            {
+                { ".html", "text/html" },
+                { ".css", "text/css" },
+                { ".js", "text/javascript" },
+                { ".png", "image/png" }
+            }; 
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly IFileSystem _fileSystem;
@@ -52,13 +60,14 @@ namespace Hadouken.Http.HttpServer
             try
             {
                 _listener.Start();
-            } catch(HttpListenerException e)
+            }
+            catch(HttpListenerException e)
             {
                 Logger.FatalException("Could not start the HTTP server interface. HTTP server NOT up and running.", e);
                 return;
             }
 
-            ReceiveLoop();
+            _listener.BeginGetContext(BeginGetContext, null);
 
             Logger.Info("HTTP server up and running on address " + ListenUri);
         }
@@ -69,7 +78,6 @@ namespace Hadouken.Http.HttpServer
 
             _listener.Stop();
             _listener.Close();
-            _listener = null;
         }
 
         public Uri ListenUri
@@ -95,26 +103,25 @@ namespace Hadouken.Http.HttpServer
             return binding.Replace("{port}", port.ToString());;
         }
 
-        private void ReceiveLoop()
+        private void BeginGetContext(IAsyncResult ar)
         {
-            _listener.BeginGetContext(ar =>
+            try
             {
-                HttpListenerContext context;
+                var context = _listener.EndGetContext(ar);
 
-                try
-                {
-                    context = _listener.EndGetContext(ar);
-                }
-                catch(Exception)
-                {
-                    return;
-                }
+                if (IsAuthenticatedUser(context.User.Identity as HttpListenerBasicIdentity))
+                    Task.Factory.StartNew(() => ProcessRequest(new HttpContext(context)));
 
-                ReceiveLoop();
-
-                new Task(() => ProcessRequest(new HttpContext(context))).Start();
-
-            }, null);
+                _listener.BeginGetContext(BeginGetContext, null);
+            }
+            catch (HttpListenerException)
+            {
+                // ignore this exception
+            }
+            catch (Exception e)
+            {
+                Logger.ErrorException("Error when getting context", e);
+            }
         }
 
         private void ProcessRequest(IHttpContext context)
@@ -123,28 +130,20 @@ namespace Hadouken.Http.HttpServer
             {
                 Logger.Trace("Incoming request to {0}", context.Request.Url);
 
-                if(IsAuthenticatedUser(context))
+                string url = context.Request.Url.AbsolutePath;
+
+                var result = (((url == "/api" || url == "/api/") && context.Request.QueryString["action"] != null)
+                                    ? FindAndExecuteAction(context)
+                                    : CheckFileSystem(context));
+
+                if (result != null)
                 {
-                    string url = context.Request.Url.AbsolutePath;
-
-                    var result = (((url == "/api" || url == "/api/") && context.Request.QueryString["action"] != null)
-                                      ? FindAndExecuteAction(context)
-                                      : CheckFileSystem(context));
-
-                    if (result != null)
-                    {
-                        result.Execute(context);
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = 404;
-                        context.Response.StatusDescription = "404 - File not found";
-                    }
+                    result.Execute(context);
                 }
                 else
                 {
-                    Logger.Info("Unauthorized user");
-                    context.Response.Unauthorized();
+                    context.Response.StatusCode = 404;
+                    context.Response.StatusDescription = "404 - File not found";
                 }
 
                 context.Response.OutputStream.Flush();
@@ -162,7 +161,7 @@ namespace Hadouken.Http.HttpServer
         {
             _webUIPath = HdknConfig.GetPath("Paths.WebUI");
 
-            string uiZip = Path.Combine(_webUIPath, "webui.zip");
+            string uiZip = Path.Combine(HdknConfig.ApplicationDirectory, "webui.zip");
 
             Logger.Debug("Checking if webui.zip exists at {0}", uiZip);
 
@@ -184,30 +183,14 @@ namespace Hadouken.Http.HttpServer
 
         private ActionResult CheckFileSystem(IHttpContext context)
         {
-            string path = _webUIPath + (context.Request.Url.AbsolutePath == "/" ? "/index.html" : context.Request.Url.AbsolutePath);
+            var path = _webUIPath + (context.Request.Url.AbsolutePath == "/" ? "/index.html" : context.Request.Url.AbsolutePath);
 
             if (_fileSystem.FileExists(path))
             {
-                string contentType = "text/html";
+                var contentType = "text/html";
 
-                switch (Path.GetExtension(path))
-                {
-                    case ".css":
-                        contentType = "text/css";
-                        break;
-
-                    case ".js":
-                        contentType = "text/javascript";
-                        break;
-
-                    case ".png":
-                        contentType = "image/png";
-                        break;
-
-                    case ".gif":
-                        contentType = "image/gif";
-                        break;
-                }
+                if (MimeTypes.ContainsKey(Path.GetExtension(path)))
+                    contentType = MimeTypes[Path.GetExtension(path)];
 
                 return new ContentResult { Content = _fileSystem.ReadAllBytes(path), ContentType = contentType };
             }
@@ -215,19 +198,17 @@ namespace Hadouken.Http.HttpServer
             return null;
         }
 
-        private bool IsAuthenticatedUser(IHttpContext context)
+        private bool IsAuthenticatedUser(HttpListenerBasicIdentity identity)
         {
-            if (context.User.Identity.IsAuthenticated)
-            {
-                var id = (HttpListenerBasicIdentity)context.User.Identity;
+            if (identity == null)
+                return false;
 
-                var usr = _keyValueStore.Get<string>("auth.username");
-                var pwd = _keyValueStore.Get<string>("auth.password");
+            var usr = _keyValueStore.Get<string>("auth.username");
+            var pwd = _keyValueStore.Get<string>("auth.password");
+            var comp = StringComparison.InvariantCultureIgnoreCase;
 
-                return (id.Name == usr && Hash.Generate(id.Password) == pwd);
-            }
-
-            return false;
+            return (String.Equals(usr, identity.Name, comp) &&
+                    String.Equals(pwd, Hash.Generate(identity.Password), comp));
         }
 
         private ActionResult FindAndExecuteAction(IHttpContext context)
