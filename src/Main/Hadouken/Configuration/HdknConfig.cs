@@ -79,7 +79,7 @@ namespace Hadouken.Configuration
 
         public static string ApplicationDirectory
         {
-            get { return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); }
+            get { return Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.ApplicationBase); }
         }
     }
 }
