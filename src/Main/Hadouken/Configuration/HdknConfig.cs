@@ -38,7 +38,7 @@ namespace Hadouken.Configuration
 
             var asm = Assembly.GetEntryAssembly();
             if (asm != null)
-                path = path.Replace("$BaseDir$", Path.GetDirectoryName(asm.Location));
+                path = path.Replace("$BaseDir$", ApplicationDirectory);
 
             return Environment.ExpandEnvironmentVariables(path);
         }
@@ -75,6 +75,11 @@ namespace Hadouken.Configuration
 
                 return ConfigManager.ConnectionString;
             }
+        }
+
+        public static string ApplicationDirectory
+        {
+            get { return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); }
         }
     }
 }

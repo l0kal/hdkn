@@ -76,12 +76,7 @@ namespace Hadouken.Http.HttpServer
         {
             get
             {
-                if (_listener.IsListening)
-                {
-                    return new Uri(_listener.Prefixes.First());
-                }
-
-                return null;
+                return _listener.IsListening ? new Uri(_listener.Prefixes.First()) : null;
             }
         }
 
@@ -148,6 +143,7 @@ namespace Hadouken.Http.HttpServer
                 }
                 else
                 {
+                    Logger.Info("Unauthorized user");
                     context.Response.Unauthorized();
                 }
 
@@ -157,6 +153,7 @@ namespace Hadouken.Http.HttpServer
             }
             catch(Exception e)
             {
+                Logger.ErrorException("Error when processing request.", e);
                 context.Response.Error(e);
             }
         }
@@ -182,10 +179,6 @@ namespace Hadouken.Http.HttpServer
                 }
 
                 _webUIPath = path;
-            }
-            else
-            {
-                _webUIPath = Path.Combine(_webUIPath, "WebUI");
             }
         }
 
