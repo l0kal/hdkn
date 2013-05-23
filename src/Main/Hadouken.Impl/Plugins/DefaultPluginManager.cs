@@ -10,6 +10,7 @@ using System.Reflection;
 using NLog;
 using Hadouken.Messaging;
 using Hadouken.Messages;
+using System.IO;
 
 namespace Hadouken.Impl.Plugins
 {
@@ -38,7 +39,21 @@ namespace Hadouken.Impl.Plugins
 
         public byte[] GetResource(string name)
         {
-            throw new NotImplementedException();
+            var resource = _attribute.ResourceBase + "." + name;
+
+            using (var stream = _instance.GetType().Assembly.GetManifestResourceStream(resource))
+            {
+                if (stream != null)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        stream.CopyTo(ms);
+                        return ms.ToArray();
+                    }
+                }
+
+                return null;
+            }
         }
 
         public void Load()
