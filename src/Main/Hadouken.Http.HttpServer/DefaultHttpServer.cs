@@ -114,7 +114,7 @@ namespace Hadouken.Http.HttpServer
 
                 _listener.BeginGetContext(BeginGetContext, null);
             }
-            catch (HttpListenerException)
+            catch (ObjectDisposedException)
             {
                 // ignore this exception
             }
