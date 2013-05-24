@@ -130,10 +130,6 @@
       <Project>{5926E8BA-144B-4B88-93D5-56C2D5CA6573}</Project>
       <Name>Hadouken.Common.IO.Local</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\Hadouken.Common.Messaging.Msmq\Hadouken.Common.Messaging.Msmq.csproj">
-      <Project>{45144E7E-D412-468F-857F-3D7665CC971F}</Project>
-      <Name>Hadouken.Common.Messaging.Msmq</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
       <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
       <Name>Hadouken.Common</Name>

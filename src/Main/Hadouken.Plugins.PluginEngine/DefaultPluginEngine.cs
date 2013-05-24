@@ -8,7 +8,6 @@ using NLog;
 using Hadouken.Common;
 using Hadouken.Configuration;
 using Hadouken.Common.IO;
-using Hadouken.Common.Messaging;
 using Hadouken.Common.Plugins;
 using Hadouken.Http;
 using System.Threading.Tasks;
@@ -23,7 +22,6 @@ namespace Hadouken.Plugins.PluginEngine
         private readonly IEnvironment _environment;
         private readonly IFileSystem _fileSystem;
         private readonly IKeyValueStore _keyValueStore;
-        private readonly IMessageBus _messageBus;
         private readonly IHttpFileSystemServer _httpServer;
         private readonly IPluginLoader[] _pluginLoaders;
 
@@ -33,43 +31,15 @@ namespace Hadouken.Plugins.PluginEngine
         public DefaultPluginEngine(IEnvironment environment,
                                    IFileSystem fileSystem,
                                    IKeyValueStore keyValueStore,
-                                   IMessageBusFactory messageBusFactory,
                                    IHttpFileSystemServer httpServer,
                                    IPluginLoader[] pluginLoaders)
         {
             _environment = environment;
             _fileSystem = fileSystem;
             _keyValueStore = keyValueStore;
-            _messageBus = messageBusFactory.Create("hdkn");
             _httpServer = httpServer;
             _pluginLoaders = pluginLoaders;
 
-            _messageBus.Subscribe<KeyValueChangedMessage>(OnBlacklistChanged);
-        }
-
-        private void OnBlacklistChanged(KeyValueChangedMessage message)
-        {
-            if (!String.Equals("plugins.blacklist", message.Key))
-                return;
-
-            var blacklist = _keyValueStore.Get(message.Key, new string[] {});
-            var unblacklistedItems = _plugins.Keys.Except(blacklist);
-
-            foreach (var item in blacklist)
-            {
-                PluginInfo plugin;
-
-                if (_plugins.TryGetValue(item, out plugin) && plugin.State == PluginState.Unloaded)
-                    UnloadPlugin(plugin);
-            }
-
-            foreach (var item in unblacklistedItems)
-            {
-                PluginInfo plugin;
-
-                if (_plugins.TryGetValue(item, out plugin) && plugin.State == PluginState.Loaded)
-                    LoadPlugin(plugin);
-            }
         }
 
         public IEnumerable<IPluginInfo> Plugins
@@ -189,12 +159,6 @@ namespace Hadouken.Plugins.PluginEngine
                         HttpUsername = httpUser,
                         HttpRoot = _httpServer.RootDirectory,
                         PluginName = pluginInfo.Name
-                    });
-
-                _messageBus.Publish(new PluginLoadedMessage
-                    {
-                        Name = pluginInfo.Name,
-                        Version = pluginInfo.Version
                     });
             }
             catch (Exception e)

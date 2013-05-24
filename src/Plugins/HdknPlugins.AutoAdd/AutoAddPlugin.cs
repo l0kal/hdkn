@@ -4,16 +4,15 @@ using System.Linq;
 using System.Text;
 using Hadouken.Common;
 using Hadouken.Common.Plugins;
-using Hadouken.Common.Messaging;
 using Hadouken.Common.Data;
 
 using HdknPlugins.AutoAdd.Timers;
 using HdknPlugins.AutoAdd.Data.Models;
 using Hadouken.Common.IO;
-using Hadouken.Common.BitTorrent;
 using Migrator.Providers.SQLite;
 using NLog;
 using System.Text.RegularExpressions;
+using Hadouken.Common.Http;
 
 namespace HdknPlugins.AutoAdd
 {
@@ -25,11 +24,11 @@ namespace HdknPlugins.AutoAdd
         private readonly IFileSystem _fileSystem;
         private readonly ITimer _timer;
 
-        public AutoAddPlugin(IMessageBus messageBus,
+        public AutoAddPlugin(IHubConnection hubConnection,
                              IDataRepository dataRepository,
                              IFileSystem fileSystem,
                              ITimerFactory timerFactory)
-            : base(messageBus)
+            : base(hubConnection)
         {
             _dataRepository = dataRepository;
             _fileSystem = fileSystem;
@@ -51,6 +50,8 @@ namespace HdknPlugins.AutoAdd
 
             _timer.SetCallback(5000, CheckFolders);
             _timer.Start();
+
+            Hub.Torrents.On<string>("torrentAdded", Console.WriteLine);
         }
 
         private void CheckFolders()
@@ -100,15 +101,6 @@ namespace HdknPlugins.AutoAdd
         internal void AddFile(string file, string label, bool autoStart)
         {
             var data = _fileSystem.ReadAllBytes(file);
-
-            var msg = new AddTorrentMessage
-                {
-                    AutoStart = autoStart,
-                    Data = data,
-                    Label = label
-                };
-
-            MessageBus.Publish(msg);
 
             _fileSystem.DeleteFile(file);
         }

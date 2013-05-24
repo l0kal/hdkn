@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Net;
-using Hadouken.Common.Messaging;
 using Hadouken.Http.Api.Dto;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Web.Http;
-using Hadouken.Common.BitTorrent;
 using Hadouken.BitTorrent;
 
 namespace Hadouken.Http.Api

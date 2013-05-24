@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Hadouken.Common.Data;
-using Hadouken.Common.Messaging;
 using Hadouken.Common.Security;
 using Hadouken.Configuration;
 using Hadouken.Data;
@@ -21,12 +20,10 @@ namespace Hadouken.Impl.Config
     {
         private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer();
         private readonly IDataRepository _data;
-        private readonly IMessageBus _bus;
 
-        public DefaultKeyValueStore(IDataRepositoryFactory repositoryFactory, IMessageBusFactory busFactory)
+        public DefaultKeyValueStore(IDataRepositoryFactory repositoryFactory)
         {
             _data = repositoryFactory.Create(HdknConfig.ConnectionString);
-            _bus = busFactory.Create("hdkn");
         }
 
         public object Get(string key)
@@ -171,9 +168,6 @@ namespace Hadouken.Impl.Config
             setting.Value = _serializer.Serialize(setting.Options.HasFlag(Options.Hashed) ? Hash.Generate(value.ToString()) : value);
 
             _data.SaveOrUpdate(setting);
-
-            // Send ISettingChanged message
-            _bus.Publish(new KeyValueChangedMessage { Key = setting.Key });
         }
     }
 }

@@ -5,14 +5,12 @@ using System.Text;
 
 using Hadouken.BitTorrent;
 using Hadouken.Common.IO;
-using Hadouken.Common.Messaging;
 using Hadouken.Configuration;
 using MonoTorrent.Client;
 using System.IO;
 using MonoTorrent.BEncoding;
 
 using System.Threading;
-using Hadouken.Common.BitTorrent;
 
 namespace Hadouken.Impl.BitTorrent
 {
@@ -30,7 +28,6 @@ namespace Hadouken.Impl.BitTorrent
 
         private IKeyValueStore _kvs;
         private IFileSystem _fileSystem;
-        private IMessageBus _mbus;
 
         private long _dlBytes;
         private long _ulBytes;
@@ -39,7 +36,7 @@ namespace Hadouken.Impl.BitTorrent
 
         private double _progress;
 
-        internal HdknTorrentManager(TorrentManager manager, IKeyValueStore kvs, IFileSystem fileSystem, IMessageBus mbus)
+        internal HdknTorrentManager(TorrentManager manager, IKeyValueStore kvs, IFileSystem fileSystem)
         {
             _manager = manager;
             _settings = new HdknTorrentSettings(manager.Settings);
@@ -55,7 +52,6 @@ namespace Hadouken.Impl.BitTorrent
 
             _kvs = kvs;
             _fileSystem = fileSystem;
-            _mbus = mbus;
             _startTime = DateTime.Now;
         }
 
@@ -113,7 +109,7 @@ namespace Hadouken.Impl.BitTorrent
         {
             if (e.NewState == MonoTorrent.Common.TorrentState.Error)
             {
-                _mbus.Publish(new TorrentErrorMessage {InfoHash = InfoHash, Name = Torrent.Name, Size = Torrent.Size});
+                //_mbus.Publish(new TorrentErrorMessage {InfoHash = InfoHash, Name = Torrent.Name, Size = Torrent.Size});
             }
 
             if (e.OldState == MonoTorrent.Common.TorrentState.Downloading && e.NewState == MonoTorrent.Common.TorrentState.Seeding)

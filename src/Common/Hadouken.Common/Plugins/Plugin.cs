@@ -1,26 +1,26 @@
 ﻿using System;
-using Hadouken.Common.Messaging;
+using Hadouken.Common.Http;
 
 namespace Hadouken.Common.Plugins
 {
     public abstract class Plugin
     {
-        private readonly IMessageBus _messageBus;
+        private readonly IHubConnection _hubConnection;
         
-        protected Plugin(IMessageBus messageBus)
+        protected Plugin(IHubConnection hubConnection)
         {
-            if(messageBus == null)
-                throw new ArgumentNullException("messageBus");
+            if(hubConnection == null)
+                throw new ArgumentNullException("hubConnection");
 
-            _messageBus = messageBus;
+            _hubConnection = hubConnection;
         }
 
         /// <summary>
-        /// Gets the MessageBus to use for publishing messages/subscribing to messages.
+        /// Gets the IHubConnection to use for listening to events.
         /// </summary>
-        protected IMessageBus MessageBus
+        protected IHubConnection Hub
         {
-            get { return _messageBus; }
+            get { return _hubConnection; }
         }
 
         public abstract void Load();

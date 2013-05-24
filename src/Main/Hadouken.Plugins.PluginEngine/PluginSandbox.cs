@@ -6,7 +6,6 @@ using System.Net;
 using System.Text;
 using Hadouken.Common;
 using Hadouken.Common.Plugins;
-using Hadouken.Common.Messaging;
 using Hadouken.Common.DI;
 using Hadouken.Common.IO;
 using NLog;
@@ -102,8 +101,12 @@ namespace Hadouken.Plugins.PluginEngine
 
             Kernel.BindToFunc(() =>
                 {
-                    var factory = Kernel.Get<IMessageBusFactory>();
-                    return factory.Create("hdkn.plugins." + setup.PluginName.ToLowerInvariant());
+                    var factory = Kernel.Get<IHubConnectionFactory>();
+
+                    var hub = factory.Connect("http://localhost:8081/superduperhub/hubs");
+                    hub.Load();
+
+                    return hub;
                 });
 
             Kernel.BindToFunc(() =>

@@ -96,6 +96,8 @@
     <Compile Include="HostEnvironment.cs" />
     <Compile Include="Hosting\DefaultHadoukenHost.cs" />
     <Compile Include="Http\HttpListenerServer.cs" />
+    <Compile Include="Messaging\InMemoryMessageBus.cs" />
+    <Compile Include="Messaging\PropertiesInterceptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -43,14 +43,6 @@
     <Compile Include="..\..\Shared\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="BitTorrent\AddTorrentMessage.cs" />
-    <Compile Include="BitTorrent\TorrentAddedMessage.cs" />
-    <Compile Include="BitTorrent\TorrentCompletedMessage.cs" />
-    <Compile Include="BitTorrent\TorrentErrorMessage.cs" />
-    <Compile Include="BitTorrent\TorrentMessage.cs" />
-    <Compile Include="BitTorrent\TorrentRemovedMessage.cs" />
-    <Compile Include="BitTorrent\TorrentStartedMessage.cs" />
-    <Compile Include="BitTorrent\TorrentStoppedMessage.cs" />
     <Compile Include="ComponentAttribute.cs" />
     <Compile Include="ComponentType.cs" />
     <Compile Include="Data\IDataRepository.cs" />
@@ -59,21 +51,14 @@
     <Compile Include="DI\IDependencyResolver.cs" />
     <Compile Include="Http\IHttpWebApiServerFactory.cs" />
     <Compile Include="Http\IHttpWebApiServer.cs" />
+    <Compile Include="Http\IHubConnection.cs" />
+    <Compile Include="Http\IHubConnectionFactory.cs" />
+    <Compile Include="Http\IHubProxy.cs" />
     <Compile Include="IComponentFactory.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="Kernel.cs" />
-    <Compile Include="Messaging\IMessage.cs" />
-    <Compile Include="Messaging\IMessageBusFactory.cs" />
-    <Compile Include="Messaging\ISubscriber.cs" />
-    <Compile Include="Messaging\ISubscriberFactory.cs" />
     <Compile Include="Plugins\IPluginEnvironment.cs" />
     <Compile Include="Plugins\Plugin.cs" />
-    <Compile Include="Messaging\IMessageBus.cs" />
-    <Compile Include="Messaging\IMessageHandler.cs" />
-    <Compile Include="Messaging\Message.cs" />
-    <Compile Include="Messaging\MessageBusExtensions.cs" />
-    <Compile Include="Plugins\PluginLoadedMessage.cs" />
-    <Compile Include="Plugins\PluginUnloadedMessage.cs" />
     <Compile Include="Security\Hash.cs" />
   </ItemGroup>
   <ItemGroup />

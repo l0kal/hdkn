@@ -15,8 +15,7 @@ namespace Hadouken.Common.DI.Ninject
         {
             _kernel = new StandardKernel(
                 new ComponentModule(),
-                new PluginModule(),
-                new MessageHandlerModule()
+                new PluginModule()
             );
         }
 

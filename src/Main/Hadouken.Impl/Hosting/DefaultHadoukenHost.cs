@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using Hadouken.Common.Data;
 using Hadouken.Common.Http;
 using Hadouken.Hosting;
@@ -14,6 +15,7 @@ using Hadouken.BitTorrent;
 using NLog;
 using Hadouken.Common;
 using Hadouken.Configuration;
+using Hadouken.Messaging;
 
 namespace Hadouken.Impl.Hosting
 {
@@ -27,9 +29,11 @@ namespace Hadouken.Impl.Hosting
         private readonly IKeyValueStore _keyValueStore;
         private readonly IMigrationRunner _migratorRunner;
         private readonly IPluginEngine _pluginEngine;
+        private readonly IMessageBus _messageBus;
 
         private readonly IHttpWebApiServerFactory _serverFactory;
         private readonly IHttpFileSystemServer _httpServer;
+        private readonly IHttpHubServer _httpHubServer;
         private IHttpWebApiServer _webApiServer;
 
         public DefaultHadoukenHost(IEnvironment environment,
@@ -38,7 +42,9 @@ namespace Hadouken.Impl.Hosting
                                    IMigrationRunner runner,
                                    IPluginEngine pluginEngine,
                                    IHttpFileSystemServer httpServer,
-                                   IHttpWebApiServerFactory httpServerFactory)
+                                   IHttpWebApiServerFactory httpServerFactory,
+                                   IHttpHubServer httpHubServer,
+                                   IMessageBus messageBus)
         {
             _environment = environment;
             _keyValueStore = keyValueStore;
@@ -47,6 +53,8 @@ namespace Hadouken.Impl.Hosting
             _httpServer = httpServer;
             _migratorRunner = runner;
             _pluginEngine = pluginEngine;
+            _httpHubServer = httpHubServer;
+            _messageBus = messageBus;
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
@@ -62,6 +70,9 @@ namespace Hadouken.Impl.Hosting
 
             Logger.Debug("Running migrations");
             _migratorRunner.Up(this.GetType().Assembly);
+
+            Logger.Debug("Starting the hub server");
+            _httpHubServer.Start("http://localhost:8081/superduperhub/");
 
             Logger.Debug("Loading the IBitTorrentEngine implementation");
             _torrentEngine.Load();

@@ -106,13 +106,13 @@
       <Project>{25eb6288-005f-42a3-ae45-78730f63fd6a}</Project>
       <Name>Hadouken.Common.Http.HttpListener</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Http.HubConnection\Hadouken.Common.Http.HubConnection.csproj">
+      <Project>{B385599D-B73F-4E3E-A250-70ACE193739E}</Project>
+      <Name>Hadouken.Common.Http.HubConnection</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Hadouken.Common.IO.Local\Hadouken.Common.IO.Local.csproj">
       <Project>{5926e8ba-144b-4b88-93d5-56c2d5ca6573}</Project>
       <Name>Hadouken.Common.IO.Local</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Common\Hadouken.Common.Messaging.Msmq\Hadouken.Common.Messaging.Msmq.csproj">
-      <Project>{45144e7e-d412-468f-857f-3d7665cc971f}</Project>
-      <Name>Hadouken.Common.Messaging.Msmq</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
       <Project>{3f2758d7-b296-41c4-b2b8-8f11aafd5b8b}</Project>
@@ -121,6 +121,10 @@
     <ProjectReference Include="..\..\Main\Hadouken.Http.Api\Hadouken.Http.Api.csproj">
       <Project>{0A098B4B-FFE5-4336-B9C3-2BDF0D5E7128}</Project>
       <Name>Hadouken.Http.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Main\Hadouken.Http.SignalR\Hadouken.Http.SignalR.csproj">
+      <Project>{AA4A53D2-B5EC-49E4-9240-C553E3CF1B66}</Project>
+      <Name>Hadouken.Http.SignalR</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Impl.BitTorrent\Hadouken.Impl.BitTorrent.csproj">
       <Project>{E5E2A7E9-E908-4E07-A948-E8B38DD139E5}</Project>
