@@ -103,7 +103,8 @@ namespace Hadouken.Plugins.PluginEngine
                 {
                     var factory = Kernel.Get<IHubConnectionFactory>();
 
-                    var hub = factory.Connect("http://localhost:8081/superduperhub/hubs");
+                    var hub = factory.Connect("http://localhost:8081/superduperhub/hubs", setup.HttpUsername,
+                                              setup.HttpPassword);
                     hub.Load();
 
                     return hub;

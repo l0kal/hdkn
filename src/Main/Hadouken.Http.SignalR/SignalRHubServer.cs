@@ -8,6 +8,7 @@ using Owin;
 using Microsoft.AspNet.SignalR;
 using System.Threading.Tasks;
 using Microsoft.Owin.Hosting;
+using Microsoft.Owin.Host.HttpListener;
 
 namespace Hadouken.Http.SignalR
 {
@@ -29,7 +30,9 @@ namespace Hadouken.Http.SignalR
     [Component(ComponentType.Singleton)]
     public class SignalRHubServer : IHttpHubServer
     {
-        private static readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener __dd;
+#pragma warning disable 0169
+        private static readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener __owl;
+#pragma warning restore 0169
 
         private readonly ManualResetEvent _resetEvent = new ManualResetEvent(false);
 

@@ -10,9 +10,12 @@ namespace Hadouken.Common.Http.HubConnection
     {
         private readonly Microsoft.AspNet.SignalR.Client.Hubs.HubConnection _hubConnection;
 
-        public SignalRHubConnection(string url)
+        public SignalRHubConnection(string url, string username, string password)
         {
-            _hubConnection = new Microsoft.AspNet.SignalR.Client.Hubs.HubConnection(url, false);
+            _hubConnection = new Microsoft.AspNet.SignalR.Client.Hubs.HubConnection(
+                url,
+                new Dictionary<string, string>() {{"usr", username}, {"pwd", password}},
+                false);
         }
 
         public IHubProxy Torrents { get; private set; }

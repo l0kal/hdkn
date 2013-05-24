@@ -13,14 +13,12 @@ namespace Hadouken.Http.SignalR
         public override object GetService(Type serviceType)
         {
             var service = Kernel.Get(serviceType);
-
             return service ?? base.GetService(serviceType);
         }
 
         public override IEnumerable<object> GetServices(Type serviceType)
         {
             var services = Kernel.GetAll(serviceType).ToList();
-
             return (!services.Any() ? base.GetServices(serviceType) : services);
         }
     }

@@ -13,8 +13,6 @@ namespace Hadouken.Plugins.PluginEngine
     {
         private static readonly JsonSerializer Serializer = new JsonSerializer();
 
-        private readonly string[] _assemblies;
-
         static PluginManifestReader()
         {
             Serializer.Converters.Add(new VersionConverter());

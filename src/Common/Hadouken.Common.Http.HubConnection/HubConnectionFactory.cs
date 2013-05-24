@@ -8,9 +8,9 @@ namespace Hadouken.Common.Http.HubConnection
     [Component(ComponentType.Singleton)]
     public class HubConnectionFactory : IHubConnectionFactory
     {
-        public IHubConnection Connect(string url)
+        public IHubConnection Connect(string url, string username, string password)
         {
-            return new SignalRHubConnection(url);
+            return new SignalRHubConnection(url, username, password);
         }
     }
 }

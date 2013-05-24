@@ -7,6 +7,6 @@ namespace Hadouken.Common.Http
 {
     public interface IHubConnectionFactory
     {
-        IHubConnection Connect(string url);
+        IHubConnection Connect(string url, string username, string password);
     }
 }

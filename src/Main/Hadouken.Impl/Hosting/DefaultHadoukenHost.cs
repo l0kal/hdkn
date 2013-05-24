@@ -92,6 +92,8 @@ namespace Hadouken.Impl.Hosting
             
             Logger.Debug("Starting the HTTP UI server");
             _httpServer.Start();
+
+            _messageBus.Publish(new Hadouken.BitTorrent.Messages.TorrentAddedMessage() {Name = "hejhejhej"});
         }
 
         public void Unload()
