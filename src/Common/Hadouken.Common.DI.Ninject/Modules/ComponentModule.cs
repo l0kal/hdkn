@@ -11,10 +11,25 @@ namespace Hadouken.Common.DI.Ninject.Modules
 {
     public class ComponentModule : NinjectModule
     {
+        private Type[] TryGetTypes(Assembly asm)
+        {
+            try
+            {
+                return asm.GetTypes();
+            }
+            catch
+            {
+            }
+
+            return null;
+        }
+
         public override void Load()
         {
             var componentTypes = (from asm in AppDomain.CurrentDomain.GetAssemblies()
-                                  from type in asm.GetTypes()
+                                  let types = TryGetTypes(asm)
+                                  where types != null
+                                  from type in types
                                   where type.HasAttribute<ComponentAttribute>()
                                   where type.IsClass && !type.IsAbstract
                                   let attr = type.GetAttribute<ComponentAttribute>()

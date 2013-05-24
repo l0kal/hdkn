@@ -99,6 +99,10 @@ namespace Hadouken.Plugins.PluginEngine
                 assemblies.Add(file);
             }
 
+            assemblies.Add(
+                typeof (FullTrustHelpers.AssemblyResolver).Assembly.ManifestModule
+                                                          .FullyQualifiedName);
+
             var manifest = Sandbox.ReadManifest(assemblies.ToArray());
 
             if (manifest == null)
@@ -144,8 +148,8 @@ namespace Hadouken.Plugins.PluginEngine
                 if (!_plugins.ContainsKey(pluginInfo.Name))
                     _plugins.Add(pluginInfo.Name, pluginInfo);
 
-                var httpUser = _keyValueStore.Get<string>("auth.username");
-                var httpPass = _keyValueStore.Get<string>("auth.password");
+                var httpUser = "hdkn"; //_keyValueStore.Get<string>("auth.username");
+                var httpPass = "hdkn"; // _keyValueStore.Get<string>("auth.password");
                 var binding = (_environment.HttpBinding.EndsWith("/")
                                    ? _environment.HttpBinding + "api/plugins/" + pluginInfo.Name
                                    : _environment.HttpBinding + "/api/plugins/" + pluginInfo.Name);

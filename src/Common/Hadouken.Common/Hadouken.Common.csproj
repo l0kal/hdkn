@@ -59,6 +59,7 @@
     <Compile Include="Kernel.cs" />
     <Compile Include="Plugins\IPluginEnvironment.cs" />
     <Compile Include="Plugins\Plugin.cs" />
+    <Compile Include="Plugins\SetupInformation.cs" />
     <Compile Include="Security\Hash.cs" />
   </ItemGroup>
   <ItemGroup />

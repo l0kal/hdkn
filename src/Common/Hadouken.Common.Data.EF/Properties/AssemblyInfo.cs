@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Hadouken.Common.Http.SignalR")]
+[assembly: AssemblyTitle("Hadouken.Common.Data.EF")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Hadouken.Common.Http.SignalR")]
+[assembly: AssemblyProduct("Hadouken.Common.Data.EF")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e8c3a7f4-c663-4815-a284-5c7c736a5d6b")]
+[assembly: Guid("874de09b-f057-45b4-a652-8771feac4d01")]
 
 // Version information for an assembly consists of the following four values:
 //

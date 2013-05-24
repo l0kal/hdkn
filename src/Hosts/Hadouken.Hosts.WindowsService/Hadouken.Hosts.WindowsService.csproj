@@ -94,9 +94,9 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Hadouken.Common.Data.FluentNHibernate\Hadouken.Common.Data.FluentNHibernate.csproj">
-      <Project>{8252ab50-901e-436c-9b06-abd32e50a692}</Project>
-      <Name>Hadouken.Common.Data.FluentNHibernate</Name>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Data.EF\Hadouken.Common.Data.EF.csproj">
+      <Project>{2b2c209c-ef7c-4adc-8e99-342d23082ea9}</Project>
+      <Name>Hadouken.Common.Data.EF</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\Hadouken.Common.DI.Ninject\Hadouken.Common.DI.Ninject.csproj">
       <Project>{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7}</Project>
@@ -133,6 +133,10 @@
     <ProjectReference Include="..\..\Main\Hadouken.Impl\Hadouken.Impl.csproj">
       <Project>{28B6D10B-1CA2-43A9-B247-FAA7DD2155FA}</Project>
       <Name>Hadouken.Impl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Main\Hadouken.Plugins.PluginEngine.FullTrustHelpers\Hadouken.Plugins.PluginEngine.FullTrustHelpers.csproj">
+      <Project>{707859b8-7a34-4fac-a3f2-bc2f6ca7dc0b}</Project>
+      <Name>Hadouken.Plugins.PluginEngine.FullTrustHelpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Plugins.PluginEngine\Hadouken.Plugins.PluginEngine.csproj">
       <Project>{4c688a37-172c-41a1-8664-9661917fa0f2}</Project>

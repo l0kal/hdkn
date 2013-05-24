@@ -12,7 +12,5 @@ namespace Hadouken.Data.Models
         public virtual string Key { get; set; }
         public virtual string Value { get; set; }
         public virtual string Type { get; set; }
-        public virtual Permissions Permissions { get; set; }
-        public virtual Options Options { get; set; }
     }
 }

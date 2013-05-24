@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -13,6 +14,7 @@ using Hadouken.Common.Http;
 using System.IO;
 using Hadouken.Common.Data;
 using System.Reflection;
+using Hadouken.Plugins.PluginEngine.FullTrustHelpers;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -20,10 +22,14 @@ namespace Hadouken.Plugins.PluginEngine
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly AssemblyResolver _assemblyResolver;
+
         private Plugin _plugin;
 
-        public PluginSandbox(IEnumerable<string> assemblies)
+        public PluginSandbox(string basePath, IEnumerable<string> assemblies)
         {
+            _assemblyResolver = new AssemblyResolver(basePath);
+
             AppDomain.CurrentDomain.DomainUnload += (s, e) => Unload();
 
             foreach (var asm in assemblies)

@@ -1,4 +1,5 @@
-﻿using Migrator.Framework;
+﻿using System.Data;
+using Migrator.Framework;
 
 namespace Hadouken.Impl.Data.Migrations.Create
 {
@@ -12,7 +13,7 @@ namespace Hadouken.Impl.Data.Migrations.Create
                 new Column("Key", System.Data.DbType.String, 200),
                 new Column("Value", System.Data.DbType.String, 200),
                 new Column("Type", System.Data.DbType.String, 200),
-                new Column("Permissions", System.Data.DbType.Int32)
+                new Column("Permissions", DbType.Int32)
             );
         }
 

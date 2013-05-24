@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
 
-namespace Hadouken.Plugins.PluginEngine
+namespace Hadouken.Common.Plugins
 {
     [Serializable]
-    internal sealed class SetupInformation
+    public sealed class SetupInformation
     {
         public string DatabasePath { get; set; }
 

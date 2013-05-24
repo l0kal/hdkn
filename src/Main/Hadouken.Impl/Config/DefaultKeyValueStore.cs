@@ -92,15 +92,7 @@ namespace Hadouken.Impl.Config
 
         private Setting GetSettingFromDatabase(string key)
         {
-            var setting = _data.Single<Setting>(s => s.Key == key);
-
-            if (setting == null)
-                return null;
-
-            if (!setting.Permissions.HasFlag(Permissions.Read) && setting.Permissions.HasFlag(Permissions.Write))
-                throw new UnauthorizedAccessException("Key " + key + " is write-only.");
-
-            return setting;
+            return _data.Single<Setting>(s => s.Key == key);
         }
 
         public T Get<T>(string key)
@@ -158,14 +150,10 @@ namespace Hadouken.Impl.Config
                 {
                     Key = key,
                     Type = value.GetType().FullName,
-                    Permissions = permissions,
-                    Options = options
                 };
 
-            if (!setting.Permissions.HasFlag(Permissions.Write))
-                throw new UnauthorizedAccessException("No write permissions on key " + key);
-
-            setting.Value = _serializer.Serialize(setting.Options.HasFlag(Options.Hashed) ? Hash.Generate(value.ToString()) : value);
+            setting.Value =
+                _serializer.Serialize(setting.Key.Equals("auth.password") ? Hash.Generate(value.ToString()) : value);
 
             _data.SaveOrUpdate(setting);
         }

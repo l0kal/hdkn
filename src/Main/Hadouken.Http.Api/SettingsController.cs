@@ -42,9 +42,7 @@ namespace Hadouken.Http.Api
                         {
                             Key = setting.Key,
                             Value = _serializer.DeserializeObject(setting.Value),
-                            Type = GetSettingType(setting.Type),
-                            Options = (int)setting.Permissions,
-                            Permissions = (int)setting.Permissions
+                            Type = GetSettingType(setting.Type)
                         });
         } 
 

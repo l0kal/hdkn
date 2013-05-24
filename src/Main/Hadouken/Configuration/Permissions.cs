@@ -3,7 +3,7 @@
 namespace Hadouken.Configuration
 {
     [Flags]
-    public enum Permissions
+    public enum Permissions : byte
     {
         None = 0,
         Read = 1,
