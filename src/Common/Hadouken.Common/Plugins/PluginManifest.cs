@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Hadouken.Plugins.PluginEngine
+namespace Hadouken.Common.Plugins
 {
     [Serializable]
     public class PluginManifest
     {
         public string Name { get; set; }
+
         public Version Version { get; set; }
 
         public Dictionary<string,string> Resources { get; set; } 

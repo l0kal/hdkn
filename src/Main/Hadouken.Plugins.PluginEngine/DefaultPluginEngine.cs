@@ -99,10 +99,6 @@ namespace Hadouken.Plugins.PluginEngine
                 assemblies.Add(file);
             }
 
-            assemblies.Add(
-                typeof (FullTrustHelpers.AssemblyResolver).Assembly.ManifestModule
-                                                          .FullyQualifiedName);
-
             var manifest = Sandbox.ReadManifest(assemblies.ToArray());
 
             if (manifest == null)
@@ -116,6 +112,8 @@ namespace Hadouken.Plugins.PluginEngine
                 Logger.Error("Plugin {0} already loaded. Ignoring.", manifest.Name);
                 return;
             }
+
+            assemblies.Add(Path.Combine(HdknConfig.WorkingDirectory, "System.Data.SQLite.Linq.dll"));
 
             var info = new PluginInfo(manifest, assemblies.ToArray());
 

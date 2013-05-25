@@ -61,7 +61,6 @@
     <Compile Include="Loaders\DirectoryPluginLoader.cs" />
     <Compile Include="Loaders\ZipPluginLoader.cs" />
     <Compile Include="PluginInfo.cs" />
-    <Compile Include="PluginManifest.cs" />
     <Compile Include="PluginManifestReader.cs" />
     <Compile Include="PluginSandbox.cs" />
     <Compile Include="Sandbox.cs" />
@@ -70,10 +69,6 @@
     <ProjectReference Include="..\..\Common\Hadouken.Common\Hadouken.Common.csproj">
       <Project>{3F2758D7-B296-41C4-B2B8-8F11AAFD5B8B}</Project>
       <Name>Hadouken.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Hadouken.Plugins.PluginEngine.FullTrustHelpers\Hadouken.Plugins.PluginEngine.FullTrustHelpers.csproj">
-      <Project>{707859b8-7a34-4fac-a3f2-bc2f6ca7dc0b}</Project>
-      <Name>Hadouken.Plugins.PluginEngine.FullTrustHelpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\Hadouken\Hadouken.csproj">
       <Project>{483BDD2E-74E7-4047-BAB4-99C7A25BB56D}</Project>

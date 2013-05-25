@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="DataRepositoryFactory.cs" />
     <Compile Include="EntityFrameworkDataRepository.cs" />
+    <Compile Include="GenericDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

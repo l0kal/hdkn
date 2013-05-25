@@ -14,7 +14,6 @@ using Hadouken.Common.Http;
 using System.IO;
 using Hadouken.Common.Data;
 using System.Reflection;
-using Hadouken.Plugins.PluginEngine.FullTrustHelpers;
 
 namespace Hadouken.Plugins.PluginEngine
 {
@@ -22,20 +21,32 @@ namespace Hadouken.Plugins.PluginEngine
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly AssemblyResolver _assemblyResolver;
-
         private Plugin _plugin;
 
         public PluginSandbox(string basePath, IEnumerable<string> assemblies)
         {
-            _assemblyResolver = new AssemblyResolver(basePath);
-
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) => LoadAssemblyFromPath(basePath, args.Name);
             AppDomain.CurrentDomain.DomainUnload += (s, e) => Unload();
 
             foreach (var asm in assemblies)
             {
-                Assembly.LoadFile(asm);
+                Assembly.Load(File.ReadAllBytes(asm));
             }
+        }
+
+        private Assembly LoadAssemblyFromPath(string basePath, string fullName)
+        {
+            foreach (var file in Directory.GetFiles(basePath, "*.dll"))
+            {
+                var assemblyName = AssemblyName.GetAssemblyName(file);
+
+                if (assemblyName.FullName == fullName)
+                {
+                    return Assembly.Load(File.ReadAllBytes(file));
+                }
+            }
+
+            return null;
         }
 
         public AppDomain GetAppDomain()

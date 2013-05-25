@@ -11,11 +11,21 @@ namespace Hadouken.Common.Data.EF
 {
     public class EntityFrameworkDataRepository : IDataRepository
     {
-        private readonly DbContext _context;
+        private static string c;
+
+        private static class Internal<TModel> where TModel : Model, new()
+        {
+            private static readonly GenericDbContext<TModel> DbContext = new GenericDbContext<TModel>(c);
+
+            public static GenericDbContext<TModel> Context
+            {
+                get { return DbContext; }
+            }
+        }
 
         public EntityFrameworkDataRepository(string connectionString)
         {
-            _context = new DbContext(new SQLiteConnection(connectionString), true);
+            c = connectionString;
             ConnectionString = connectionString;
         }
 
@@ -23,8 +33,8 @@ namespace Hadouken.Common.Data.EF
 
         public void Save<TModel>(TModel model) where TModel : Model, new()
         {
-            _context.Set<TModel>().Add(model);
-            _context.SaveChanges();
+            Internal<TModel>.Context.DbSet.Add(model);
+            Internal<TModel>.Context.SaveChanges();
         }
 
         public void SaveOrUpdate<TModel>(TModel model) where TModel : Model, new()
@@ -41,33 +51,33 @@ namespace Hadouken.Common.Data.EF
 
         public void Update<TModel>(TModel model) where TModel : Model, new()
         {
-            _context.SaveChanges();
+            Internal<TModel>.Context.SaveChanges();
         }
 
         public void Delete<TModel>(TModel model) where TModel : Model, new()
         {
-            _context.Set<TModel>().Remove(model);
-            _context.SaveChanges();
+            Internal<TModel>.Context.DbSet.Remove(model);
+            Internal<TModel>.Context.SaveChanges();
         }
 
         public TModel Single<TModel>(int id) where TModel : Model, new()
         {
-            return _context.Set<TModel>().Find(id);
+            return Internal<TModel>.Context.DbSet.Find(id);
         }
 
         public TModel Single<TModel>(Expression<Func<TModel, bool>> query) where TModel : Model, new()
         {
-            return _context.Set<TModel>().Where(query).SingleOrDefault();
+            return Internal<TModel>.Context.DbSet.Where(query).SingleOrDefault();
         }
 
         public IEnumerable<TModel> List<TModel>() where TModel : Model, new()
         {
-            return _context.Set<TModel>().ToList();
+            return Internal<TModel>.Context.DbSet.ToList();
         }
 
         public IEnumerable<TModel> List<TModel>(Expression<Func<TModel, bool>> query) where TModel : Model, new()
         {
-            return _context.Set<TModel>().Where(query).ToList();
+            return Internal<TModel>.Context.DbSet.Where(query).ToList();
         }
     }
 }

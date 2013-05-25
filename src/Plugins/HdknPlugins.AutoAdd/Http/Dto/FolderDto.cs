@@ -7,7 +7,7 @@ namespace HdknPlugins.AutoAdd.Http.Dto
 {
     public class FolderDto
     {
-        public int? Id { get; set; }
+        public long? Id { get; set; }
         public string Path { get; set; }
         public string Label { get; set; }
         public string ExcludeFilter { get; set; }
