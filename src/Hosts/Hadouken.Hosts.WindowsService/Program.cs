@@ -9,6 +9,7 @@ using Hadouken.Common;
 using Hadouken.Common.DI.Ninject;
 using System.IO;
 using NLog;
+using Hadouken.Data;
 
 namespace Hadouken.Hosts.WindowsService
 {
@@ -35,7 +36,7 @@ namespace Hadouken.Hosts.WindowsService
 
             // register base types
             Kernel.SetResolver(new NinjectDependencyResolver());
-
+            
             if(Bootstrapper.RunAsConsoleIfRequested<HdknService>())
                 return;
 

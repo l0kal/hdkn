@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.Entity;
-using System.Data.SQLite;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -9,32 +9,24 @@ using System.Threading.Tasks;
 
 namespace Hadouken.Common.Data.EF
 {
-    public class EntityFrameworkDataRepository : IDataRepository
+    public class EntityFrameworkDataRepository : DbContext, IDataRepository
     {
-        private static string c;
-
-        private static class Internal<TModel> where TModel : Model, new()
+        public EntityFrameworkDataRepository(DbConnection dbConnection) : base(dbConnection, true)
         {
-            private static readonly GenericDbContext<TModel> DbContext = new GenericDbContext<TModel>(c);
-
-            public static GenericDbContext<TModel> Context
-            {
-                get { return DbContext; }
-            }
+            Database.SetInitializer<EntityFrameworkDataRepository>(null);
+            ConnectionString = dbConnection.ConnectionString;
         }
 
-        public EntityFrameworkDataRepository(string connectionString)
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            c = connectionString;
-            ConnectionString = connectionString;
+            this.Configuration.ProxyCreationEnabled = false;
         }
 
         public string ConnectionString { get; private set; }
 
         public void Save<TModel>(TModel model) where TModel : Model, new()
         {
-            Internal<TModel>.Context.DbSet.Add(model);
-            Internal<TModel>.Context.SaveChanges();
+            Set<TModel>().Add(model);
         }
 
         public void SaveOrUpdate<TModel>(TModel model) where TModel : Model, new()
@@ -51,33 +43,32 @@ namespace Hadouken.Common.Data.EF
 
         public void Update<TModel>(TModel model) where TModel : Model, new()
         {
-            Internal<TModel>.Context.SaveChanges();
+            SaveChanges();
         }
 
         public void Delete<TModel>(TModel model) where TModel : Model, new()
         {
-            Internal<TModel>.Context.DbSet.Remove(model);
-            Internal<TModel>.Context.SaveChanges();
+            Set<TModel>().Remove(model);
         }
 
         public TModel Single<TModel>(int id) where TModel : Model, new()
         {
-            return Internal<TModel>.Context.DbSet.Find(id);
+            return Set<TModel>().Find(id);
         }
 
         public TModel Single<TModel>(Expression<Func<TModel, bool>> query) where TModel : Model, new()
         {
-            return Internal<TModel>.Context.DbSet.Where(query).SingleOrDefault();
+            return Set<TModel>().Where(query).SingleOrDefault();
         }
 
         public IEnumerable<TModel> List<TModel>() where TModel : Model, new()
         {
-            return Internal<TModel>.Context.DbSet.ToList();
+            return Set<TModel>().ToList();
         }
 
         public IEnumerable<TModel> List<TModel>(Expression<Func<TModel, bool>> query) where TModel : Model, new()
         {
-            return Internal<TModel>.Context.DbSet.Where(query).ToList();
+            return Set<TModel>().Where(query).ToList();
         }
     }
 }

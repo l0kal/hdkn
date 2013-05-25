@@ -30,23 +30,17 @@ namespace Hadouken.Plugins.PluginEngine
 
             foreach (var asm in assemblies)
             {
-                Assembly.Load(File.ReadAllBytes(asm));
+                AppDomain.CurrentDomain.Load(File.ReadAllBytes(asm));
             }
         }
 
         private Assembly LoadAssemblyFromPath(string basePath, string fullName)
         {
-            foreach (var file in Directory.GetFiles(basePath, "*.dll"))
-            {
-                var assemblyName = AssemblyName.GetAssemblyName(file);
-
-                if (assemblyName.FullName == fullName)
-                {
-                    return Assembly.Load(File.ReadAllBytes(file));
-                }
-            }
-
-            return null;
+            return (from file in Directory.GetFiles(basePath, "*.dll")
+                    let assemblyName = AssemblyName.GetAssemblyName(file)
+                    where assemblyName.FullName == fullName
+                    select AppDomain.CurrentDomain.Load(File.ReadAllBytes(file)))
+                    .FirstOrDefault();
         }
 
         public AppDomain GetAppDomain()
@@ -130,7 +124,7 @@ namespace Hadouken.Plugins.PluginEngine
             Kernel.BindToFunc(() =>
                 {
                     var factory = Kernel.Get<IDataRepositoryFactory>();
-                    return factory.Create(String.Format("Data Source={0}; Version=3;", setup.DatabasePath));
+                    return factory.Create(String.Format("Data Source={0}; Persist Security Info=False;", setup.DatabasePath));
                 });
 
             Kernel.BindToFunc(() =>

@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Http.HubCon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Data.EF", "src\Common\Hadouken.Common.Data.EF\Hadouken.Common.Data.EF.csproj", "{2B2C209C-EF7C-4ADC-8E99-342D23082EA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hadouken.Common.Data.Firebird", "src\Common\Hadouken.Common.Data.Firebird\Hadouken.Common.Data.Firebird.csproj", "{A4E74D49-AF1F-4EDE-821E-103412F0A9AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -206,6 +208,14 @@ Global
 		{2B2C209C-EF7C-4ADC-8E99-342D23082EA9}.Release|x64.Build.0 = Release|Any CPU
 		{2B2C209C-EF7C-4ADC-8E99-342D23082EA9}.Release|x86.ActiveCfg = Release|Any CPU
 		{2B2C209C-EF7C-4ADC-8E99-342D23082EA9}.Release|x86.Build.0 = Release|Any CPU
+		{A4E74D49-AF1F-4EDE-821E-103412F0A9AE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A4E74D49-AF1F-4EDE-821E-103412F0A9AE}.Debug|x64.Build.0 = Debug|Any CPU
+		{A4E74D49-AF1F-4EDE-821E-103412F0A9AE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A4E74D49-AF1F-4EDE-821E-103412F0A9AE}.Debug|x86.Build.0 = Debug|Any CPU
+		{A4E74D49-AF1F-4EDE-821E-103412F0A9AE}.Release|x64.ActiveCfg = Release|Any CPU
+		{A4E74D49-AF1F-4EDE-821E-103412F0A9AE}.Release|x64.Build.0 = Release|Any CPU
+		{A4E74D49-AF1F-4EDE-821E-103412F0A9AE}.Release|x86.ActiveCfg = Release|Any CPU
+		{A4E74D49-AF1F-4EDE-821E-103412F0A9AE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -230,5 +240,6 @@ Global
 		{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 		{B385599D-B73F-4E3E-A250-70ACE193739E} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 		{2B2C209C-EF7C-4ADC-8E99-342D23082EA9} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
+		{A4E74D49-AF1F-4EDE-821E-103412F0A9AE} = {56D3E2F5-23C1-4AC2-837C-7D8D0E8820AB}
 	EndGlobalSection
 EndGlobal

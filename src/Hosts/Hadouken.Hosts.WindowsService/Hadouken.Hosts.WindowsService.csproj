@@ -98,6 +98,10 @@
       <Project>{2b2c209c-ef7c-4adc-8e99-342d23082ea9}</Project>
       <Name>Hadouken.Common.Data.EF</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Hadouken.Common.Data.Firebird\Hadouken.Common.Data.Firebird.csproj">
+      <Project>{a4e74d49-af1f-4ede-821e-103412f0a9ae}</Project>
+      <Name>Hadouken.Common.Data.Firebird</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Hadouken.Common.DI.Ninject\Hadouken.Common.DI.Ninject.csproj">
       <Project>{5F5583D5-EE42-470C-9FC9-3D0308BC7CF7}</Project>
       <Name>Hadouken.Common.DI.Ninject</Name>

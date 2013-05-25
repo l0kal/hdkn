@@ -146,8 +146,8 @@ namespace Hadouken.Plugins.PluginEngine
                 if (!_plugins.ContainsKey(pluginInfo.Name))
                     _plugins.Add(pluginInfo.Name, pluginInfo);
 
-                var httpUser = "hdkn"; //_keyValueStore.Get<string>("auth.username");
-                var httpPass = "hdkn"; // _keyValueStore.Get<string>("auth.password");
+                var httpUser = _keyValueStore.Get<string>("auth.username");
+                var httpPass = _keyValueStore.Get<string>("auth.password");
                 var binding = (_environment.HttpBinding.EndsWith("/")
                                    ? _environment.HttpBinding + "api/plugins/" + pluginInfo.Name
                                    : _environment.HttpBinding + "/api/plugins/" + pluginInfo.Name);
@@ -155,7 +155,7 @@ namespace Hadouken.Plugins.PluginEngine
                 pluginInfo.Load(new SetupInformation
                     {
                         DatabasePath = Path.Combine(HdknConfig.GetPath("Paths.Data"),
-                                                    String.Format("hdkn.plugins.{0}.db", pluginInfo.Name)),
+                                                    String.Format("hdkn.plugins.{0}.sdf", pluginInfo.Name)),
                         HttpBinding = binding,
                         HttpPassword = httpPass,
                         HttpUsername = httpUser,
