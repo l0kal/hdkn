@@ -7,7 +7,7 @@ namespace Hadouken.Events.BitTorrent
 {
     public interface ITorrentEventListener : IEventListener
     {
-        void OnAdded(Action<Torrent> callback);
-        void OnRemoved(Action<Torrent> callback);
+        void OnAdded(Action<TorrentAdded> callback);
+        void OnRemoved(Action<TorrentRemoved> callback);
     }
 }

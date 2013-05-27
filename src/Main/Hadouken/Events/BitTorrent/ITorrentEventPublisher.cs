@@ -7,7 +7,7 @@ namespace Hadouken.Events.BitTorrent
 {
     public interface ITorrentEventPublisher : IEventPublisher
     {
-        void PublishTorrentAdded(Torrent torrent);
-        void PublishTorrentRemoved(Torrent torrent);
+        void Publish(TorrentAdded message);
+        void Publish(TorrentRemoved message);
     }
 }

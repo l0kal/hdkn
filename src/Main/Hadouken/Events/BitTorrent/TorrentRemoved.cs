@@ -5,10 +5,8 @@ using System.Text;
 
 namespace Hadouken.Events.BitTorrent
 {
-    public class Torrent
+    public class TorrentRemoved
     {
         public string InfoHash { get; set; }
-        public string Name { get; set; }
-        public long Size { get; set; }
     }
 }

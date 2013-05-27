@@ -86,7 +86,8 @@
     <Compile Include="Data\TableAttribute.cs" />
     <Compile Include="DI\IDependencyResolver.cs" />
     <Compile Include="Events\BitTorrent\ITorrentEventPublisher.cs" />
-    <Compile Include="Events\BitTorrent\Torrent.cs" />
+    <Compile Include="Events\BitTorrent\TorrentAdded.cs" />
+    <Compile Include="Events\BitTorrent\TorrentRemoved.cs" />
     <Compile Include="Events\IEventListener.cs" />
     <Compile Include="Events\IEventPublisher.cs" />
     <Compile Include="Events\BitTorrent\ITorrentEventListener.cs" />
