@@ -85,6 +85,11 @@
     <Compile Include="Data\Models\TorrentInfo.cs" />
     <Compile Include="Data\TableAttribute.cs" />
     <Compile Include="DI\IDependencyResolver.cs" />
+    <Compile Include="Events\BitTorrent\ITorrentEventPublisher.cs" />
+    <Compile Include="Events\BitTorrent\Torrent.cs" />
+    <Compile Include="Events\IEventListener.cs" />
+    <Compile Include="Events\IEventPublisher.cs" />
+    <Compile Include="Events\BitTorrent\ITorrentEventListener.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\HttpListenerResponseExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
