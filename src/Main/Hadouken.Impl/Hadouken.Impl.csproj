@@ -105,9 +105,7 @@
     <Compile Include="Data\Migrations\Insert\InsertSettingData_001.cs" />
     <Compile Include="Data\Migrations\Insert\InsertSettingData_002.cs" />
     <Compile Include="Hosting\DefaultHost.cs" />
-    <Compile Include="Messaging\DefaultMessageBus.cs" />
     <Compile Include="IO\LocalFileSystem.cs" />
-    <Compile Include="Messaging\PropertiesInterceptor.cs" />
     <Compile Include="Plugins\AssemblyPluginLoader.cs" />
     <Compile Include="Plugins\DefaultPluginEngine.cs" />
     <Compile Include="Plugins\DefaultPluginManager.cs" />
@@ -127,10 +125,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hadouken.Messages\Hadouken.Messages.csproj">
-      <Project>{dea098a4-8a50-4a2d-a19b-d457aba1fee8}</Project>
-      <Name>Hadouken.Messages</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Hadouken\Hadouken.csproj">
       <Project>{483bdd2e-74e7-4047-bab4-99c7a25bb56d}</Project>
       <Name>Hadouken</Name>

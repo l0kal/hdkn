@@ -7,7 +7,6 @@ using System.Linq.Expressions;
 using NHibernate;
 using NHibernate.Linq;
 using FluentNHibernate.Cfg;
-using Hadouken.Messaging;
 using FluentNHibernate.Cfg.Db;
 using System.Reflection;
 using FluentNHibernate.Automapping;
@@ -17,7 +16,7 @@ using System.IO;
 using Hadouken.Configuration;
 using NLog;
 using Hadouken.Reflection;
-using Hadouken.Messages;
+using Hadouken.Events.Plugin;
 
 namespace Hadouken.Impl.Data
 {
@@ -67,20 +66,12 @@ namespace Hadouken.Impl.Data
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
-        private List<Assembly> _modelAssemblies = new List<Assembly>();
-
         private ISessionFactory _sessionFactory;
         private ISession _session;
 
-        public FluentNhibernateDataRepository(IMessageBus mbus)
+        public FluentNhibernateDataRepository(IPluginEventListener eventListener)
         {
-            _modelAssemblies.AddRange(AppDomain.CurrentDomain.GetAssemblies().Where(asm => asm.GetName().Name.StartsWith("Hadouken")));
-
-            mbus.Subscribe<IPluginLoading>(msg =>
-                {
-                    _modelAssemblies.AddRange(msg.Assemblies);
-                    RebuildSessionFactory();
-                });
+            eventListener.OnLoaded(_ => RebuildSessionFactory());
             
             RebuildSessionFactory();
         }
@@ -96,7 +87,8 @@ namespace Hadouken.Impl.Data
             _sessionFactory = Fluently.Configure()
                                       .Database(SQLiteConfiguration.Standard.ConnectionString(connectionString))
                                       .Mappings(m => m.AutoMappings.Add(
-                                          AutoMap.Assemblies(new HdknAutomappingConfig(), _modelAssemblies)
+                                          AutoMap.Assemblies(new HdknAutomappingConfig(),
+                                                             AppDomain.CurrentDomain.GetAssemblies())
                                                  .Conventions.Add(new EnumMappingConvention())
                                                  .Conventions.Add(new TableNameConvention())))
                                       .BuildSessionFactory();

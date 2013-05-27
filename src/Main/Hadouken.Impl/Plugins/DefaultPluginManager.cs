@@ -8,8 +8,6 @@ using Hadouken.Data;
 using Hadouken.Reflection;
 using System.Reflection;
 using NLog;
-using Hadouken.Messaging;
-using Hadouken.Messages;
 using System.IO;
 
 namespace Hadouken.Impl.Plugins

@@ -6,9 +6,7 @@ using Hadouken.Configuration;
 using Hadouken.Data;
 using Hadouken.Data.Models;
 using System.Web.Script.Serialization;
-using System.Linq.Expressions;
-using Hadouken.Messaging;
-using Hadouken.Messages;
+using Hadouken.Events.Configuration;
 using Hadouken.Security;
 
 using Microsoft.Win32;
@@ -20,12 +18,12 @@ namespace Hadouken.Impl.Config
     {
         private readonly JavaScriptSerializer _serializer = new JavaScriptSerializer();
         private readonly IDataRepository _data;
-        private readonly IMessageBus _bus;
+        private readonly IConfigurationEventPublisher _configPublisher;
 
-        public DefaultKeyValueStore(IDataRepository data, IMessageBus bus)
+        public DefaultKeyValueStore(IDataRepository data, IConfigurationEventPublisher configPublisher)
         {
             _data = data;
-            _bus = bus;
+            _configPublisher = configPublisher;
         }
 
         public object Get(string key)
@@ -152,12 +150,8 @@ namespace Hadouken.Impl.Config
 
             _data.SaveOrUpdate(setting);
 
-            // Send ISettingChanged message
-            _bus.Send<ISettingChanged>(msg =>
-            {
-                msg.Key = setting.Key;
-                msg.NewValue = value;
-            });
+            // Publish key change
+            _configPublisher.PublishConfigChanged(setting.Key);
         }
     }
 }

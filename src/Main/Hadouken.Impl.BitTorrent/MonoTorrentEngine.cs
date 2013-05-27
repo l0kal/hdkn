@@ -13,14 +13,14 @@ using System.IO;
 
 using HdknTorrentState = Hadouken.BitTorrent.TorrentState;
 using Hadouken.IO;
-using Hadouken.Messaging;
-using System.Collections.ObjectModel;
-using Hadouken.Messages;
 using System.Threading;
 using Hadouken.Configuration;
 using MonoTorrent;
 using System.Net;
 using EncryptionTypes = MonoTorrent.Client.Encryption.EncryptionTypes;
+using MtTorrent = MonoTorrent.Common.Torrent;
+using Hadouken.Events.BitTorrent;
+using Hadouken.Events.Configuration;
 
 namespace Hadouken.Impl.BitTorrent
 {
@@ -32,21 +32,25 @@ namespace Hadouken.Impl.BitTorrent
         private IKeyValueStore _kvs;
         private IDataRepository _data;
         private IFileSystem _fs;
-        private IMessageBus _mbus;
+
+        private readonly ITorrentEventPublisher _torrentPublisher;
+        private readonly IConfigurationEventListener _configListener;
 
         private string _torrentFileSavePath;
 
         private ClientEngine _clientEngine;
         private Dictionary<string, ITorrentManager> _torrents = new Dictionary<string, ITorrentManager>();
 
-        public MonoTorrentEngine(IFileSystem fs, IMessageBus mbus, IDataRepository data, IKeyValueStore kvs)
+        public MonoTorrentEngine(IFileSystem fs, ITorrentEventPublisher torrentPublisher, IConfigurationEventListener configListener, IDataRepository data, IKeyValueStore kvs)
         {
             _kvs = kvs;
             _data = data;
             _fs = fs;
-            _mbus = mbus;
 
-            _mbus.Subscribe<ISettingChanged>(SettingChanged);
+            _torrentPublisher = torrentPublisher;
+            _configListener = configListener;
+
+            _configListener.OnChanged(SettingChanged);
 
             _torrentFileSavePath = Path.Combine(HdknConfig.GetPath("Paths.Data"), "Torrents");
         }
@@ -62,24 +66,26 @@ namespace Hadouken.Impl.BitTorrent
             LoadState();
         }
 
-        private void SettingChanged(ISettingChanged message)
+        private void SettingChanged(string key)
         {
             if(_clientEngine == null)
                 return;
 
-            switch(message.Key)
+            var setting = _kvs.Get(key);
+
+            switch(key)
             {
                 case "bandwidth.globalMaxConnections":
-                    _clientEngine.Settings.GlobalMaxConnections = Convert.ToInt32(message.NewValue);
+                    _clientEngine.Settings.GlobalMaxConnections = Convert.ToInt32(setting);
                     break;
 
                 case "bt.listenPort":
-                    var newPort = Convert.ToInt32(message.NewValue);
+                    var newPort = Convert.ToInt32(setting);
                     _clientEngine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Any, newPort));
                     break;
 
                 case "paths.defaultSavePath":
-                    _clientEngine.Settings.SavePath = message.NewValue.ToString();
+                    _clientEngine.Settings.SavePath = setting.ToString();
                     break;
             }
         }
@@ -284,9 +290,9 @@ namespace Hadouken.Impl.BitTorrent
             if (data == null || data.Length == 0)
                 return null;
 
-            Torrent t = null;
+            MtTorrent t = null;
 
-            if (Torrent.TryLoad(data, out t))
+            if (MtTorrent.TryLoad(data, out t))
             {
                 if (String.IsNullOrEmpty(savePath))
                     savePath = _clientEngine.Settings.SavePath;
@@ -306,15 +312,12 @@ namespace Hadouken.Impl.BitTorrent
             _clientEngine.Register(manager);
 
             // add to dictionary
-            var hdknManager = new HdknTorrentManager(manager, _kvs, _fs, _mbus) { TorrentData = data };
+            var hdknManager = new HdknTorrentManager(manager, _kvs, _fs, _torrentPublisher) { TorrentData = data };
             hdknManager.Load();
 
             _torrents.Add(hdknManager.InfoHash, hdknManager);
 
-            _mbus.Send<ITorrentAdded>(m =>
-            {
-                m.Torrent = hdknManager;
-            });
+            _torrentPublisher.PublishTorrentAdded(new Hadouken.Events.BitTorrent.Torrent());
 
             // Save state whenever adding torrents.
             SaveState();
