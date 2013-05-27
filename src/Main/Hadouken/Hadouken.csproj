@@ -126,8 +126,6 @@
     <Compile Include="Http\RedirectResult.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="Kernel.cs" />
-    <Compile Include="Messaging\IMessage.cs" />
-    <Compile Include="Messaging\IMessageBus.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\IPluginEngine.cs" />
     <Compile Include="Plugins\IPluginLoader.cs" />
