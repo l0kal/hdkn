@@ -7,21 +7,25 @@ using Microsoft.AspNet.SignalR.Client.Hubs;
 
 namespace Hadouken.Events.SignalR.Plugin
 {
+    [Component(ComponentLifestyle.Singleton)]
     public class PluginEventListener : IPluginEventListener
     {
-        private readonly IHubConnection _connection;
+        private readonly HubConnection _connection;
         private readonly IHubProxy _proxy;
 
         public PluginEventListener(ISignalRConnectionProvider connectionProvider)
         {
-            _connection = connectionProvider.GetConnection();
-            _proxy = new HubProxy(_connection, "Plugin");
+            _connection = (HubConnection)connectionProvider.GetConnection();
+
+            _proxy = _connection.CreateHubProxy("Plugins");
             _proxy.On("Ping", () => { });
+
+            _connection.Start().Wait();
         }
 
-        public void OnLoaded(Action<PluginLoaded> callback)
+        public void OnLoading(Action<Events.Plugin.Plugin> callback)
         {
-            _proxy.On("PluginLoaded", callback);
+            _proxy.On("PluginLoading", callback);
         }
     }
 }

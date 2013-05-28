@@ -8,6 +8,7 @@ using Hadouken.Data;
 using Hadouken.Plugins;
 using Hadouken.BitTorrent;
 using NLog;
+using Hadouken.Events;
 
 namespace Hadouken.Impl.Hosting
 {
@@ -16,15 +17,13 @@ namespace Hadouken.Impl.Hosting
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
-        private IDataRepository _data;
         private IBitTorrentEngine _torrentEngine;
         private IMigrationRunner _migratorRunner;
         private IPluginEngine _pluginEngine;
         private IHttpServer _httpServer;
 
-        public DefaultHost(IDataRepository data, IBitTorrentEngine torrentEngine, IMigrationRunner runner, IPluginEngine pluginEngine, IHttpServer httpServer)
+        public DefaultHost(IBitTorrentEngine torrentEngine, IMigrationRunner runner, IPluginEngine pluginEngine, IHttpServer httpServer)
         {
-            _data = data;
             _torrentEngine = torrentEngine;
             _migratorRunner = runner;
             _pluginEngine = pluginEngine;

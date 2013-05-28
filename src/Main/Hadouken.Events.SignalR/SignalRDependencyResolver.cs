@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNet.SignalR;
@@ -16,12 +17,8 @@ namespace Hadouken.Events.SignalR
 
         public override IEnumerable<object> GetServices(Type serviceType)
         {
-            var services = Kernel.Resolver.GetAll(serviceType);
-
-            if (services == null || !services.Any())
-                return base.GetServices(serviceType);
-
-            return services;
+            var services = Kernel.Resolver.GetAll(serviceType).ToList();
+            return (!services.Any() ? base.GetServices(serviceType) : services);
         }
     }
 }

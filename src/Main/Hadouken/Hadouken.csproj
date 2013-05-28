@@ -95,7 +95,7 @@
     <Compile Include="Events\BitTorrent\ITorrentEventListener.cs" />
     <Compile Include="Events\Plugin\IPluginEventListener.cs" />
     <Compile Include="Events\Plugin\IPluginEventPublisher.cs" />
-    <Compile Include="Events\Plugin\PluginLoaded.cs" />
+    <Compile Include="Events\Plugin\Plugin.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\HttpListenerResponseExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

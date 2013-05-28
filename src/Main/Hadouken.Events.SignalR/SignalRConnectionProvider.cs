@@ -12,14 +12,9 @@ namespace Hadouken.Events.SignalR
     {
         private IHubConnection _connection;
 
-        private IHubConnection Create()
-        {
-            return new HubConnection("");
-        }
-
         public IHubConnection GetConnection()
         {
-            return (_connection ?? (_connection = Create()));
+            return (_connection ?? (_connection = new HubConnection("http://localhost:8080/superduperhub/hubs", false)));
         }
     }
 }

@@ -90,6 +90,10 @@
       <Project>{237472F6-726C-40AF-8631-8D4D7BFD288E}</Project>
       <Name>Hadouken.DI.Ninject</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Main\Hadouken.Events.SignalR\Hadouken.Events.SignalR.csproj">
+      <Project>{3dd42f62-cd22-4881-bf46-02cf60813919}</Project>
+      <Name>Hadouken.Events.SignalR</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Http.HttpServer\Hadouken.Http.HttpServer.csproj">
       <Project>{71DB95DE-C310-4165-A4BA-2C23A250CDB1}</Project>
       <Name>Hadouken.Http.HttpServer</Name>

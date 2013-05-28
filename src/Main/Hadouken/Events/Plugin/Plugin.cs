@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Hadouken.Events.Plugin
 {
-    public class PluginLoaded
+    public class Plugin
     {
         public string Name { get; set; }
 
-        public Version Version { get; set; }
+        public string Version { get; set; }
     }
 }

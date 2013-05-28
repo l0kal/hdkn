@@ -17,7 +17,10 @@ namespace Hadouken.Events.SignalR
         {
             var cfg = new HubConfiguration
                 {
-
+                    EnableCrossDomain = false,
+                    EnableDetailedErrors = true,
+                    EnableJavaScriptProxies = true,
+                    Resolver = new SignalRDependencyResolver()
                 };
 
             app.MapHubs("/hubs", cfg);
@@ -37,7 +40,7 @@ namespace Hadouken.Events.SignalR
         {
             Task.Factory.StartNew(() =>
                 {
-                    using (WebApplication.Start<Startup>("url"))
+                    using (WebApplication.Start<Startup>("http://localhost:8080/superduperhub/"))
                     {
                         _resetEvent.WaitOne();
                     }
