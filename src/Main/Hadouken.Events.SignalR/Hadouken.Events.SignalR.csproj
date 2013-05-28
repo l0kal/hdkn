@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventBroker.cs" />
     <Compile Include="ISignalRConnectionProvider.cs" />
     <Compile Include="Plugin\PluginEventListener.cs" />
     <Compile Include="Plugin\PluginEventPublisher.cs" />
