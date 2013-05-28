@@ -61,6 +61,11 @@ namespace Hadouken.DI.Ninject
             return _kernel.GetAll<T>();
         }
 
+        public IEnumerable<object> GetAll(Type serviceType)
+        {
+            return _kernel.GetAll(serviceType);
+        } 
+
         public T TryGet<T>()
         {
             return _kernel.TryGet<T>();
