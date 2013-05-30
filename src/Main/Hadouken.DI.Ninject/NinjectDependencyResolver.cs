@@ -16,7 +16,9 @@ namespace Hadouken.DI.Ninject
 
         public NinjectDependencyResolver()
         {
-            _kernel = new StandardKernel(new ApiActionModule(), new EventModule(),
+            _kernel = new StandardKernel(new ApiActionModule(),
+                                         new EventListenerModule(),
+                                         new EventPublisherModule(),
                                          new ComponentModule(),
                                          new PluginModule());
         }
@@ -29,7 +31,6 @@ namespace Hadouken.DI.Ninject
         public IDependencyResolver CreateChildResolver(IList<Assembly> assemblies)
         {
             var childKernel = new ChildKernel(_kernel,
-                                              new EventModule(),
                                               new ApiActionModule(assemblies),
                                               new ComponentModule(assemblies),
                                               new PluginModule(assemblies));

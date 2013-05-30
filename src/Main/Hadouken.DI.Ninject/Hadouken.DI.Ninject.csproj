@@ -65,7 +65,8 @@
   <ItemGroup>
     <Compile Include="Modules\ApiActionModule.cs" />
     <Compile Include="Modules\ComponentModule.cs" />
-    <Compile Include="Modules\EventModule.cs" />
+    <Compile Include="Modules\EventPublisherModule.cs" />
+    <Compile Include="Modules\EventListenerModule.cs" />
     <Compile Include="Modules\PluginModule.cs" />
     <Compile Include="NinjectDependencyResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

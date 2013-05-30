@@ -71,7 +71,7 @@ namespace Hadouken.Impl.Data
 
         public FluentNhibernateDataRepository(IPluginEventListener eventListener)
         {
-            eventListener.OnLoading(_ => Console.WriteLine(_.Name));
+            eventListener.OnLoading(_ => RebuildSessionFactory());
             
             RebuildSessionFactory();
         }
