@@ -15,9 +15,8 @@ namespace Hadouken.Events.SignalR.Plugin
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public void PublishPluginLoading(Events.Plugin.Plugin message)
+        public void PublishPluginLoading(object message)
         {
-            Logger.Trace("PublishPluginLoading: " + message.Name);
             Clients.All.PluginLoading(message);
         }
 

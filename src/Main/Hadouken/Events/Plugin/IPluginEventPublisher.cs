@@ -7,6 +7,6 @@ namespace Hadouken.Events.Plugin
 {
     public interface IPluginEventPublisher : IEventPublisher
     {
-        void PublishPluginLoading(Plugin message);
+        void PublishPluginLoading(object message);
     }
 }

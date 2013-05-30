@@ -77,9 +77,9 @@ namespace Hadouken.Impl.Plugins
             var manager = new DefaultPluginManager(plugin);
 
             // Publish loading
-            _pluginPublisher.PublishPluginLoading(new Plugin
+            _pluginPublisher.PublishPluginLoading(new
                 {
-                    Name = manager.Name,
+                    manager.Name,
                     Version = manager.Version.ToString()
                 });
 
