@@ -317,7 +317,7 @@ namespace Hadouken.Impl.BitTorrent
 
             _torrents.Add(hdknManager.InfoHash, hdknManager);
 
-            _torrentPublisher.PublishTorrentAdded(new Hadouken.Events.BitTorrent.Torrent());
+            _torrentPublisher.PublishTorrentAdded(hdknManager);
 
             // Save state whenever adding torrents.
             SaveState();

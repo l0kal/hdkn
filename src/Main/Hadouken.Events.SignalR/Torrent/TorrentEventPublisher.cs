@@ -6,27 +6,31 @@ using System.Text;
 
 namespace Hadouken.Events.SignalR.Torrent
 {
-    [Component(ComponentLifestyle.Singleton)]
     public class TorrentEventPublisher : ITorrentEventPublisher
     {
-        public void PublishTorrentAdded(BitTorrent.Torrent torrent)
+        public void PublishTorrentAdded(object message)
         {
+            throw new NotImplementedException();
         }
 
-        public void PublishTorrentRemoved(string infoHash)
+        public void PublishTorrentRemoved(object message)
         {
+            throw new NotImplementedException();
         }
 
-        public void PublishTorrentError(BitTorrent.Torrent torrent)
+        public void PublishTorrentError(object message)
         {
+            throw new NotImplementedException();
         }
 
-        public void PublishTorrentCompleted(BitTorrent.Torrent torrent)
+        public void PublishTorrentCompleted(object message)
         {
+            throw new NotImplementedException();
         }
 
-        public void PublishTorrentMoved(BitTorrent.Torrent torrent)
+        public void PublishTorrentMoved(object message)
         {
+            throw new NotImplementedException();
         }
     }
 }

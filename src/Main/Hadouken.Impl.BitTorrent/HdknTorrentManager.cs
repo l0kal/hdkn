@@ -111,7 +111,7 @@ namespace Hadouken.Impl.BitTorrent
         {
             if (e.NewState == MonoTorrent.Common.TorrentState.Error)
             {
-                _eventPublisher.PublishTorrentError(new Torrent());
+                _eventPublisher.PublishTorrentError(new {});
             }
 
             if (e.OldState == MonoTorrent.Common.TorrentState.Downloading && e.NewState == MonoTorrent.Common.TorrentState.Seeding)
@@ -121,7 +121,7 @@ namespace Hadouken.Impl.BitTorrent
 
                 var oldSavePath = String.Copy(SavePath);
 
-                _eventPublisher.PublishTorrentCompleted(new Torrent());
+                _eventPublisher.PublishTorrentCompleted(new {});
                 //_mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this).ContinueWith(_ => BasicMove(oldSavePath));
             }
         }
@@ -412,7 +412,7 @@ namespace Hadouken.Impl.BitTorrent
             if (isRunning)
                 Start();
 
-            _eventPublisher.PublishTorrentMoved(new Torrent());
+            _eventPublisher.PublishTorrentMoved(new {});
         }
 
         private void DuplicateStructure(string source, string target)
