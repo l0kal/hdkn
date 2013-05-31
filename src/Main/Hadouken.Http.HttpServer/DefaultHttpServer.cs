@@ -17,9 +17,6 @@ namespace Hadouken.Http.HttpServer
     [Component]
     public class DefaultHttpServer : IHttpServer
     {
-        private static readonly int DefaultPort = 8081;
-        private static readonly string DefaultBinding = "http://localhost:{port}/";
-
         private static readonly IDictionary<string, string> MimeTypes = new Dictionary<string, string>()
             {
                 { ".html", "text/html" },
@@ -32,7 +29,7 @@ namespace Hadouken.Http.HttpServer
 
         private readonly IFileSystem _fileSystem;
         private readonly IKeyValueStore _keyValueStore;
-        private readonly IRegistryReader _registryReader;
+        private readonly string _binding;
 
         private HttpListener _listener;
         private string _webUIPath;
@@ -40,19 +37,17 @@ namespace Hadouken.Http.HttpServer
         private static readonly string TokenCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         private static readonly int TokenLength = 40;
         
-        public DefaultHttpServer(IKeyValueStore keyValueStore, IRegistryReader registryReader, IFileSystem fileSystem)
+        public DefaultHttpServer(IKeyValueStore keyValueStore, IBindingFactory bindingFactory, IFileSystem fileSystem)
         {
             _keyValueStore = keyValueStore;
-            _registryReader = registryReader;
+            _binding = bindingFactory.GetBinding();
             _fileSystem = fileSystem;
         }
 
         public void Start()
         {
-            var binding = GetBinding();
-
             _listener = new HttpListener();
-            _listener.Prefixes.Add(binding);
+            _listener.Prefixes.Add(_binding);
             _listener.AuthenticationSchemes = AuthenticationSchemes.Basic;
 
             UnzipWebUI();
@@ -86,21 +81,6 @@ namespace Hadouken.Http.HttpServer
             {
                 return _listener.IsListening ? new Uri(_listener.Prefixes.First()) : null;
             }
-        }
-
-        private string GetBinding()
-        {
-            var binding = _registryReader.ReadString("webui.binding", DefaultBinding);
-            var port = _registryReader.ReadInt("webui.port", DefaultPort);
-
-            // Allow overriding from application configuration file.
-            if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Binding"))
-                binding = HdknConfig.ConfigManager["WebUI.Binding"];
-
-            if (HdknConfig.ConfigManager.AllKeys.Contains("WebUI.Port"))
-                port = Convert.ToInt32(HdknConfig.ConfigManager["WebUI.Port"]);
-
-            return binding.Replace("{port}", port.ToString());;
         }
 
         private void BeginGetContext(IAsyncResult ar)

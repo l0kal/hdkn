@@ -106,6 +106,7 @@
     <Compile Include="Data\Migrations\Insert\InsertSettingData_001.cs" />
     <Compile Include="Data\Migrations\Insert\InsertSettingData_002.cs" />
     <Compile Include="Hosting\DefaultHost.cs" />
+    <Compile Include="Http\BindingFactory.cs" />
     <Compile Include="IO\LocalFileSystem.cs" />
     <Compile Include="Plugins\AssemblyPluginLoader.cs" />
     <Compile Include="Plugins\DefaultPluginEngine.cs" />

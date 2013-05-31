@@ -8,6 +8,7 @@ using Owin;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Hosting;
 using Microsoft.Owin.Host.HttpListener;
+using Hadouken.Http;
 
 namespace Hadouken.Events.SignalR
 {
@@ -34,13 +35,19 @@ namespace Hadouken.Events.SignalR
         private static readonly Microsoft.Owin.Host.HttpListener.OwinHttpListener __owl;
 #pragma warning restore 0169
 
+        private readonly string _binding;
         private readonly ManualResetEvent _resetEvent = new ManualResetEvent(false);
+
+        public EventBroker(IBindingFactory bindingFactory)
+        {
+            _binding = bindingFactory.GetBinding("superduperhub");
+        }
 
         public void Start()
         {
             Task.Factory.StartNew(() =>
                 {
-                    using (WebApplication.Start<Startup>("http://localhost:8080/superduperhub/"))
+                    using (WebApplication.Start<Startup>(_binding))
                     {
                         _resetEvent.WaitOne();
                     }

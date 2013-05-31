@@ -120,6 +120,7 @@
     <Compile Include="Http\ActionResult.cs" />
     <Compile Include="Http\ApiAction.cs" />
     <Compile Include="Http\IApiAction.cs" />
+    <Compile Include="Http\IBindingFactory.cs" />
     <Compile Include="Http\IHttpPostedFile.cs" />
     <Compile Include="Http\IHttpContext.cs" />
     <Compile Include="Http\IHttpRequest.cs" />
