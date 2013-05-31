@@ -19,7 +19,10 @@ namespace Hadouken.DI.Ninject.Modules
 
             foreach (var type in types)
             {
-                Kernel.Bind(typeof(IEventPublisher), type).To(type).InSingletonScope();
+                var registerTypes = type.GetInterfaces().ToList();
+                registerTypes.Add(type);
+
+                Kernel.Bind(registerTypes.ToArray()).To(type).InSingletonScope();
             }
         }
     }
