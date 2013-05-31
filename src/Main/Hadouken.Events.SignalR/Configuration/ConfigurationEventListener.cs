@@ -24,12 +24,12 @@ namespace Hadouken.Events.SignalR.Configuration
 
         public void OnChanged(Action callback)
         {
-            _proxy.On("ConfigChanged", callback);
+            _proxy.On("Changed", callback);
         }
 
         public void OnChanged<T>(Action<T> callback)
         {
-            _proxy.On("ConfigChanged", callback);
+            _proxy.On("Changed", callback);
         }
     }
 }

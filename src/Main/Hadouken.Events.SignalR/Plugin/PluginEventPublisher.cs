@@ -11,13 +11,13 @@ using Hadouken.Configuration;
 namespace Hadouken.Events.SignalR.Plugin
 {
     [HubName("Plugins")]
-    public class PluginsHub : Hub, IPluginEventPublisher
+    public class PluginEventPublisher : Hub, IPluginEventPublisher
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public void PublishPluginLoading(object message)
         {
-            Clients.All.PluginLoading(message);
+            Clients.All.Loading(message);
         }
 
         public override System.Threading.Tasks.Task OnConnected()

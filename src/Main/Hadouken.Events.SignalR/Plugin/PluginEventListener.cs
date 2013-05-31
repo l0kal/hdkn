@@ -24,12 +24,12 @@ namespace Hadouken.Events.SignalR.Plugin
 
         public void OnLoading(Action callback)
         {
-            _proxy.On("PluginLoading", callback);
+            _proxy.On("Loading", callback);
         }
 
         public void OnLoading<T>(Action<T> callback)
         {
-            _proxy.On("PluginLoading", callback);
+            _proxy.On("Loading", callback);
         }
     }
 }

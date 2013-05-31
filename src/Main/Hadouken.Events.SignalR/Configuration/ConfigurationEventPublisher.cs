@@ -13,7 +13,7 @@ namespace Hadouken.Events.SignalR.Configuration
     {
         public void PublishConfigChanged(object message)
         {
-            Clients.All.ConfigChanged(message);
+            Clients.All.Changed(message);
         }
     }
 }

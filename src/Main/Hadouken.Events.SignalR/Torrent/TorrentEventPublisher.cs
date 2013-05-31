@@ -13,27 +13,27 @@ namespace Hadouken.Events.SignalR.Torrent
     {
         public void PublishTorrentAdded(object message)
         {
-            Clients.All.TorrentAdded(message);
+            Clients.All.Added(message);
         }
 
         public void PublishTorrentRemoved(object message)
         {
-            Clients.All.TorrentRemoved(message);
+            Clients.All.Removed(message);
         }
 
         public void PublishTorrentError(object message)
         {
-            Clients.All.TorrentError(message);
+            Clients.All.Error(message);
         }
 
         public void PublishTorrentCompleted(object message)
         {
-            Clients.All.TorrentCompleted(message);
+            Clients.All.Completed(message);
         }
 
         public void PublishTorrentMoved(object message)
         {
-            Clients.All.TOrrentMoved(message);
+            Clients.All.Moved(message);
         }
     }
 }

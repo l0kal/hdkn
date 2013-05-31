@@ -24,52 +24,52 @@ namespace Hadouken.Events.SignalR.Torrent
 
         public void OnAdded(Action callback)
         {
-            _proxy.On("TorrentAdded", callback);
+            _proxy.On("Added", callback);
         }
 
         public void OnAdded<T>(Action<T> callback)
         {
-            _proxy.On("TorrentAdded", callback);
+            _proxy.On("Added", callback);
         }
 
         public void OnRemoved(Action callback)
         {
-            _proxy.On("TorrentRemoved", callback);
+            _proxy.On("Removed", callback);
         }
 
         public void OnRemoved<T>(Action<T> callback)
         {
-            _proxy.On("TorrentRemoved", callback);
+            _proxy.On("Removed", callback);
         }
 
         public void OnError(Action callback)
         {
-            _proxy.On("TorrentError", callback);
+            _proxy.On("Error", callback);
         }
 
         public void OnError<T>(Action<T> callback)
         {
-            _proxy.On("TorrentError", callback);
+            _proxy.On("Error", callback);
         }
 
         public void OnCompleted(Action callback)
         {
-            _proxy.On("TorrentCompleted", callback);
+            _proxy.On("Completed", callback);
         }
 
         public void OnCompleted<T>(Action<T> callback)
         {
-            _proxy.On("TorrentCompleted", callback);
+            _proxy.On("Completed", callback);
         }
 
         public void OnMoved(Action callback)
         {
-            _proxy.On("TorrentMoved", callback);
+            _proxy.On("Moved", callback);
         }
 
         public void OnMoved<T>(Action<T> callback)
         {
-            _proxy.On("TorrentMoved", callback);
+            _proxy.On("Moved", callback);
         }
     }
 }
