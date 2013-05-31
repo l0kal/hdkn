@@ -7,6 +7,6 @@ namespace Hadouken.Events.Configuration
 {
     public interface IConfigurationEventPublisher : IEventPublisher
     {
-        void PublishConfigChanged(string key);
+        void PublishConfigChanged(object message);
     }
 }

@@ -8,7 +8,6 @@ namespace Hadouken.Events.Plugin
     public interface IPluginEventListener : IEventListener
     {
         void OnLoading(Action callback);
-        void OnLoading(Action<dynamic> callback);
         void OnLoading<T>(Action<T> callback);
     }
 }

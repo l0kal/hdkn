@@ -7,6 +7,7 @@ namespace Hadouken.Events.Configuration
 {
     public interface IConfigurationEventListener : IEventListener
     {
-        void OnChanged(Action<string> callback);
+        void OnChanged(Action callback);
+        void OnChanged<T>(Action<T> callback);
     }
 }

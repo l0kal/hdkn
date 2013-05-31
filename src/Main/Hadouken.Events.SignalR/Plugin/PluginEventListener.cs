@@ -7,7 +7,6 @@ using Microsoft.AspNet.SignalR.Client.Hubs;
 
 namespace Hadouken.Events.SignalR.Plugin
 {
-    [Component(ComponentLifestyle.Singleton)]
     public class PluginEventListener : IPluginEventListener
     {
         private readonly HubConnection _connection;
@@ -24,11 +23,6 @@ namespace Hadouken.Events.SignalR.Plugin
         }
 
         public void OnLoading(Action callback)
-        {
-            _proxy.On("PluginLoading", callback);
-        }
-
-        public void OnLoading(Action<dynamic> callback)
         {
             _proxy.On("PluginLoading", callback);
         }

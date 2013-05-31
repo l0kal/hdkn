@@ -50,7 +50,7 @@ namespace Hadouken.Impl.BitTorrent
             _torrentPublisher = torrentPublisher;
             _configListener = configListener;
 
-            _configListener.OnChanged(SettingChanged);
+            _configListener.OnChanged<string>(SettingChanged);
 
             _torrentFileSavePath = Path.Combine(HdknConfig.GetPath("Paths.Data"), "Torrents");
         }
