@@ -3,18 +3,23 @@ using NUnit.Framework;
 using Hadouken.Impl.BitTorrent;
 using Moq;
 using Hadouken.IO;
-using Hadouken.Messaging;
 using Hadouken.Data;
 using Hadouken.Data.Models;
 using Hadouken.Configuration;
+using Hadouken.Events.BitTorrent;
+using Hadouken.Events.Configuration;
 
 namespace Hadouken.UnitTests.BitTorrent
 {
     [TestFixture]
     public class BitTorrentEngineTests
     {
-        private readonly Mock<IFileSystem> fs = new Mock<IFileSystem>();    
-        private readonly Mock<IMessageBus> bus = new Mock<IMessageBus>();
+        private readonly Mock<IFileSystem> fs = new Mock<IFileSystem>();
+        private readonly Mock<ITorrentEventPublisher> _torrentEventPublisher = new Mock<ITorrentEventPublisher>();
+
+        private readonly Mock<IConfigurationEventListener> _configEventListener =
+            new Mock<IConfigurationEventListener>();
+
         private readonly Mock<IDataRepository> repo = new Mock<IDataRepository>();
         private readonly Mock<IKeyValueStore> kvs = new Mock<IKeyValueStore>();
         private MonoTorrentEngine engine;
@@ -28,7 +33,7 @@ namespace Hadouken.UnitTests.BitTorrent
         [SetUp]
         public void SetUp()
         {
-            engine = new MonoTorrentEngine(fs.Object, bus.Object, repo.Object, kvs.Object);
+            engine = new MonoTorrentEngine(fs.Object, _torrentEventPublisher.Object, _configEventListener.Object, repo.Object, kvs.Object);
         }
 
         [TearDown]

@@ -7,6 +7,7 @@ using Hadouken.DI.Ninject;
 using NUnit.Framework;
 using Hadouken.Hosting;
 using System.IO;
+using Hadouken.Events;
 
 namespace Hadouken.UnitTests
 {
@@ -25,10 +26,15 @@ namespace Hadouken.UnitTests
 
             Kernel.Bootstrap(path);
             Kernel.SetResolver(new NinjectDependencyResolver());
-            
+
+            var eventBroker = Kernel.Resolver.Get<IEventBroker>();
+            eventBroker.Start();
+
             var host = Kernel.Resolver.Get<IHost>();
 
             Assert.IsNotNull(host);
+
+            eventBroker.Stop();
         }
     }
 }
