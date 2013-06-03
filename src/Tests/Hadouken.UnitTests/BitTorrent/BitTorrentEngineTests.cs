@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Hadouken.Events.BitTorrent;
 using NUnit.Framework;
 using Hadouken.Impl.BitTorrent;
 using Moq;
@@ -6,7 +7,6 @@ using Hadouken.IO;
 using Hadouken.Data;
 using Hadouken.Data.Models;
 using Hadouken.Configuration;
-using Hadouken.Events.BitTorrent;
 using Hadouken.Events.Configuration;
 
 namespace Hadouken.UnitTests.BitTorrent
@@ -15,6 +15,7 @@ namespace Hadouken.UnitTests.BitTorrent
     public class BitTorrentEngineTests
     {
         private readonly Mock<IFileSystem> fs = new Mock<IFileSystem>();
+
         private readonly Mock<ITorrentEventPublisher> _torrentEventPublisher = new Mock<ITorrentEventPublisher>();
 
         private readonly Mock<IConfigurationEventListener> _configEventListener =
@@ -33,7 +34,8 @@ namespace Hadouken.UnitTests.BitTorrent
         [SetUp]
         public void SetUp()
         {
-            engine = new MonoTorrentEngine(fs.Object, _torrentEventPublisher.Object, _configEventListener.Object, repo.Object, kvs.Object);
+            engine = new MonoTorrentEngine(fs.Object, _torrentEventPublisher.Object, _configEventListener.Object,
+                                           repo.Object, kvs.Object);
         }
 
         [TearDown]

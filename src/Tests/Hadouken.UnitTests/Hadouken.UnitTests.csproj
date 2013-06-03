@@ -126,7 +126,7 @@
       <Name>Hadouken.DI.Ninject</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Events.SignalR\Hadouken.Events.SignalR.csproj">
-      <Project>{3dd42f62-cd22-4881-bf46-02cf60813919}</Project>
+      <Project>{3DD42F62-CD22-4881-BF46-02CF60813919}</Project>
       <Name>Hadouken.Events.SignalR</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Main\Hadouken.Http.HttpServer\Hadouken.Http.HttpServer.csproj">

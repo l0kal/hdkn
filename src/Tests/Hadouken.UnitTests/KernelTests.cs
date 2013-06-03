@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Hadouken.Hosting;
 using System.IO;
 using Hadouken.Events;
+using System.Threading;
 
 namespace Hadouken.UnitTests
 {
@@ -27,14 +28,12 @@ namespace Hadouken.UnitTests
             Kernel.Bootstrap(path);
             Kernel.SetResolver(new NinjectDependencyResolver());
 
-            var eventBroker = Kernel.Resolver.Get<IEventBroker>();
-            eventBroker.Start();
-
+            var broker = Kernel.Resolver.Get<IEventBroker>();
+            broker.Start();
+            
             var host = Kernel.Resolver.Get<IHost>();
 
             Assert.IsNotNull(host);
-
-            eventBroker.Stop();
         }
     }
 }
