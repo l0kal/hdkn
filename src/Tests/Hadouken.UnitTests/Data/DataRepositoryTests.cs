@@ -5,10 +5,10 @@ using System.Text;
 using NUnit.Framework;
 using Hadouken.Impl.Data;
 using Moq;
-using Hadouken.Messaging;
 using Hadouken.Data.Models;
 using System.IO;
 using Hadouken.Configuration;
+using Hadouken.Events.Plugin;
 
 namespace Hadouken.UnitTests.Data
 {
@@ -32,7 +32,7 @@ namespace Hadouken.UnitTests.Data
         [Test]
         public void Can_CRUD_records()
         {
-            var mbus = new Mock<IMessageBus>();
+            var mbus = new Mock<IPluginEventListener>();
             var repo = new FluentNhibernateDataRepository(mbus.Object);
 
             // Saving

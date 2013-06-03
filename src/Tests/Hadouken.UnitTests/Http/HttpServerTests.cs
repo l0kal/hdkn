@@ -30,9 +30,10 @@ namespace Hadouken.UnitTests.Http
         {
             var kvs = new Mock<IKeyValueStore>();
             var fs = new Mock<IFileSystem>();
-            var rr = new Mock<IRegistryReader>();
+            var bindingFactory = new Mock<IBindingFactory>();
+            bindingFactory.Setup(bf => bf.GetBinding(null)).Returns("http://localhost:8081/");
 
-            var server = new DefaultHttpServer(kvs.Object, rr.Object, fs.Object);
+            var server = new DefaultHttpServer(kvs.Object, bindingFactory.Object, fs.Object);
             server.Start();
             server.Stop();
         }
