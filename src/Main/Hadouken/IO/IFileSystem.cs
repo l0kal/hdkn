@@ -25,6 +25,8 @@ namespace Hadouken.IO
         string[] GetFiles(string path, string pattern, SearchOption option);
 
         void DeleteFile(string path);
+        void MoveFile(string oldFile, string newFile);
+
         void DeleteDirectory(string path);
         void CreateDirectory(string path);
 
@@ -42,5 +44,6 @@ namespace Hadouken.IO
         /// </summary>
         /// <param name="path">The path to clean.</param>
         void EmptyDirectory(string path);
+
     }
 }

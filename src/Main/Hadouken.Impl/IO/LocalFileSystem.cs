@@ -75,6 +75,11 @@ namespace Hadouken.Impl.IO
             File.Delete(path);
         }
 
+        public void MoveFile(string oldFile, string newFile)
+        {
+            File.Move(oldFile, newFile);
+        }
+
         public void DeleteDirectory(string path)
         {
             Directory.Delete(path);

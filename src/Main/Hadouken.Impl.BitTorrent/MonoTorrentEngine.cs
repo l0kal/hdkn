@@ -1,33 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Net;
+using System.Threading;
 
 using Hadouken.BitTorrent;
 using Hadouken.Data;
 using MonoTorrent.Client;
 using Hadouken.Data.Models;
-using MonoTorrent.Common;
-using MonoTorrent.BEncoding;
-using System.IO;
 
 using HdknTorrentState = Hadouken.BitTorrent.TorrentState;
 using Hadouken.IO;
-using System.Threading;
 using Hadouken.Configuration;
 using MonoTorrent;
-using System.Net;
 using EncryptionTypes = MonoTorrent.Client.Encryption.EncryptionTypes;
 using MtTorrent = MonoTorrent.Common.Torrent;
 using Hadouken.Events.BitTorrent;
 using Hadouken.Events.Configuration;
+using MonoTorrent.BEncoding;
 
 namespace Hadouken.Impl.BitTorrent
 {
     [Component]
     public class MonoTorrentEngine : IBitTorrentEngine
     {
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IKeyValueStore _keyValueStore;
         private readonly IDataRepository _repository;
@@ -39,7 +37,7 @@ namespace Hadouken.Impl.BitTorrent
         private readonly string _torrentFileSavePath;
 
         private ClientEngine _clientEngine;
-        private readonly Dictionary<string, ITorrentManager> _torrents = new Dictionary<string, ITorrentManager>();
+        private readonly IDictionary<string, ITorrentManager> _torrents = new Dictionary<string, ITorrentManager>();
 
         public MonoTorrentEngine(IFileSystem fs, ITorrentEventPublisher torrentPublisher, IConfigurationEventListener configListener, IDataRepository data, IKeyValueStore kvs)
         {
@@ -57,7 +55,7 @@ namespace Hadouken.Impl.BitTorrent
 
         public void Load()
         {
-            _logger.Info("Loading BitTorrent engine");
+            Logger.Info("Loading BitTorrent engine");
 
             if(!_fileSystem.DirectoryExists(_torrentFileSavePath))
                 _fileSystem.CreateDirectory(_torrentFileSavePath);
@@ -118,89 +116,79 @@ namespace Hadouken.Impl.BitTorrent
 
         private void LoadState()
         {
-            _logger.Info("Loading torrent state");
+            Logger.Info("Loading torrent state");
 
-            var infos = _repository.List<TorrentInfo>();
+            var datFile = Path.Combine(HdknConfig.GetPath("Paths.Data"), "state.dat");
+            var oldDatFile = datFile + ".old";
 
-            if(infos == null)
+            if (!_fileSystem.FileExists(datFile))
                 return;
 
-            foreach (var torrentInfo in infos)
+            BEncodedDictionary dat = null;
+
+            try
             {
-                var manager = (HdknTorrentManager)AddTorrent(torrentInfo.Data, torrentInfo.SavePath);
-
-                if (manager != null)
+                Logger.Trace("Loading dat file {0} to BEncoded dictionary", datFile);
+                using (var s = _fileSystem.OpenRead(datFile))
                 {
-                    manager.DownloadedBytes = torrentInfo.DownloadedBytes;
-                    manager.UploadedBytes = torrentInfo.UploadedBytes;
-                    manager.Label = torrentInfo.Label;
-                    manager.StartTime = torrentInfo.StartTime;
-                    manager.CompletedTime = torrentInfo.CompletedTime;
-
-                    // Load settings
-                    manager.Settings.ConnectionRetentionFactor = torrentInfo.ConnectionRetentionFactor;
-                    manager.Settings.EnablePeerExchange = torrentInfo.EnablePeerExchange;
-                    manager.Settings.InitialSeedingEnabled = torrentInfo.InitialSeedingEnabled;
-                    manager.Settings.MaxConnections = torrentInfo.MaxConnections;
-                    manager.Settings.MaxDownloadSpeed = torrentInfo.MaxDownloadSpeed;
-                    manager.Settings.MaxUploadSpeed = torrentInfo.MaxUploadSpeed;
-                    manager.Settings.MinimumTimeBetweenReviews = torrentInfo.MinimumTimeBetweenReviews;
-                    manager.Settings.PercentOfMaxRateToSkipReview = torrentInfo.PercentOfMaxRateToSkipReview;
-                    manager.Settings.UploadSlots = torrentInfo.UploadSlots;
-                    manager.Settings.UseDht = torrentInfo.UseDht;
-
-                    _logger.Debug("Loading FastResume data for torrent {0}", manager.Torrent.Name);
-
-                    if (torrentInfo.FastResumeData != null)
-                        manager.LoadFastResume(torrentInfo.FastResumeData);
-
-                    BringToState(manager, torrentInfo.State);
+                    dat = BEncodedValue.Decode<BEncodedDictionary>(s);
                 }
             }
+            catch (Exception e)
+            {
+                Logger.ErrorException("Could not load dat file " + datFile, e);
+            }
+
+            if (dat != null)
+            {
+                var torrentsPath = Path.Combine(HdknConfig.GetPath("Paths.Data"), "Torrents");
+
+                foreach (var key in dat.Keys)
+                {
+                    var torrentFile = Path.Combine(torrentsPath, key.Text);
+
+                    if (!_fileSystem.FileExists(torrentFile))
+                    {
+                        Logger.Error("Could not find torrent {0}", torrentFile);
+                        continue;
+                    }
+
+                    var d = dat[key] as BEncodedDictionary;
+                    var savePath = ((BEncodedString) d["path"]).Text;
+
+                    MtTorrent t;
+
+                    Logger.Trace("Loading state for torrent {0}", torrentFile);
+
+                    if (MtTorrent.TryLoad(torrentFile, out t))
+                    {
+                        var manager = RegisterTorrentManager(new TorrentManager(t, savePath, new TorrentSettings()));
+                        manager.SetStateData(d);
+                    }
+                }
+            }
+
+            // Move state file after loading state
+            if (_fileSystem.FileExists(oldDatFile))
+                _fileSystem.DeleteFile(oldDatFile);
+
+            _fileSystem.MoveFile(datFile, oldDatFile);
         }
 
         private void SaveState()
         {
-            var infoList = _repository.List<TorrentInfo>();
+            Logger.Info("Saving torrent state");
 
-            foreach (var m in _torrents.Values)
+            var datFile = Path.Combine(HdknConfig.GetPath("Paths.Data"), "state.dat");
+            var dat = new BEncodedDictionary();
+
+            foreach (var manager in _torrents.Values.Cast<HdknTorrentManager>())
             {
-                HdknTorrentManager manager = (HdknTorrentManager)m;
-                TorrentInfo info = infoList.SingleOrDefault(i => i.InfoHash == manager.InfoHash);
-
-                if (info == null)
-                    info = new TorrentInfo();
-
-                _logger.Debug("Saving state for torrent {0}", manager.Torrent.Name);
-
-                CreateTorrentInfo(manager, info);
-
-                _repository.SaveOrUpdate(info);
+                var d = manager.GetStateData();
+                dat.Add(manager.Torrent.Name + ".torrent", d);
             }
-        }
 
-        private void BringToState(HdknTorrentManager manager, HdknTorrentState state)
-        {
-            switch (state)
-            {
-                case HdknTorrentState.Downloading:
-                case HdknTorrentState.Seeding:
-                    manager.Start();
-                    break;
-
-                case HdknTorrentState.Hashing:
-                    manager.HashCheck(false);
-                    break;
-
-                case HdknTorrentState.Paused:
-                    manager.Start();
-                    manager.Pause();
-                    break;
-
-                case HdknTorrentState.Stopped:
-                    manager.Stop();
-                    break;
-            }
+            _fileSystem.WriteAllBytes(datFile, dat.Encode());
         }
 
         public void Unload()
@@ -213,48 +201,7 @@ namespace Hadouken.Impl.BitTorrent
 
         public IDictionary<string, ITorrentManager> Managers
         {
-            get { return (IDictionary<string, ITorrentManager>)_torrents; }
-        }
-
-        private void CreateTorrentInfo(HdknTorrentManager manager, TorrentInfo info)
-        {
-            info.Data = manager.TorrentData;
-            info.DownloadedBytes = manager.DownloadedBytes;
-
-            if (manager.HashChecked)
-            {
-                info.FastResumeData = manager.SaveFastResume();
-            }
-            else
-            {
-                info.FastResumeData = null;
-            }
-            
-            info.InfoHash = manager.InfoHash;
-            info.Label = manager.Label;
-            info.SavePath = manager.SavePath;
-            info.StartTime = manager.StartTime;
-            info.CompletedTime = manager.CompletedTime;
-
-            // to prevent nesting directories
-            if (manager.Torrent.Files.Length > 1)
-                info.SavePath = Directory.GetParent(manager.SavePath).FullName;
-
-            info.State = manager.State;
-            info.UploadedBytes = manager.UploadedBytes;
-
-            // save torrent settings
-            info.ConnectionRetentionFactor = manager.Settings.ConnectionRetentionFactor;
-            info.EnablePeerExchange = manager.Settings.EnablePeerExchange;
-            info.InitialSeedingEnabled = manager.Settings.InitialSeedingEnabled;
-            info.MaxConnections = manager.Settings.MaxConnections;
-            info.MaxDownloadSpeed = manager.Settings.MaxDownloadSpeed;
-            info.MaxUploadSpeed = manager.Settings.MaxUploadSpeed;
-            info.MinimumTimeBetweenReviews = manager.Settings.MinimumTimeBetweenReviews;
-            info.PercentOfMaxRateToSkipReview = manager.Settings.PercentOfMaxRateToSkipReview;
-
-            info.UploadSlots = manager.Settings.UploadSlots;
-            info.UseDht = manager.Settings.UseDht;
+            get { return _torrents; }
         }
 
         public void StartAll()
@@ -290,20 +237,30 @@ namespace Hadouken.Impl.BitTorrent
             if (data == null || data.Length == 0)
                 return null;
 
-            MtTorrent t = null;
+            MtTorrent t;
 
             if (MtTorrent.TryLoad(data, out t))
             {
+                // Save the file to torrents path if it does not already exist.
+                var torrentFile = Path.Combine(HdknConfig.GetPath("Paths.Data"), "Torrents", t.Name + ".torrent");
+
+                if (!_fileSystem.FileExists(torrentFile))
+                    _fileSystem.WriteAllBytes(torrentFile, data);
+
                 if (String.IsNullOrEmpty(savePath))
                     savePath = _clientEngine.Settings.SavePath;
 
-                return RegisterTorrentManager(new TorrentManager(t, savePath, new TorrentSettings()), data); ;
+                var manager = RegisterTorrentManager(new TorrentManager(t, savePath, new TorrentSettings())); ;
+
+                SaveState();
+
+                return manager;
             }
 
             return null;
         }
 
-        private HdknTorrentManager RegisterTorrentManager(TorrentManager manager, byte[] data = null)
+        private HdknTorrentManager RegisterTorrentManager(TorrentManager manager)
         {
             // register with engine
             if (_clientEngine.Contains(manager))
@@ -312,15 +269,12 @@ namespace Hadouken.Impl.BitTorrent
             _clientEngine.Register(manager);
 
             // add to dictionary
-            var hdknManager = new HdknTorrentManager(manager, _keyValueStore, _fileSystem, _torrentPublisher) { TorrentData = data };
+            var hdknManager = new HdknTorrentManager(manager, _keyValueStore, _fileSystem, _torrentPublisher);
             hdknManager.Load();
 
             _torrents.Add(hdknManager.InfoHash, hdknManager);
 
             _torrentPublisher.PublishTorrentAdded(hdknManager);
-
-            // Save state whenever adding torrents.
-            SaveState();
 
             return hdknManager;
         }
