@@ -29,23 +29,23 @@ namespace Hadouken.Impl.BitTorrent
     {
         private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private IKeyValueStore _kvs;
-        private IDataRepository _data;
-        private IFileSystem _fs;
+        private readonly IKeyValueStore _keyValueStore;
+        private readonly IDataRepository _repository;
+        private readonly IFileSystem _fileSystem;
 
         private readonly ITorrentEventPublisher _torrentPublisher;
         private readonly IConfigurationEventListener _configListener;
 
-        private string _torrentFileSavePath;
+        private readonly string _torrentFileSavePath;
 
         private ClientEngine _clientEngine;
-        private Dictionary<string, ITorrentManager> _torrents = new Dictionary<string, ITorrentManager>();
+        private readonly Dictionary<string, ITorrentManager> _torrents = new Dictionary<string, ITorrentManager>();
 
         public MonoTorrentEngine(IFileSystem fs, ITorrentEventPublisher torrentPublisher, IConfigurationEventListener configListener, IDataRepository data, IKeyValueStore kvs)
         {
-            _kvs = kvs;
-            _data = data;
-            _fs = fs;
+            _keyValueStore = kvs;
+            _repository = data;
+            _fileSystem = fs;
 
             _torrentPublisher = torrentPublisher;
             _configListener = configListener;
@@ -59,8 +59,8 @@ namespace Hadouken.Impl.BitTorrent
         {
             _logger.Info("Loading BitTorrent engine");
 
-            if(!_fs.DirectoryExists(_torrentFileSavePath))
-                _fs.CreateDirectory(_torrentFileSavePath);
+            if(!_fileSystem.DirectoryExists(_torrentFileSavePath))
+                _fileSystem.CreateDirectory(_torrentFileSavePath);
 
             LoadEngine();
             LoadState();
@@ -71,7 +71,7 @@ namespace Hadouken.Impl.BitTorrent
             if(_clientEngine == null)
                 return;
 
-            var setting = _kvs.Get(key);
+            var setting = _keyValueStore.Get(key);
 
             switch(key)
             {
@@ -93,21 +93,21 @@ namespace Hadouken.Impl.BitTorrent
         private void LoadEngine()
         {
             string defaultSavePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-            string savePath = _kvs.Get<string>("paths.defaultSavePath", defaultSavePath);
-            int listenPort = _kvs.Get<int>("bt.listenPort", 6998);
+            string savePath = _keyValueStore.Get<string>("paths.defaultSavePath", defaultSavePath);
+            int listenPort = _keyValueStore.Get<int>("bt.listenPort", 6998);
 
             var settings = new EngineSettings
                                {
                                    AllowedEncryption = EncryptionTypes.All,
-                                   GlobalMaxConnections = _kvs.Get("bandwidth.globalMaxConnections", 200),
-                                   GlobalMaxDownloadSpeed = _kvs.Get("bandwidth.globalMaxDlSpeed", 0),
-                                   GlobalMaxHalfOpenConnections = _kvs.Get("bandwidth.globalMaxHalfConnections", 100),
-                                   GlobalMaxUploadSpeed = _kvs.Get("bandwidth.globalMaxUpSpeed", 0),
+                                   GlobalMaxConnections = _keyValueStore.Get("bandwidth.globalMaxConnections", 200),
+                                   GlobalMaxDownloadSpeed = _keyValueStore.Get("bandwidth.globalMaxDlSpeed", 0),
+                                   GlobalMaxHalfOpenConnections = _keyValueStore.Get("bandwidth.globalMaxHalfConnections", 100),
+                                   GlobalMaxUploadSpeed = _keyValueStore.Get("bandwidth.globalMaxUpSpeed", 0),
                                    //HaveSupressionEnabled
-                                   MaxOpenFiles = _kvs.Get("diskio.maxOpenFiles", 0),
-                                   MaxReadRate = _kvs.Get("diskio.maxReadRate", 0),
-                                   MaxWriteRate = _kvs.Get("diskio.maxWriteRate", 0),
-                                   PreferEncryption = _kvs.Get("bt.preferEncryption", true),
+                                   MaxOpenFiles = _keyValueStore.Get("diskio.maxOpenFiles", 0),
+                                   MaxReadRate = _keyValueStore.Get("diskio.maxReadRate", 0),
+                                   MaxWriteRate = _keyValueStore.Get("diskio.maxWriteRate", 0),
+                                   PreferEncryption = _keyValueStore.Get("bt.preferEncryption", true),
                                    //ReportedAddress = _kvs.Get<string>("bt.reportedAddress")
                                    SavePath = savePath
                                };
@@ -120,7 +120,7 @@ namespace Hadouken.Impl.BitTorrent
         {
             _logger.Info("Loading torrent state");
 
-            var infos = _data.List<TorrentInfo>();
+            var infos = _repository.List<TorrentInfo>();
 
             if(infos == null)
                 return;
@@ -161,7 +161,7 @@ namespace Hadouken.Impl.BitTorrent
 
         private void SaveState()
         {
-            var infoList = _data.List<TorrentInfo>();
+            var infoList = _repository.List<TorrentInfo>();
 
             foreach (var m in _torrents.Values)
             {
@@ -175,7 +175,7 @@ namespace Hadouken.Impl.BitTorrent
 
                 CreateTorrentInfo(manager, info);
 
-                _data.SaveOrUpdate(info);
+                _repository.SaveOrUpdate(info);
             }
         }
 
@@ -312,7 +312,7 @@ namespace Hadouken.Impl.BitTorrent
             _clientEngine.Register(manager);
 
             // add to dictionary
-            var hdknManager = new HdknTorrentManager(manager, _kvs, _fs, _torrentPublisher) { TorrentData = data };
+            var hdknManager = new HdknTorrentManager(manager, _keyValueStore, _fileSystem, _torrentPublisher) { TorrentData = data };
             hdknManager.Load();
 
             _torrents.Add(hdknManager.InfoHash, hdknManager);
