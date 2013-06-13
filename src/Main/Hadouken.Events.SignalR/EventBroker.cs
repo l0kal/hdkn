@@ -16,12 +16,14 @@ namespace Hadouken.Events.SignalR
     {
         public void Configuration(IAppBuilder app)
         {
+            GlobalHost.DependencyResolver = new SignalRDependencyResolver();
+
             var cfg = new HubConfiguration
                 {
                     EnableCrossDomain = false,
                     EnableDetailedErrors = true,
                     EnableJavaScriptProxies = true,
-                    Resolver = new SignalRDependencyResolver()
+                    Resolver = GlobalHost.DependencyResolver
                 };
 
             app.MapHubs("/hubs", cfg);

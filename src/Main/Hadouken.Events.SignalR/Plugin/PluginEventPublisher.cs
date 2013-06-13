@@ -11,19 +11,28 @@ using Hadouken.Configuration;
 namespace Hadouken.Events.SignalR.Plugin
 {
     [HubName("Plugins")]
-    public class PluginEventPublisher : Hub, IPluginEventPublisher
+    public class PluginsHub : Hub
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public void PublishPluginLoading(object message)
-        {
-            Clients.All.Loading(message);
-        }
-
         public override System.Threading.Tasks.Task OnConnected()
         {
-            Logger.Trace("Connection: " + Context.ConnectionId);
+            Logger.Trace("OnConnected: {0}", Context.ConnectionId);
+            Clients.Client(Context.ConnectionId).Ping();
+
             return base.OnConnected();
+        }
+    }
+
+    public class PluginEventPublisher : IPluginEventPublisher
+    {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        private readonly Lazy<IHubContext> _hub = new Lazy<IHubContext>(() => GlobalHost.ConnectionManager.GetHubContext<PluginsHub>()); 
+
+        public void PublishPluginLoading(object message)
+        {
+            _hub.Value.Clients.All.Loading(message);
         }
     }
 }
