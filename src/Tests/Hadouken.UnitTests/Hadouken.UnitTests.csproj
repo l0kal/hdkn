@@ -110,7 +110,6 @@
     <Compile Include="Http\HttpContextHelper.cs" />
     <Compile Include="Http\HttpServerTests.cs" />
     <Compile Include="IO\LocalFileSystemTests.cs" />
-    <Compile Include="KernelTests.cs" />
     <Compile Include="MemoryConfigManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelper.cs" />

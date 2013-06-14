@@ -82,7 +82,6 @@
     <Compile Include="Data\IMigrationRunner.cs" />
     <Compile Include="Data\Model.cs" />
     <Compile Include="Data\Models\Setting.cs" />
-    <Compile Include="Data\Models\TorrentInfo.cs" />
     <Compile Include="Data\TableAttribute.cs" />
     <Compile Include="DI\IDependencyResolver.cs" />
     <Compile Include="Events\BitTorrent\ITorrentEventPublisher.cs" />
