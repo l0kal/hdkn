@@ -47,8 +47,6 @@ namespace Hadouken.UnitTests.BitTorrent
         [Test]
         public void Does_not_care_about_null_data()
         {
-            repo.Setup(r => r.List<TorrentInfo>()).Returns(new List<TorrentInfo>());
-        
             engine.Load();
             var t = engine.AddTorrent(null);
 
@@ -58,8 +56,6 @@ namespace Hadouken.UnitTests.BitTorrent
         [Test]
         public void Does_not_care_about_garbage_data()
         {
-            repo.Setup(r => r.List<TorrentInfo>()).Returns(new List<TorrentInfo>());
-
             engine.Load();
             var t = engine.AddTorrent(new byte[] { 6, 7, 1, 4, 5, 3, 3 }); // garbage data :)
 
@@ -69,7 +65,6 @@ namespace Hadouken.UnitTests.BitTorrent
         [Test]
         public void Can_load_and_unload_torrent()
         {
-            repo.Setup(r => r.List<TorrentInfo>()).Returns(new List<TorrentInfo>());
             byte[] torrent = TestHelper.LoadResource("Hadouken.UnitTests.Resources.ubuntu.torrent").ToArray();
 
             engine.Load();

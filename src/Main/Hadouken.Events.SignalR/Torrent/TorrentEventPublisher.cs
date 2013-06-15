@@ -9,31 +9,38 @@ using Microsoft.AspNet.SignalR.Hubs;
 namespace Hadouken.Events.SignalR.Torrent
 {
     [HubName("Torrents")]
-    public class TorrentEventPublisher : Hub, ITorrentEventPublisher
+    public class TorrentsHub : Hub
     {
+    }
+
+    public class TorrentEventPublisher : ITorrentEventPublisher
+    {
+        private static readonly Lazy<IHubContext> HubInstance =
+            new Lazy<IHubContext>(() => GlobalHost.ConnectionManager.GetHubContext<TorrentsHub>());
+ 
         public void PublishTorrentAdded(object message)
         {
-            Clients.All.Added(message);
+            HubInstance.Value.Clients.All.Added(message);
         }
 
         public void PublishTorrentRemoved(object message)
         {
-            Clients.All.Removed(message);
+            HubInstance.Value.Clients.All.Removed(message);
         }
 
         public void PublishTorrentError(object message)
         {
-            Clients.All.Error(message);
+            HubInstance.Value.Clients.All.Error(message);
         }
 
         public void PublishTorrentCompleted(object message)
         {
-            Clients.All.Completed(message);
+            HubInstance.Value.Clients.All.Completed(message);
         }
 
         public void PublishTorrentMoved(object message)
         {
-            Clients.All.Moved(message);
+            HubInstance.Value.Clients.All.Moved(message);
         }
     }
 }

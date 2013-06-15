@@ -21,17 +21,19 @@ namespace Hadouken.Impl.BitTorrent
 
         private readonly TorrentManager _manager;
 
-        private HdknTorrent _torrent;
-        private List<IPeer> _peers = new List<IPeer>();
-        private List<ITracker> _trackers = new List<ITracker>();
+        private readonly HdknTorrent _torrent;
+        private readonly List<IPeer> _peers = new List<IPeer>();
+        private readonly List<ITracker> _trackers = new List<ITracker>();
         private ITorrentSettings _settings;
 
-        private IKeyValueStore _kvs;
-        private IFileSystem _fileSystem;
+        private readonly IKeyValueStore _keyValueStore;
+        private readonly IFileSystem _fileSystem;
         private readonly ITorrentEventPublisher _eventPublisher;
 
         private long _dlBytes;
         private long _ulBytes;
+        private int _initialHashFails;
+        private DateTime _addedTime;
         private DateTime _startTime;
         private DateTime? _completedTime;
 
@@ -51,7 +53,7 @@ namespace Hadouken.Impl.BitTorrent
                 }
             }
 
-            _kvs = kvs;
+            _keyValueStore = kvs;
             _fileSystem = fileSystem;
             _eventPublisher = eventPublisher;
             _startTime = DateTime.Now;
@@ -59,11 +61,17 @@ namespace Hadouken.Impl.BitTorrent
 
         internal TorrentManager Manager { get { return _manager; } }
 
+        internal DateTime AddedTime
+        {
+            get { return _addedTime; }
+            set { _addedTime = value; }
+        }
+
         internal void Load()
         {
-            _manager.PeerConnected += new EventHandler<PeerConnectionEventArgs>(PeerConnected);
-            _manager.PeerDisconnected += new EventHandler<PeerConnectionEventArgs>(PeerDisconnected);
-            _manager.PieceHashed += new EventHandler<PieceHashedEventArgs>(PieceHashed);
+            _manager.PeerConnected += PeerConnected;
+            _manager.PeerDisconnected += PeerDisconnected;
+            _manager.PieceHashed += PieceHashed;
             _manager.TorrentStateChanged += TorrentStateChanged;
         }
 
@@ -121,7 +129,7 @@ namespace Hadouken.Impl.BitTorrent
 
                 var oldSavePath = String.Copy(SavePath);
 
-                _eventPublisher.PublishTorrentCompleted(new {});
+                _eventPublisher.PublishTorrentCompleted(this);
                 //_mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this).ContinueWith(_ => BasicMove(oldSavePath));
             }
         }
@@ -132,16 +140,16 @@ namespace Hadouken.Impl.BitTorrent
                 return;
 
             var moveCompleted =
-                _kvs.Get<bool>(
+                _keyValueStore.Get<bool>(
                     "paths.shouldMoveCompleted");
 
             var newPath =
-                _kvs.Get<string>(
+                _keyValueStore.Get<string>(
                     "paths.completedPath");
 
             if (!moveCompleted || String.IsNullOrEmpty(newPath)) return;
 
-            var appendLabel = _kvs.Get<bool>("paths.appendLabelOnMoveCompleted");
+            var appendLabel = _keyValueStore.Get<bool>("paths.appendLabelOnMoveCompleted");
 
             if (appendLabel && !String.IsNullOrEmpty(Label))
                 newPath = Path.Combine(newPath, Label);
@@ -191,7 +199,7 @@ namespace Hadouken.Impl.BitTorrent
 
         public int HashFails
         {
-            get { return _manager.HashFails; }
+            get { return _manager.HashFails + _initialHashFails; }
         }
 
         public bool HasMetadata
@@ -451,6 +459,103 @@ namespace Hadouken.Impl.BitTorrent
             var f = new FastResume(d);
 
             _manager.LoadFastResume(f);
+        }
+
+        internal BEncodedDictionary GetStateData()
+        {
+            var d = new BEncodedDictionary();
+
+            d["added_on"] = new BEncodedNumber(-1);
+
+            if (CompletedTime.HasValue)
+                d["completed_on"] = new BEncodedNumber(CompletedTime.Value.ToUnixTime());
+
+            d["downloaded"] = new BEncodedNumber(DownloadedBytes);
+
+            if (_manager.HashChecked)
+                d["fast_resume"] = _manager.SaveFastResume().Encode();
+
+            d["hashfails"] = new BEncodedNumber(HashFails);
+            // have
+            d["label"] = new BEncodedString(Label ?? "");
+            d["max_connections"] = new BEncodedNumber(_manager.Settings.MaxConnections);
+            d["moved"] = new BEncodedNumber(0);
+            d["state"] = new BEncodedNumber((long)_manager.State);
+
+            if (_manager.Torrent.Files.Length > 1)
+            {
+                d["path"] = new BEncodedString(Directory.GetParent(_manager.SavePath).FullName);
+            }
+            else
+            {
+                d["path"] = new BEncodedString(_manager.SavePath);
+            }
+            
+
+            d["seedtime"] = new BEncodedNumber(0);
+            d["superseed"] = new BEncodedNumber(_manager.Settings.InitialSeedingEnabled ? 1 : 0);
+
+            var tiers = new BEncodedList();
+
+            foreach (var tier in _manager.TrackerManager.TrackerTiers)
+            {
+                tiers.Add(new BEncodedList(tier.Select(t => new BEncodedString(t.Uri.ToString()))));
+            }
+
+            d["trackers"] = tiers;
+            d["ulslots"] = new BEncodedNumber(_manager.Settings.UploadSlots);
+            d["uploaded"] = new BEncodedNumber(UploadedBytes);
+
+            return d;
+        }
+
+        internal void SetStateData(BEncodedDictionary d)
+        {
+            _addedTime = FromUnixTime(((BEncodedNumber) d["added_on"]).Number);
+
+            if (d.ContainsKey("completed_on"))
+                _completedTime = FromUnixTime(((BEncodedNumber) d["completed_on"]).Number);
+
+            _dlBytes = ((BEncodedNumber)d["downloaded"]).Number;
+            _ulBytes = ((BEncodedNumber)d["uploaded"]).Number;
+
+            if (d.ContainsKey("fast_resume"))
+                _manager.LoadFastResume(new FastResume(d["fast_resume"] as BEncodedDictionary));
+
+            _initialHashFails = (int)((BEncodedNumber) d["hashfails"]).Number;
+            Label = ((BEncodedString) d["label"]).Text;
+
+            _manager.Settings.MaxConnections = Convert.ToInt32(((BEncodedNumber) d["max_connections"]).Number);
+            _manager.Settings.InitialSeedingEnabled = (((BEncodedNumber) d["superseed"]).Number == 1);
+            _manager.Settings.UploadSlots = (int)((BEncodedNumber) d["ulslots"]).Number;
+
+            // Parse tracker and tiers
+
+            // Bring torrent to state
+            var state = (MonoTorrent.Common.TorrentState)(int)((BEncodedNumber)d["state"]).Number;
+
+            switch (state)
+            {
+                case MonoTorrent.Common.TorrentState.Downloading:
+                case MonoTorrent.Common.TorrentState.Seeding:
+                    Start();
+                    break;
+
+                case MonoTorrent.Common.TorrentState.Paused:
+                    Start();
+                    Pause();
+                    break;
+
+                case MonoTorrent.Common.TorrentState.Stopped:
+                case MonoTorrent.Common.TorrentState.Stopping:
+                    Stop();
+                    break;
+            }
+        }
+
+        private static DateTime FromUnixTime(long ticks)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(ticks).ToLocalTime();
         }
     }
 }
