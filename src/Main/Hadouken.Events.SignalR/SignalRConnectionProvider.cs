@@ -12,7 +12,6 @@ namespace Hadouken.Events.SignalR
     public class SignalRConnectionProvider : ISignalRConnectionProvider
     {
         private readonly string _binding;
-        private IHubConnection _connection;
 
         public SignalRConnectionProvider(IBindingFactory bindingFactory)
         {
