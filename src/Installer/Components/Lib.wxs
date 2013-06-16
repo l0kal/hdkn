@@ -14,10 +14,6 @@
   <Fragment>
     <ComponentGroup Id="LibComponents" Directory="INSTALLDIR" Source="$(var.BinDir)\">
       <Component Win64="$(var.IsWin64)">
-        <File Name="Castle.Core.dll" />
-      </Component>
-
-      <Component Win64="$(var.IsWin64)">
         <File Name="FluentNHibernate.dll" />
       </Component>
 
