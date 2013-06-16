@@ -119,7 +119,7 @@ namespace Hadouken.Impl.BitTorrent
         {
             if (e.NewState == MonoTorrent.Common.TorrentState.Error)
             {
-                _eventPublisher.PublishTorrentError(new {});
+                _eventPublisher.PublishTorrentError(this);
             }
 
             if (e.OldState == MonoTorrent.Common.TorrentState.Downloading && e.NewState == MonoTorrent.Common.TorrentState.Seeding)
