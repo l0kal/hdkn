@@ -96,6 +96,11 @@ namespace Hadouken.Impl.Plugins
             _managers.Add(manager.Name, manager);
 
             // Publish loaded
+            _pluginPublisher.PublishPluginLoaded(new
+                {
+                    manager.Name,
+                    Version = manager.Version.ToString()
+                });
         }
 
         public void UnloadAll()

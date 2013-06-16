@@ -34,5 +34,10 @@ namespace Hadouken.Events.SignalR.Plugin
         {
             _hub.Value.Clients.All.Loading(message);
         }
+
+        public void PublishPluginLoaded(object message)
+        {
+            _hub.Value.Clients.All.Loaded(message);
+        }
     }
 }
