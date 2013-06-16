@@ -128,9 +128,9 @@ namespace Hadouken.Impl.BitTorrent
                     _completedTime = DateTime.Now;
 
                 var oldSavePath = String.Copy(SavePath);
+                BasicMove(oldSavePath);
 
                 _eventPublisher.PublishTorrentCompleted(this);
-                //_mbus.Send<ITorrentCompleted>(msg => msg.Torrent = this).ContinueWith(_ => BasicMove(oldSavePath));
             }
         }
 
@@ -420,7 +420,7 @@ namespace Hadouken.Impl.BitTorrent
             if (isRunning)
                 Start();
 
-            _eventPublisher.PublishTorrentMoved(new {});
+            _eventPublisher.PublishTorrentMoved(this);
         }
 
         private void DuplicateStructure(string source, string target)
