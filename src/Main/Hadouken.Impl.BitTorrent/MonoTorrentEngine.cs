@@ -297,6 +297,9 @@ namespace Hadouken.Impl.BitTorrent
                 _clientEngine.Unregister(hdknManager.Manager);
 
                 _torrents.Remove(hdknManager.InfoHash);
+
+                // Publish 'removed'-event. Only the InfoHash is needed since the data is invalid.
+                _torrentPublisher.PublishTorrentRemoved(new {hdknManager.InfoHash});
             }
         }
     }
