@@ -42,7 +42,7 @@ namespace Hadouken.Events.SignalR
 
         public EventBroker(IBindingFactory bindingFactory)
         {
-            _binding = bindingFactory.GetBinding("superduperhub");
+            _binding = bindingFactory.GetBinding("events");
         }
 
         public void Start()

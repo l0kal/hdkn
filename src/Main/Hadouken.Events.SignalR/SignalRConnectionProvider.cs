@@ -15,7 +15,7 @@ namespace Hadouken.Events.SignalR
 
         public SignalRConnectionProvider(IBindingFactory bindingFactory)
         {
-            _binding = bindingFactory.GetBinding("superduperhub/hubs");
+            _binding = bindingFactory.GetBinding("events/hubs");
         }
 
         public IHubConnection GetConnection()
