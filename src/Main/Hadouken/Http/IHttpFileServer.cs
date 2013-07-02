@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
+using System.Threading.Tasks;
 
 namespace Hadouken.Http
 {
-    public abstract class ActionResult
+    public interface IHttpFileServer
     {
-        public abstract void Execute(IHttpContext context);
+        void Start();
+        void Stop();
     }
 }

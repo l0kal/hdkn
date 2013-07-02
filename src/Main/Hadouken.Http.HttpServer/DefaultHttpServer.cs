@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using Hadouken.Reflection;
 using System.Net;
 using System.IO;
@@ -11,6 +12,9 @@ using Hadouken.Configuration;
 using Ionic.Zip;
 using NLog;
 using Hadouken.Security;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace Hadouken.Http.HttpServer
 {
@@ -22,6 +26,7 @@ namespace Hadouken.Http.HttpServer
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly IApiRequestHandler _apiRequestHandler;
         private readonly IFileSystem _fileSystem;
         private readonly IKeyValueStore _keyValueStore;
         private readonly IRegistryReader _registryReader;
@@ -32,8 +37,9 @@ namespace Hadouken.Http.HttpServer
         private static readonly string TokenCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         private static readonly int TokenLength = 40;
         
-        public DefaultHttpServer(IKeyValueStore keyValueStore, IRegistryReader registryReader, IFileSystem fileSystem)
+        public DefaultHttpServer(IApiRequestHandler apiRequestHandler, IKeyValueStore keyValueStore, IRegistryReader registryReader, IFileSystem fileSystem)
         {
+            _apiRequestHandler = apiRequestHandler;
             _keyValueStore = keyValueStore;
             _registryReader = registryReader;
             _fileSystem = fileSystem;
@@ -117,11 +123,13 @@ namespace Hadouken.Http.HttpServer
 
                 if(IsAuthenticatedUser(context))
                 {
-                    string url = context.Request.Url.AbsolutePath;
+                    if (_apiRequestHandler.CanHandle(context))
+                    {
+                        _apiRequestHandler.Handle(context);
+                        return;
+                    }
 
-                    var result = (((url == "/api" || url == "/api/") && context.Request.QueryString["action"] != null)
-                                      ? FindAndExecuteAction(context)
-                                      : CheckFileSystem(context));
+                    var result = CheckFileSystem(context));
 
                     if (result != null)
                     {
@@ -222,48 +230,6 @@ namespace Hadouken.Http.HttpServer
             }
 
             return false;
-        }
-
-        private ActionResult FindAndExecuteAction(IHttpContext context)
-        {
-            string actionName = context.Request.QueryString["action"];
-
-            if (actionName == "gettoken")
-                return GenerateCSRFToken();
-
-            var action = (from a in Kernel.Resolver.GetAll<IApiAction>()
-                          where a.GetType().HasAttribute<ApiActionAttribute>()
-                          let attr = a.GetType().GetAttribute<ApiActionAttribute>()
-                          where attr != null && attr.Name == actionName
-                          select a).SingleOrDefault();
-
-            if (action != null)
-            {
-                try
-                {
-                    action.Context = context;
-                    return action.Execute();
-                }
-                catch (Exception e)
-                {
-                    Logger.ErrorException(String.Format("Could not execute action {0}", action.GetType().FullName), e);
-                }
-            }
-
-            return null;
-        }
-
-        private ActionResult GenerateCSRFToken()
-        {
-            var rnd = new Random(DateTime.Now.Millisecond);
-            var sb = new StringBuilder();
-
-            for (int i = 0; i < TokenLength; i++)
-            {
-                sb.Append(TokenCharacters[rnd.Next(0, TokenCharacters.Length - 1)]);
-            }
-
-            return new JsonResult() { Data = sb.ToString() };
         }
     }
 }

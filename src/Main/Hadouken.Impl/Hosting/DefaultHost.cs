@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Hadouken.Hosting;
-using Hadouken.Http;
+
 using Hadouken.Data;
 using Hadouken.Plugins;
 using Hadouken.BitTorrent;
 using NLog;
+using Hadouken.Http;
+using Hadouken.Http.Api;
+using Hadouken.Configuration;
 
 namespace Hadouken.Impl.Hosting
 {
@@ -20,18 +23,29 @@ namespace Hadouken.Impl.Hosting
         private IBitTorrentEngine _torrentEngine;
         private IMigrationRunner _migratorRunner;
         private IPluginEngine _pluginEngine;
-        private IHttpServer _httpServer;
 
-        public DefaultHost(IDataRepository data, IBitTorrentEngine torrentEngine, IMigrationRunner runner, IPluginEngine pluginEngine, IHttpServer httpServer)
+        private readonly IHttpFileServer _fileServer;
+        private readonly IHttpApiServer _apiServer;
+
+        public DefaultHost(IDataRepository data, IBitTorrentEngine torrentEngine, IMigrationRunner runner,
+                           IPluginEngine pluginEngine,
+                           IHttpFileServerFactory fileServerFactory,
+                           IHttpApiServerFactory apiServerFactory,
+            IBindingBuilder bindingBuilder)
         {
             _data = data;
             _torrentEngine = torrentEngine;
             _migratorRunner = runner;
             _pluginEngine = pluginEngine;
-            _httpServer = httpServer;
+
+            _fileServer = fileServerFactory.Create(bindingBuilder.Build(),
+                                                   new FileSystemProvider(HdknConfig.GetPath("Paths.WebUI")));
+
+            _apiServer = apiServerFactory.Create(bindingBuilder.Build("api"), typeof (Kernel).Assembly);
 
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            AppDomain.CurrentDomain.UnhandledException +=
+                new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
         }
 
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -55,16 +69,18 @@ namespace Hadouken.Impl.Hosting
             _torrentEngine.Load();
             _pluginEngine.Load();
 
-            _httpServer.Start();
+            _apiServer.Start();
+            _fileServer.Start();
         }
 
         public void Unload()
         {
+            _fileServer.Stop();
+            _apiServer.Stop();
+
             _pluginEngine.UnloadAll();
 
             _torrentEngine.Unload();
-
-            _httpServer.Stop();
         }
     }
 }

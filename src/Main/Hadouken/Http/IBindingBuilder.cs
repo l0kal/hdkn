@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Hadouken.Http
 {
-    public interface IHttpServer
+    public interface IBindingBuilder
     {
-        void Start();
-        void Stop();
+        string Build(params string[] subPaths);
     }
 }

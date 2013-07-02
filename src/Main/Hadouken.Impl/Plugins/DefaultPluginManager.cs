@@ -11,6 +11,8 @@ using System.Reflection;
 using NLog;
 using Hadouken.Messaging;
 using Hadouken.Messages;
+using Hadouken.Http.Api;
+using Hadouken.Http;
 
 namespace Hadouken.Impl.Plugins
 {
@@ -19,12 +21,24 @@ namespace Hadouken.Impl.Plugins
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         private readonly IPlugin _instance;
+        private readonly IHttpApiServer _apiServer;
+        private readonly IHttpFileServer _fileServer;
+
         private readonly PluginAttribute _attribute;
 
-        internal DefaultPluginManager(IPlugin plugin)
+        internal DefaultPluginManager(IPlugin plugin, IHttpApiServerFactory apiServerFactory,
+                                      IHttpFileServerFactory fileServerFactory, IBindingBuilder bindingBuilder)
         {
             _instance = plugin;
             _attribute = plugin.GetType().GetAttribute<PluginAttribute>();
+
+            _apiServer = apiServerFactory.Create(bindingBuilder.Build("api", "plugins", Name),
+                                                 plugin.GetType().Assembly);
+
+            _fileServer = fileServerFactory.Create(bindingBuilder.Build("plugins", Name),
+                                                   new EmbeddedResourceProvider(plugin.GetType().Assembly,
+                                                                                "/plugins/" + Name + "/",
+                                                                                _attribute.ResourceBase));
         }
 
         public string Name
@@ -37,34 +51,19 @@ namespace Hadouken.Impl.Plugins
             get { return _attribute.Version; }
         }
 
-        public byte[] GetResource(string name)
-        {
-            if (String.IsNullOrEmpty(_attribute.ResourceBase))
-                return null;
-
-            var resourceName = String.Concat(_attribute.ResourceBase, ".", name);
-
-            using (var stream = _instance.GetType().Assembly.GetManifestResourceStream(resourceName))
-            {
-                if (stream == null)
-                    return null;
-
-                using (var ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-
-                    return ms.ToArray();
-                }
-            }
-        }
-
         public void Load()
         {
             _instance.Load();
+
+            _apiServer.Start();
+            _fileServer.Start();
         }
 
         public void Unload()
         {
+            _fileServer.Start();
+            _apiServer.Stop();
+
             _instance.Unload();
         }
     }

@@ -9,7 +9,5 @@ namespace Hadouken.Plugins
 
         void Load();
         void Unload();
-
-        byte[] GetResource(string name);
     }
 }

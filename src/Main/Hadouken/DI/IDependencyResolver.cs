@@ -16,6 +16,7 @@ namespace Hadouken.DI
         T Get<T>();
         T Get<T>(string name);
 
+        IEnumerable<object> GetAll(Type serviceType);
         IEnumerable<T> GetAll<T>();
 
         T TryGet<T>();

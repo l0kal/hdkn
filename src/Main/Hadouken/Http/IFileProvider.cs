@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Hadouken.Http
 {
-    public interface IApiAction
+    public interface IFileProvider
     {
-        IHttpContext Context { get; set; }
-
-        ActionResult Execute();
+        byte[] GetFile(string path);
     }
 }

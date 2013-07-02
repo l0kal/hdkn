@@ -66,7 +66,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Modules\ApiActionModule.cs" />
     <Compile Include="Modules\ComponentModule.cs" />
     <Compile Include="Modules\PluginModule.cs" />
     <Compile Include="NinjectDependencyResolver.cs" />

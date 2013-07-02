@@ -12,6 +12,8 @@ using Hadouken.Reflection;
 using NLog;
 using System.Reflection;
 using Hadouken.Messages;
+using Hadouken.Http.Api;
+using Hadouken.Http;
 
 namespace Hadouken.Impl.Plugins
 {
@@ -26,16 +28,25 @@ namespace Hadouken.Impl.Plugins
         private readonly IMessageBus _messageBus;
         private readonly IMigrationRunner _migrationRunner;
         private readonly IPluginLoader[] _pluginLoaders;
+        private readonly IHttpApiServerFactory _apiServerFactory;
+        private readonly IHttpFileServerFactory _fileServerFactory;
+        private readonly IBindingBuilder _bindingBuilder;
 
         public DefaultPluginEngine(IFileSystem fileSystem,
                                    IMessageBus messageBus,
                                    IMigrationRunner migrationRunner,
+                                   IHttpApiServerFactory apiServerFactory,
+                                   IHttpFileServerFactory fileServerFactory,
+                                   IBindingBuilder bindingBuilder,
                                    IPluginLoader[] pluginLoaders)
         {
             _fileSystem = fileSystem;
             _messageBus = messageBus;
             _migrationRunner = migrationRunner;
             _pluginLoaders = pluginLoaders;
+            _apiServerFactory = apiServerFactory;
+            _fileServerFactory = fileServerFactory;
+            _bindingBuilder = bindingBuilder;
         }
 
         public void Load()
@@ -76,7 +87,7 @@ namespace Hadouken.Impl.Plugins
 
             var childResolver = Kernel.Resolver.CreateChildResolver(assemblies);
             var plugin = childResolver.Get<IPlugin>();
-            var manager = new DefaultPluginManager(plugin);
+            var manager = new DefaultPluginManager(plugin, _apiServerFactory, _fileServerFactory, _bindingBuilder);
 
             _messageBus.Send<IPluginLoading>(msg =>
                 {
@@ -97,10 +108,7 @@ namespace Hadouken.Impl.Plugins
 
             _managers.Add(manager.Name, manager);
 
-            _messageBus.Send<IPluginLoaded>(msg =>
-                {
-                    msg.Manager = manager;
-                });
+            _messageBus.Send<IPluginLoaded>(msg => msg.Manager = manager);
         }
 
         public void UnloadAll()

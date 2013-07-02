@@ -16,8 +16,7 @@ namespace Hadouken.DI.Ninject
 
         public NinjectDependencyResolver()
         {
-            _kernel = new StandardKernel(new ApiActionModule(),
-                                         new ComponentModule(),
+            _kernel = new StandardKernel(new ComponentModule(),
                                          new PluginModule());
         }
 
@@ -29,7 +28,6 @@ namespace Hadouken.DI.Ninject
         public IDependencyResolver CreateChildResolver(IList<Assembly> assemblies)
         {
             var childKernel = new ChildKernel(_kernel,
-                                              new ApiActionModule(assemblies),
                                               new ComponentModule(assemblies),
                                               new PluginModule(assemblies));
 
@@ -38,7 +36,7 @@ namespace Hadouken.DI.Ninject
 
         public object Get(Type t)
         {
-            return _kernel.Get(t);
+            return _kernel.TryGet(t);
         }
 
         public object Get(Type t, string name)
@@ -55,6 +53,11 @@ namespace Hadouken.DI.Ninject
         {
             return _kernel.Get<T>(name);
         }
+
+        public IEnumerable<object> GetAll(Type serviceType)
+        {
+            return _kernel.GetAll(serviceType);
+        } 
 
         public IEnumerable<T> GetAll<T>()
         {
